@@ -10,17 +10,20 @@ import nodemon from 'gulp-nodemon'
 import path from 'path'
 import concat from 'gulp-concat'
 import browserSync from 'browser-sync'
+import prettyError from 'gulp-prettyerror'
 
 const reload = browserSync.reload;
 const port = process.env.port || 8000;
 
-gulp.task('js', () => gulp.src([
+gulp.task('js', () =>
+  gulp.src([
     // './lib/three.js-master/build/three.min.js',
     // './lib/three.js-master/examples/js/loaders/BinaryLoader.js',
     // './lib/three.js-master/examples/js/Detector.js',
     // './lib/three.js-master/examples/js/libs/stats.min.js',
     './src/js/app/index.js'
   ])
+  .pipe(prettyError())
   .pipe(sourcemaps.init())
   .pipe(babel({
     presets: ['es2015'],
@@ -28,10 +31,12 @@ gulp.task('js', () => gulp.src([
   .pipe(concat('app.js'))
   .pipe(sourcemaps.write('.'))
   .pipe(gulp.dest('./src/js'))
-  .pipe(reload({stream:true})));
+  .pipe(reload({stream:true}))
+)
 
 
 gulp.task('sass', () => gulp.src('./src/styles/app.scss')
+  .pipe(prettyError())
   .pipe(sourcemaps.init())
   .pipe(sass().on('error', sass.logError))
   .pipe(sourcemaps.write())
