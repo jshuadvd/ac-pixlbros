@@ -1,5 +1,5 @@
 {
-  "name": "ac",
+  "name": "ac-pixlbros",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
@@ -24,6 +24,5 @@
     "gulp-sass": "^2.3.2",
     "gulp-sourcemaps": "^1.9.1",
     "gulp-uglify": "^2.0.0",
-    "three": "^0.82.1"
   }
 }
