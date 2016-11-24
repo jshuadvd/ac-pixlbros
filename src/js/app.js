@@ -119,6 +119,28 @@ function getDistance(object) {
 	return distance;
 };
 
+function reset() {
+
+	var pos = { x: 0, y: 0 };
+	var distance = 60;
+	var speed = 1;
+
+	if (camera.parent !== scene) {
+		var pos = camera.position.clone();
+		camera.parent.localToWorld(camera.position);
+		scene.add(camera);
+	}
+
+	timeline.clear();
+	timeline.to(camera.position, speed, {
+		x: pos.x,
+		y: pos.y,
+		z: distance,
+		ease: easing
+	}, 0);
+	timeline.to(camera.rotation, speed, { x: 0, y: 0, z: 0, ease: easing }, 0);
+};
+
 function zoom(object) {
 
 	var pos = camera.position.clone();
@@ -150,6 +172,9 @@ function mouseDown(e) {
 		selected = intersects[0].object;
 		console.log(selected);
 		zoom(selected);
+	} else {
+		selected = null;
+		camera.reset();
 	}
 }
 
