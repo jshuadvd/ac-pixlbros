@@ -8,7 +8,7 @@ var onMouseDownMouseX = 0;
 var onMouseDownMouseY = 0;
 var onMouseDownLat = 0;
 var onMouseDownLon = 0;
-var lon = 0;
+var lon = 30;
 var lat = 0;
 var phi = 0;
 var theta = 0;
@@ -34,6 +34,13 @@ function init() {
 	container = document.getElementById('container');
 	camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 1, 1100);
 	camera.target = new THREE.Vector3(0, 0, 0);
+
+	lat = Math.max(-85, Math.min(85, lat));
+	phi = THREE.Math.degToRad(90 - lat);
+	theta = THREE.Math.degToRad(lon);
+	camera.target.x = 500 * Math.sin(phi) * Math.cos(theta);
+	camera.lookAt(camera.target);
+
 	scene = new THREE.Scene();
 	scene.add(camera);
 	var geometry = new THREE.SphereGeometry(500, 60, 40);
