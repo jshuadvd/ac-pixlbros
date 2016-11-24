@@ -1,11 +1,16 @@
-var camera, controls, renderer, scene;
+let camera;
+let controls;
+let renderer;
+let scene;
 
 init();
 animate();
 
 function init() {
 
-	var container = document.getElementById( 'container' );
+	const container = document.getElementById( 'container' );
+
+	console.log('container', container);
 
 	renderer = new THREE.WebGLRenderer();
 	renderer.setPixelRatio( window.devicePixelRatio );
@@ -21,18 +26,18 @@ function init() {
 	controls.enableZoom = true;
 	controls.enablePan = false;
 
-	var textures = getTextures( "assets/textures/animus.jpg", 6 );
+	const textures = getTextures( "/textures/animus.jpg", 6 );
 
-	var materials = [];
+	const materials = [];
 
-	for ( var i = 0; i < 6; i ++ ) {
+	for ( let i = 0; i < 6; i ++ ) {
 
 		materials.push( new THREE.MeshBasicMaterial( { map: textures[ i ] } ) );
 
 	}
 
 	// var skyBox = new THREE.Mesh( new THREE.CubeGeometry( 1, 1, 1 ), new THREE.MeshFaceMaterial( materials ) );
-	var skyBox = new THREE.Mesh( new THREE.SphereGeometry( 30, 32, 32 ), new THREE.MeshFaceMaterial( materials ) );
+	const skyBox = new THREE.Mesh( new THREE.SphereGeometry( 30, 32, 32 ), new THREE.MeshFaceMaterial( materials ) );
 	skyBox.applyMatrix( new THREE.Matrix4().makeScale( 1, 1, - 1 ) );
 	scene.add( skyBox );
 
@@ -42,22 +47,22 @@ function init() {
 
 function getTextures( atlasImgUrl, tilesNum ) {
 
-	var textures = [];
+	const textures = [];
 
-	for ( var i = 0; i < tilesNum; i ++ ) {
+	for ( let i = 0; i < tilesNum; i ++ ) {
 
 		textures[ i ] = new THREE.Texture();
 
 	}
 
-	var imageObj = new Image();
+	const imageObj = new Image();
 
-	imageObj.onload = function() {
+	imageObj.onload = () => {
+        let canvas;
+        let context;
+        const tileWidth = imageObj.height;
 
-		var canvas, context;
-		var tileWidth = imageObj.height;
-
-		for ( var i = 0; i < textures.length; i ++ ) {
+        for ( let i = 0; i < textures.length; i ++ ) {
 
 			canvas = document.createElement( 'canvas' );
 			context = canvas.getContext( '2d' );
@@ -68,8 +73,7 @@ function getTextures( atlasImgUrl, tilesNum ) {
 			textures[ i ].needsUpdate = true;
 
 		}
-
-	};
+    };
 
 	imageObj.src = atlasImgUrl;
 
