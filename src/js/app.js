@@ -1,97 +1,99 @@
 'use strict';
 
 var camera = void 0;
-var controls = void 0;
-var renderer = void 0;
 var scene = void 0;
+var renderer = void 0;
+var isUserInteracting = false;
+var onMouseDownMouseX = 0;
+var onMouseDownMouseY = 0;
+var lon = 0;
+var onMouseDownLon = 0;
+var lat = 0;
+var onMouseDownLat = 0;
+var phi = 0;
+var theta = 0;
+
+var fovMin = 75;
+var fovMax = 55;
+var zoomed = void 0;
+
+var onPointerDownPointerX = void 0;
+var onPointerDownPointerY = void 0;
+var onPointerDownLon = void 0;
+var onPointerDownLat = void 0;
 
 init();
 animate();
 
 function init() {
-
-	var container = document.getElementById('container');
-
-	console.log('container', container);
-
+	var container = void 0;
+	var mesh = void 0;
+	container = document.getElementById('container');
+	camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 1, 1100);
+	camera.target = new THREE.Vector3(0, 0, 0);
+	scene = new THREE.Scene();
+	var geometry = new THREE.SphereGeometry(500, 60, 40);
+	geometry.scale(-1, 1, 1);
+	var material = new THREE.MeshBasicMaterial({
+		map: new THREE.TextureLoader().load('textures/AnimusPanorama.jpg')
+	});
+	mesh = new THREE.Mesh(geometry, material);
+	scene.add(mesh);
 	renderer = new THREE.WebGLRenderer();
 	renderer.setPixelRatio(window.devicePixelRatio);
 	renderer.setSize(window.innerWidth, window.innerHeight);
 	container.appendChild(renderer.domElement);
-
-	scene = new THREE.Scene();
-
-	camera = new THREE.PerspectiveCamera(90, window.innerWidth / window.innerHeight, 0.1, 100);
-	camera.position.z = 0.01;
-
-	controls = new THREE.OrbitControls(camera);
-	controls.enableZoom = true;
-	controls.enablePan = false;
-
-	var textures = getTextures("/textures/animus.jpg", 6);
-
-	var materials = [];
-
-	for (var i = 0; i < 6; i++) {
-
-		materials.push(new THREE.MeshBasicMaterial({ map: textures[i] }));
-	}
-
-	// var skyBox = new THREE.Mesh( new THREE.CubeGeometry( 1, 1, 1 ), new THREE.MeshFaceMaterial( materials ) );
-	var skyBox = new THREE.Mesh(new THREE.SphereGeometry(30, 32, 32), new THREE.MeshFaceMaterial(materials));
-	skyBox.applyMatrix(new THREE.Matrix4().makeScale(1, 1, -1));
-	scene.add(skyBox);
-
+	document.addEventListener('mousedown', onDocumentMouseDown, false);
+	document.addEventListener('mousemove', onDocumentMouseMove, false);
+	document.addEventListener('mouseup', onDocumentMouseUp, false);
+	document.addEventListener('click', onDocumentClick, false);
 	window.addEventListener('resize', onWindowResize, false);
 }
 
-function getTextures(atlasImgUrl, tilesNum) {
-
-	var textures = [];
-
-	for (var i = 0; i < tilesNum; i++) {
-
-		textures[i] = new THREE.Texture();
-	}
-
-	var imageObj = new Image();
-
-	imageObj.onload = function () {
-		var canvas = void 0;
-		var context = void 0;
-		var tileWidth = imageObj.height;
-
-		for (var _i = 0; _i < textures.length; _i++) {
-
-			canvas = document.createElement('canvas');
-			context = canvas.getContext('2d');
-			canvas.height = tileWidth;
-			canvas.width = tileWidth;
-			context.drawImage(imageObj, tileWidth * _i, 0, tileWidth, tileWidth, 0, 0, tileWidth, tileWidth);
-			textures[_i].image = canvas;
-			textures[_i].needsUpdate = true;
-		}
-	};
-
-	imageObj.src = atlasImgUrl;
-
-	return textures;
-}
-
 function onWindowResize() {
-
 	camera.aspect = window.innerWidth / window.innerHeight;
 	camera.updateProjectionMatrix();
-
 	renderer.setSize(window.innerWidth, window.innerHeight);
 }
 
+function onDocumentMouseDown(event) {
+	event.preventDefault();
+	isUserInteracting = true;
+	onPointerDownPointerX = event.clientX;
+	onPointerDownPointerY = event.clientY;
+	onPointerDownLon = lon;
+	onPointerDownLat = lat;
+}
+
+function onDocumentMouseMove(event) {
+	if (isUserInteracting === true) {
+		lon = (onPointerDownPointerX - event.clientX) * 0.1 + onPointerDownLon;
+	}
+}
+
+function onDocumentMouseUp(event) {
+	isUserInteracting = false;
+}
+
+function onDocumentClick(event) {
+	camera.fov = zoomed ? fovMin : fovMax;
+	zoomed = !zoomed;
+	camera.updateProjectionMatrix();
+}
+
 function animate() {
-
-	controls.update();
-
-	renderer.render(scene, camera);
-
 	requestAnimationFrame(animate);
+	update();
+}
+
+function update() {
+	lat = Math.max(-85, Math.min(85, lat));
+	phi = THREE.Math.degToRad(90 - lat);
+	theta = THREE.Math.degToRad(lon);
+	camera.target.x = 500 * Math.sin(phi) * Math.cos(theta);
+	camera.target.y = 500 * Math.cos(phi);
+	camera.target.z = 500 * Math.sin(phi) * Math.sin(theta);
+	camera.lookAt(camera.target);
+	renderer.render(scene, camera);
 }
 //# sourceMappingURL=app.js.map
