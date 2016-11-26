@@ -33,6 +33,7 @@ function init() {
 	var mesh = void 0;
 	container = document.getElementById('container');
 	camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 1, 1100);
+	// camera.position.set( 0, 0, 60 );
 	camera.target = new THREE.Vector3(0, 0, 0);
 
 	lat = Math.max(-85, Math.min(85, lat));
@@ -52,17 +53,33 @@ function init() {
 	scene.add(mesh);
 
 	// add light
-	var light = new THREE.DirectionalLight('white', 1);
-	light.position.set(-4, 4, 4);
-	light.name = 'Back light';
-	scene.add(light);
+	// let light = new THREE.DirectionalLight('white', 1);
+	// light.position.set(-4,4,4);
+	// light.name = 'Back light';
+	// scene.add(light);
+
+	// Add spotlight for case focus
+	var spotLight = new THREE.SpotLight(0xffffff, 2.2, 1000, Math.PI / 10.5, 0.001);
+	spotLight.castShadow = true;
+	spotLight.position.set(52, 75, 50);
+	spotLight.shadowMapWidth = 1024;
+	spotLight.shadowMapHeight = 1024;
+	spotLight.shadowCameraNear = 1;
+	spotLight.shadowCameraFar = 1000;
+	scene.add(spotLight);
+
+	// Add marker to set initial position for click
+	var marker = new THREE.Object3D();
+	marker.position.set(0, 0, 0);
+	marker.add(spotLight);
+	scene.add(marker);
 
 	// add a sphere to click
-	var mat2 = new THREE.MeshLambertMaterial({ side: THREE.DoubleSide, color: '#f4d742' });
-	var object = new THREE.Mesh(new THREE.SphereGeometry(4, 20, 20), mat2);
-	object.position.set(40, 0, 0);
-	object.name = 'Object 1';
-	scene.add(object);
+	// let mat2 = new THREE.MeshLambertMaterial({side: THREE.DoubleSide, color: '#f4d742'});
+	// let object = new THREE.Mesh(new THREE.SphereGeometry(4,20,20),mat2);
+	// object.position.set( 40, 0, 0 );
+	// object.name = 'Object 1';
+	// scene.add(object);
 
 	renderer = new THREE.WebGLRenderer();
 	renderer.setPixelRatio(window.devicePixelRatio);
@@ -267,5 +284,16 @@ function update(time) {
 	// console.log(camera.fov)
 	camera.updateProjectionMatrix();
 	render();
+}
+
+function orbit(origin, h, v, distance) {
+	origin = origin || new THREE.Vector3();
+	var p = new THREE.Vector3();
+	var phi = v * Math.PI / 180;
+	var theta = h * Math.PI / 180;
+	p.x = distance * Math.sin(phi) * Math.cos(theta) + origin.x;
+	p.z = distance * Math.sin(phi) * Math.sin(theta) + origin.z;
+	p.y = distance * Math.cos(phi) + origin.y;
+	return p;
 }
 //# sourceMappingURL=app.js.map
