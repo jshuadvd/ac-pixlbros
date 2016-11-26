@@ -50,6 +50,7 @@ function init() {
 		map: new THREE.TextureLoader().load('textures/AnimusPanorama.jpg')
 	});
 	mesh = new THREE.Mesh(geometry, material);
+	mesh.name = 'scene';
 	scene.add(mesh);
 
 	// add light
@@ -192,13 +193,13 @@ function mouseDown(e) {
 	var vector = new THREE.Vector3(mouse.x, mouse.y).unproject(camera);
 	var raycaster = new THREE.Raycaster(camera.position, vector.sub(camera.position).normalize());
 	var intersects = raycaster.intersectObject(scene, true);
-	if (intersects.length > 0 && intersects[0].object !== selected) {
+	if (intersects.length > 0 && intersects[0].object !== selected && intersects[0].object.name !== 'scene') {
 		selected = intersects[0].object;
 		console.log(selected);
 		zoom(selected);
 	} else {
 		selected = null;
-		camera.reset();
+		reset();
 	}
 }
 
