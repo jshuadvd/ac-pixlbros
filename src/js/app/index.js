@@ -310,201 +310,274 @@ let onPointerDownLat;
 // 	return p;
 // }
 
-var camera, scene, renderer;
+var camera, container, controls, clock, info, mesh, renderer, raycaster, scene;
+// var MOVESPEED = 0, LOOKSPEED = 0.075, CAMERAMOVESPEED = MOVESPEED * 2;
+var isUserInteracting = false,
+onMouseDownMouseX = 0, onMouseDownMouseY = 0,
+lon = 30, onMouseDownLon = 0,
+lat = 0, onMouseDownLat = 0,
+phi = 0, theta = 0;
 
-	var isUserInteracting = false,
-	onMouseDownMouseX = 0, onMouseDownMouseY = 0,
-	lon = 30, onMouseDownLon = 0,
-	lat = 0, onMouseDownLat = 0,
-	phi = 0, theta = 0;
+container = document.getElementById( 'container' );
+// info = document.getElementById( 'info' );
 
-	init();
-	animate();
+init();
+animate();
 
-	function init() {
+var moveForward = false;
+var moveBackward = false;
+var moveLeft = false;
+var moveRight = false;
+var canJump = false;
+var prevTime = performance.now();
+var velocity = new THREE.Vector3();
 
-		var container, mesh;
+function init() {
 
-		container = document.getElementById( 'container' );
+	camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 1, 1100 );
+	camera.target = new THREE.Vector3( 0, 0, 0 );
 
-		camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 1, 1100 );
-		camera.target = new THREE.Vector3( 0, 0, 0 );
+	scene = new THREE.Scene();
 
-		scene = new THREE.Scene();
+	var geometry = new THREE.SphereGeometry( 500, 60, 400 );
+	geometry.scale( - 1, 1, 1 );
 
-		var geometry = new THREE.SphereGeometry( 500, 60, 400 );
-		geometry.scale( - 1, 1, 1 );
+	var material = new THREE.MeshBasicMaterial( {
+		map: new THREE.TextureLoader().load( 'textures/AnimusPanorama.jpg' )
+	} );
 
-		var material = new THREE.MeshBasicMaterial( {
-			map: new THREE.TextureLoader().load( 'textures/AnimusPanorama.jpg' )
-		} );
-
-		mesh = new THREE.Mesh( geometry, material );
-
-		scene.add( mesh );
+	mesh = new THREE.Mesh( geometry, material );
+	scene.add( mesh );
+	
+	// controls = new THREE.FirstPersonControls( camera );
+	// controls.movementSpeed = MOVESPEED;
+	// controls.lookSpeed = LOOKSPEED;
+	// controls.lookVertical = false; // Temporary solution; play on flat surfaces only
+	// controls.noFly = true;
+	// clock = new THREE.Clock();
+	
+	controls = new THREE.PointerLockControls( camera );
+	scene.add( controls.getObject() );
+	
+	var onKeyDown = function ( event ) {
+		switch ( event.keyCode ) {
+			
+			case 38: // up
+			case 87: // w
+			moveForward = true;
+			break;
+			
+			case 37: // left
+			case 65: // a
+			moveLeft = true; break;
+			
+			case 40: // down
+			case 83: // s
+			moveBackward = true;
+			break;
+			
+			case 39: // right
+			case 68: // d
+			moveRight = true;
+			break;
+			
+			case 32: // space
+			if ( canJump === true ) velocity.y += 350;
+			canJump = false;
+			break;
+			
+		}
 		
-		var camControls = new THREE.FirstPersonControls(camera);
-        camControls.lookSpeed = 0.4;
-        camControls.movementSpeed = 20;
-        camControls.noFly = true;
-        camControls.lookVertical = true;
-        camControls.constrainVertical = true;
-        camControls.verticalMin = 1.0;
-        camControls.verticalMax = 2.0;
-        camControls.lon = -150;
-        camControls.lat = 120;
-		// camControls.update()
+	};
+	
+	var onKeyUp = function ( event ) {
+		switch( event.keyCode ) {
+			
+			case 38: // up
+			case 87: // w
+			moveForward = false;
+			break;
+			
+			case 37: // left
+			case 65: // a
+			moveLeft = false;
+			break;
+			
+			case 40: // down
+			case 83: // s
+			moveBackward = false;
+			break;
+			
+			case 39: // right
+			case 68: // d
+			moveRight = false;
+			break;
+			
+		}
+		
+	};
 
-		renderer = new THREE.WebGLRenderer();
-		renderer.setPixelRatio( window.devicePixelRatio );
-		renderer.setSize( window.innerWidth, window.innerHeight );
-		container.appendChild( renderer.domElement );
-		container.addEventListener("mousedown", getPosition, false);
+	renderer = new THREE.WebGLRenderer();
+	renderer.setPixelRatio( window.devicePixelRatio );
+	renderer.setSize( window.innerWidth, window.innerHeight );
+	container.appendChild( renderer.domElement );
+	container.addEventListener("mousedown", getPosition, false);
+	// container.addEventListener("mousemove", getPosition, false);
+	
 
-		document.addEventListener( 'mousedown', onDocumentMouseDown, false );
-		document.addEventListener( 'mousemove', onDocumentMouseMove, false );
-		document.addEventListener( 'mouseup', onDocumentMouseUp, false );
-		document.addEventListener( 'wheel', onDocumentMouseWheel, false );
-		// document.addEventListener("DOMContentLoaded", init, false);
+	document.addEventListener( 'mousedown', onDocumentMouseDown, false );
+	document.addEventListener( 'mousemove', onDocumentMouseMove, false );
+	document.addEventListener( 'mouseup', onDocumentMouseUp, false );
+	document.addEventListener( 'wheel', onDocumentMouseWheel, false );
+	document.addEventListener( 'keydown', onKeyDown, false );
+	document.addEventListener( 'keyup', onKeyUp, false );
+	// document.addEventListener("DOMContentLoaded", init, false);
 
 
-		document.addEventListener( 'dragover', function ( event ) {
+	document.addEventListener( 'dragover', function ( event ) {
 
-			event.preventDefault();
-			event.dataTransfer.dropEffect = 'copy';
+		event.preventDefault();
+		event.dataTransfer.dropEffect = 'copy';
 
-		}, false );
+	}, false );
 
-		document.addEventListener( 'dragenter', function ( event ) {
+	document.addEventListener( 'dragenter', function ( event ) {
 
-			document.body.style.opacity = 0.5;
+		document.body.style.opacity = 0.5;
 
-		}, false );
+	}, false );
 
-		document.addEventListener( 'dragleave', function ( event ) {
+	document.addEventListener( 'dragleave', function ( event ) {
 
-			document.body.style.opacity = 1;
+		document.body.style.opacity = 1;
 
-		}, false );
+	}, false );
 
-		document.addEventListener( 'drop', function ( event ) {
-
-			event.preventDefault();
-
-			var reader = new FileReader();
-			reader.addEventListener( 'load', function ( event ) {
-
-				material.map.image.src = event.target.result;
-				material.map.needsUpdate = true;
-
-			}, false );
-			reader.readAsDataURL( event.dataTransfer.files[ 0 ] );
-
-			document.body.style.opacity = 1;
-
-		}, false );
-
-		window.addEventListener( 'resize', onWindowResize, false );
-
-	}
-
-	function onWindowResize() {
-
-		camera.aspect = window.innerWidth / window.innerHeight;
-		camera.updateProjectionMatrix();
-
-		renderer.setSize( window.innerWidth, window.innerHeight );
-
-	}
-
-	function onDocumentMouseDown( event ) {
+	document.addEventListener( 'drop', function ( event ) {
 
 		event.preventDefault();
 
-		isUserInteracting = true;
+		var reader = new FileReader();
+		reader.addEventListener( 'load', function ( event ) {
 
-		onPointerDownPointerX = event.clientX;
-		// onPointerDownPointerY = event.clientY;
+			material.map.image.src = event.target.result;
+			material.map.needsUpdate = true;
 
-		onPointerDownLon = lon;
-		// onPointerDownLat = lat;
+		}, false );
+		reader.readAsDataURL( event.dataTransfer.files[ 0 ] );
 
-	}
+		document.body.style.opacity = 1;
 
-	function onDocumentMouseMove( event ) {
+	}, false );
 
-		if ( isUserInteracting === true ) {
+	window.addEventListener( 'resize', onWindowResize, false );
 
-			lon = ( onPointerDownPointerX - event.clientX ) * 0.1 + onPointerDownLon;
-			// lat = ( event.clientY - onPointerDownPointerY ) * 0.1 + onPointerDownLat;
+}
 
-		}
+function onWindowResize() {
 
-	}
+	camera.aspect = window.innerWidth / window.innerHeight;
+	camera.updateProjectionMatrix();
 
-	function onDocumentMouseUp( event ) {
+	renderer.setSize( window.innerWidth, window.innerHeight );
 
-		isUserInteracting = false;
+}
 
-	}
+function onDocumentMouseDown( event ) {
 
-	// Zoom in & out | Need to limit this to the starting point and a endind point
-	function onDocumentMouseWheel( event ) {
-		
-		camera.fov += event.deltaY * 0.05;
-		camera.updateProjectionMatrix();
+	event.preventDefault();
 
-	}
+	isUserInteracting = true;
 
-	function animate() {
+	onPointerDownPointerX = event.clientX;
+	// onPointerDownPointerY = event.clientY;
 
-		requestAnimationFrame( animate );
-		update();
+	onPointerDownLon = lon;
+	// onPointerDownLat = lat;
 
-	}
+}
 
-	function update() {
-
-		if ( isUserInteracting === false ) {
-			// lon += 0.1;
-		}
-
-		lat = Math.max( - 85, Math.min( 85, lat ) );
-		phi = THREE.Math.degToRad( 90 - lat );
-		theta = THREE.Math.degToRad( lon );
-
-		camera.target.x = 500 * Math.sin( phi ) * Math.cos( theta );
-		camera.target.y = 500 * Math.cos( phi );
-		camera.target.z = 500 * Math.sin( phi ) * Math.sin( theta );
-
-		camera.lookAt( camera.target );
-
-		/*
-		// distortion
-		camera.position.copy( camera.target ).negate();
-		*/
-    	// camControls.update()
-		renderer.render( scene, camera );
-
-	}
+function onDocumentMouseMove( event ) {
 	
-	function getPosition(event) {
-		var x = new Number();
-		var y = new Number();
-		var container = document.getElementById( 'container' );
-		
-		if (event.x != undefined && event.y != undefined) {
-			x = event.x;
-			y = event.y;
-		} else { // Firefox method to get the position
-			x = event.clientX + document.body.scrollLeft +
-			document.documentElement.scrollLeft;
-			y = event.clientY + document.body.scrollTop +
-			document.documentElement.scrollTop;
-		}
-		
-		x -= container.offsetLeft;
-		y -= container.offsetTop;
-		
-		console.log("x: " + x + "  y: " + y);
+	console.log("IM MOVING YALL!!!!!!!");
+	// onPointerDownLon = lon;
+	// isUserInteracting = true
+	// lon = ( onPointerDownPointerX - event.clientX ) * 0.1 + onPointerDownLon;
+	// $( "#container" ).mousemove(function( event ) {
+	// 		
+	// });
+	
+	if ( isUserInteracting === true ) {
+		lon = ( onPointerDownPointerX - event.clientX ) * 0.1 + onPointerDownLon;
+		// lat = ( event.clientY - onPointerDownPointerY ) * 0.1 + onPointerDownLat;
 	}
+
+}
+
+function onDocumentMouseUp( event ) {
+
+	isUserInteracting = false;
+
+}
+
+// Zoom in & out | Need to limit this to the starting point and a endind point
+function onDocumentMouseWheel( event ) {
+	
+	camera.fov += event.deltaY * 0.05;
+	camera.updateProjectionMatrix();
+
+}
+
+function animate() {
+
+	requestAnimationFrame( animate );
+	update();
+
+}
+
+function update() {
+		
+	if ( isUserInteracting === false ) {
+		// lon += 0.1;
+	}
+
+	lat = Math.max( - 85, Math.min( 85, lat ) );
+	phi = THREE.Math.degToRad( 90 - lat );
+	theta = THREE.Math.degToRad( lon );
+
+	camera.target.x = 500 * Math.sin( phi ) * Math.cos( theta );
+	// camera.target.y = 500 * Math.cos( phi );
+	camera.target.z = 500 * Math.sin( phi ) * Math.sin( theta );
+
+	camera.lookAt( camera.target );
+
+	/*
+	// distortion
+	camera.position.copy( camera.target ).negate();
+	*/
+	// var delta = clock.getDelta(), speed = delta * CAMERAMOVESPEED;
+	// controls.update(delta);
+	
+	renderer.render( scene, camera );
+
+}
+
+function getPosition(event) {
+	var x = new Number();
+	var y = new Number();
+	
+	if (event.x != undefined && event.y != undefined) {
+		x = event.x;
+		y = event.y;
+	} else { // Firefox method to get the position
+		x = event.clientX + document.body.scrollLeft +
+		document.documentElement.scrollLeft;
+		y = event.clientY + document.body.scrollTop +
+		document.documentElement.scrollTop;
+	}
+	x -= container.offsetLeft;
+	y -= container.offsetTop;	
+	// alert("x: " + x + "  y: " + y);
+	console.log();("x: " + x + "  y: " + y);
+	
+}
