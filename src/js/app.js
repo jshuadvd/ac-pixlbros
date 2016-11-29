@@ -8,12 +8,12 @@
 // const onMouseDownMouseY = 0;
 // const onMouseDownLat = 0;
 // const onMouseDownLon = 0;
-// let lon = 30;
+var lon = 30;
 // let lat = 0;
 // let phi = 0;
 // let theta = 0;
-// let fovMin = 75;
-// let fovMax = 55;
+var fovMin = 75;
+var fovMax = 55;
 // let zoomed;
 // 
 var onPointerDownPointerX = void 0;
@@ -312,12 +312,24 @@ var onPointerDownLat = void 0;
 // 	return p;
 // }
 
-var camera, container, controls, clock, info, mesh, renderer, raycaster, scene;
+// Add Audio Loader
+
+var camera = void 0,
+    container = void 0,
+    controls = void 0,
+    clock = void 0,
+    info = void 0,
+    marker = void 0,
+    mesh = void 0,
+    renderer = void 0,
+    raycaster = void 0,
+    scene = void 0,
+    spotLight = void 0,
+    spotLightHelper = void 0;
 // var MOVESPEED = 0, LOOKSPEED = 0.075, CAMERAMOVESPEED = MOVESPEED * 2;
 var isUserInteracting = false,
     onMouseDownMouseX = 0,
     onMouseDownMouseY = 0,
-    lon = 30,
     onMouseDownLon = 0,
     lat = 0,
     onMouseDownLat = 0,
@@ -355,12 +367,65 @@ function init() {
 	mesh = new THREE.Mesh(geometry, material);
 	scene.add(mesh);
 
+	// let circleGeometry = new THREE.CircleGeometry( 50, 32 );
+	// let circleMaterial = new THREE.MeshBasicMaterial( { color: 0xffff00 } );
+	// let circle = new THREE.Mesh( circleGeometry, circleMaterial );
+	// scene.add( circle );
+
 	// controls = new THREE.FirstPersonControls( camera );
 	// controls.movementSpeed = MOVESPEED;
 	// controls.lookSpeed = LOOKSPEED;
 	// controls.lookVertical = false; // Temporary solution; play on flat surfaces only
 	// controls.noFly = true;
 	// clock = new THREE.Clock();
+
+	// let flashlight = new THREE.SpotLight(0xffffff, 4, 40);
+	// camera.add(flashlight);
+	// flashlight.position.set(0,0,1);
+	// flashlight.target = camera;
+
+	// let light = new THREE.SpotLight(0xffffff, 2.0, 1000);
+	// light.target = mesh;
+	// scene.add(light)
+	// 
+	// let lightHelper = new THREE.SpotLightHelper(light);
+	// scene.add(lightHelper)
+
+	spotLight = new THREE.SpotLight(0xffffff, 2, 10);
+	// spotLight.position.set(0, 0, 0 );
+	// spotLight.target = mesh
+	spotLight.position.set(0, 0, 0);
+	spotLight.castShadow = true;
+	// spotLight.angle = Math.PI / 4;
+	spotLight.penumbra = 0.05;
+	spotLight.decay = 2;
+	spotLight.distance = 200;
+	spotLight.shadow.mapSize.width = 1024;
+	spotLight.shadow.mapSize.height = 1024;
+	spotLight.shadow.camera.near = 1;
+	spotLight.shadow.camera.far = 100;
+	scene.add(spotLight);
+	camera.add(spotLight);
+
+	spotLightHelper = new THREE.SpotLightHelper(spotLight);
+	scene.add(spotLightHelper);
+
+	// scene.fog = new THREE.Fog( 0xffffff, 0.015, 10 );
+
+	// spotLight = new THREE.SpotLight(0xffffff, 2.2, 1000, Math.PI/10.5, 0.001);
+	// spotLight.castShadow = true;
+	// spotLight.position.set(0, 0, 0);
+	// spotLight.shadowMapWidth = 1;
+	// spotLight.shadowMapHeight = 100;
+	// spotLight.shadowCameraNear = 1;
+	// spotLight.shadowCameraFar = 1000;
+	// scene.add(camera)
+	// camera.add(spotLight);
+	// 
+	// marker = new THREE.Object3D();
+	// marker.position.set(400, 300, 400);
+	// marker.add(spotLight);
+	// scene.add(marker);
 
 	controls = new THREE.PointerLockControls(camera);
 	scene.add(controls.getObject());
@@ -396,7 +461,6 @@ function init() {
 				if (canJump === true) velocity.y += 350;
 				canJump = false;
 				break;
-
 		}
 	};
 
@@ -435,8 +499,6 @@ function init() {
 	renderer.setSize(window.innerWidth, window.innerHeight);
 	container.appendChild(renderer.domElement);
 	container.addEventListener("mousedown", getPosition, false);
-	// container.addEventListener("mousemove", getPosition, false);
-
 
 	document.addEventListener('mousedown', onDocumentMouseDown, false);
 	document.addEventListener('mousemove', onDocumentMouseMove, false);
@@ -504,15 +566,12 @@ function onDocumentMouseDown(event) {
 
 function onDocumentMouseMove(event) {
 
-	console.log("IM MOVING YALL!!!!!!!");
-	// onPointerDownLon = lon;
-	// isUserInteracting = true
+	// console.log("IM MOVING YALL!!!!!!!");
+	// isUserInteracting = true;
 	// lon = ( onPointerDownPointerX - event.clientX ) * 0.1 + onPointerDownLon;
-	// $( "#container" ).mousemove(function( event ) {
-	// 		
-	// });
 
 	if (isUserInteracting === true) {
+		// onPointerDownLon = lon;
 		lon = (onPointerDownPointerX - event.clientX) * 0.1 + onPointerDownLon;
 		// lat = ( event.clientY - onPointerDownPointerY ) * 0.1 + onPointerDownLat;
 	}
@@ -556,9 +615,11 @@ function update() {
  // distortion
  camera.position.copy( camera.target ).negate();
  */
-	// var delta = clock.getDelta(), speed = delta * CAMERAMOVESPEED;
+	// let delta = clock.getDelta(), speed = delta * CAMERAMOVESPEED;
 	// controls.update(delta);
+	// spotLight.target = marker;
 
+	spotLightHelper.update();
 	renderer.render(scene, camera);
 }
 
@@ -577,6 +638,6 @@ function getPosition(event) {
 	x -= container.offsetLeft;
 	y -= container.offsetTop;
 	// alert("x: " + x + "  y: " + y);
-	console.log();"x: " + x + "  y: " + y;
+	console.log("x: " + x + "  y: " + y);
 }
 //# sourceMappingURL=app.js.map

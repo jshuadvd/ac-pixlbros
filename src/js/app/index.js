@@ -6,12 +6,12 @@
 // const onMouseDownMouseY = 0;
 // const onMouseDownLat = 0;
 // const onMouseDownLon = 0;
-// let lon = 30;
+let lon = 30;
 // let lat = 0;
 // let phi = 0;
 // let theta = 0;
-// let fovMin = 75;
-// let fovMax = 55;
+let fovMin = 75;
+let fovMax = 55;
 // let zoomed;
 // 
 let onPointerDownPointerX;
@@ -310,11 +310,13 @@ let onPointerDownLat;
 // 	return p;
 // }
 
-var camera, container, controls, clock, info, mesh, renderer, raycaster, scene;
+// Add Audio Loader
+
+let camera, container, controls, clock, info, marker, mesh, renderer, raycaster, scene, spotLight, spotLightHelper;
 // var MOVESPEED = 0, LOOKSPEED = 0.075, CAMERAMOVESPEED = MOVESPEED * 2;
-var isUserInteracting = false,
+let isUserInteracting = false,
 onMouseDownMouseX = 0, onMouseDownMouseY = 0,
-lon = 30, onMouseDownLon = 0,
+onMouseDownLon = 0,
 lat = 0, onMouseDownLat = 0,
 phi = 0, theta = 0;
 
@@ -324,13 +326,13 @@ container = document.getElementById( 'container' );
 init();
 animate();
 
-var moveForward = false;
-var moveBackward = false;
-var moveLeft = false;
-var moveRight = false;
-var canJump = false;
-var prevTime = performance.now();
-var velocity = new THREE.Vector3();
+let moveForward = false;
+let moveBackward = false;
+let moveLeft = false;
+let moveRight = false;
+let canJump = false;
+let prevTime = performance.now();
+let velocity = new THREE.Vector3();
 
 function init() {
 
@@ -339,15 +341,20 @@ function init() {
 
 	scene = new THREE.Scene();
 
-	var geometry = new THREE.SphereGeometry( 500, 60, 400 );
+	let geometry = new THREE.SphereGeometry( 500, 60, 400 );
 	geometry.scale( - 1, 1, 1 );
 
-	var material = new THREE.MeshBasicMaterial( {
+	let material = new THREE.MeshBasicMaterial( {
 		map: new THREE.TextureLoader().load( 'textures/AnimusPanorama.jpg' )
 	} );
 
 	mesh = new THREE.Mesh( geometry, material );
 	scene.add( mesh );
+	
+	// let circleGeometry = new THREE.CircleGeometry( 50, 32 );
+	// let circleMaterial = new THREE.MeshBasicMaterial( { color: 0xffff00 } );
+	// let circle = new THREE.Mesh( circleGeometry, circleMaterial );
+	// scene.add( circle );
 	
 	// controls = new THREE.FirstPersonControls( camera );
 	// controls.movementSpeed = MOVESPEED;
@@ -356,10 +363,58 @@ function init() {
 	// controls.noFly = true;
 	// clock = new THREE.Clock();
 	
+	// let flashlight = new THREE.SpotLight(0xffffff, 4, 40);
+	// camera.add(flashlight);
+	// flashlight.position.set(0,0,1);
+	// flashlight.target = camera;
+	
+	// let light = new THREE.SpotLight(0xffffff, 2.0, 1000);
+	// light.target = mesh;
+	// scene.add(light)
+	// 
+	// let lightHelper = new THREE.SpotLightHelper(light);
+	// scene.add(lightHelper)
+	
+	spotLight = new THREE.SpotLight( 0xffffff, 2, 10 );
+	// spotLight.position.set(0, 0, 0 );
+	// spotLight.target = mesh
+	spotLight.position.set(0, 0, 0);
+	spotLight.castShadow = true;
+	// spotLight.angle = Math.PI / 4;
+	spotLight.penumbra = 0.05;
+	spotLight.decay = 2;
+	spotLight.distance = 200;
+	spotLight.shadow.mapSize.width = 1024;
+	spotLight.shadow.mapSize.height = 1024;
+	spotLight.shadow.camera.near = 1;
+	spotLight.shadow.camera.far = 100;
+	scene.add( spotLight );
+	camera.add(spotLight)
+
+	spotLightHelper = new THREE.SpotLightHelper( spotLight );
+	scene.add( spotLightHelper );
+	
+	// scene.fog = new THREE.Fog( 0xffffff, 0.015, 10 );
+	
+	// spotLight = new THREE.SpotLight(0xffffff, 2.2, 1000, Math.PI/10.5, 0.001);
+	// spotLight.castShadow = true;
+	// spotLight.position.set(0, 0, 0);
+	// spotLight.shadowMapWidth = 1;
+	// spotLight.shadowMapHeight = 100;
+	// spotLight.shadowCameraNear = 1;
+	// spotLight.shadowCameraFar = 1000;
+	// scene.add(camera)
+	// camera.add(spotLight);
+	// 
+	// marker = new THREE.Object3D();
+	// marker.position.set(400, 300, 400);
+	// marker.add(spotLight);
+	// scene.add(marker);
+	
 	controls = new THREE.PointerLockControls( camera );
 	scene.add( controls.getObject() );
 	
-	var onKeyDown = function ( event ) {
+	let onKeyDown = function ( event ) {
 		switch ( event.keyCode ) {
 			
 			case 38: // up
@@ -385,12 +440,10 @@ function init() {
 			if ( canJump === true ) velocity.y += 350;
 			canJump = false;
 			break;
-			
 		}
-		
 	};
 	
-	var onKeyUp = function ( event ) {
+	let onKeyUp = function ( event ) {
 		switch( event.keyCode ) {
 			
 			case 38: // up
@@ -414,7 +467,6 @@ function init() {
 			break;
 			
 		}
-		
 	};
 
 	renderer = new THREE.WebGLRenderer();
@@ -422,8 +474,6 @@ function init() {
 	renderer.setSize( window.innerWidth, window.innerHeight );
 	container.appendChild( renderer.domElement );
 	container.addEventListener("mousedown", getPosition, false);
-	// container.addEventListener("mousemove", getPosition, false);
-	
 
 	document.addEventListener( 'mousedown', onDocumentMouseDown, false );
 	document.addEventListener( 'mousemove', onDocumentMouseMove, false );
@@ -457,7 +507,7 @@ function init() {
 
 		event.preventDefault();
 
-		var reader = new FileReader();
+		let reader = new FileReader();
 		reader.addEventListener( 'load', function ( event ) {
 
 			material.map.image.src = event.target.result;
@@ -499,15 +549,12 @@ function onDocumentMouseDown( event ) {
 
 function onDocumentMouseMove( event ) {
 	
-	console.log("IM MOVING YALL!!!!!!!");
-	// onPointerDownLon = lon;
-	// isUserInteracting = true
+	// console.log("IM MOVING YALL!!!!!!!");
+	// isUserInteracting = true;
 	// lon = ( onPointerDownPointerX - event.clientX ) * 0.1 + onPointerDownLon;
-	// $( "#container" ).mousemove(function( event ) {
-	// 		
-	// });
 	
 	if ( isUserInteracting === true ) {
+		// onPointerDownLon = lon;
 		lon = ( onPointerDownPointerX - event.clientX ) * 0.1 + onPointerDownLon;
 		// lat = ( event.clientY - onPointerDownPointerY ) * 0.1 + onPointerDownLat;
 	}
@@ -555,16 +602,18 @@ function update() {
 	// distortion
 	camera.position.copy( camera.target ).negate();
 	*/
-	// var delta = clock.getDelta(), speed = delta * CAMERAMOVESPEED;
+	// let delta = clock.getDelta(), speed = delta * CAMERAMOVESPEED;
 	// controls.update(delta);
+	// spotLight.target = marker;
 	
+	spotLightHelper.update()
 	renderer.render( scene, camera );
 
 }
 
 function getPosition(event) {
-	var x = new Number();
-	var y = new Number();
+	let x = new Number();
+	let y = new Number();
 	
 	if (event.x != undefined && event.y != undefined) {
 		x = event.x;
@@ -578,6 +627,6 @@ function getPosition(event) {
 	x -= container.offsetLeft;
 	y -= container.offsetTop;	
 	// alert("x: " + x + "  y: " + y);
-	console.log();("x: " + x + "  y: " + y);
+	console.log("x: " + x + "  y: " + y);
 	
 }
