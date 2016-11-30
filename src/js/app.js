@@ -443,7 +443,9 @@ function init() {
 			case 37: // left
 			case 65:
 				// a
-				moveLeft = true;break;
+				// lon = event.clientX
+				moveLeft = true;
+				break;
 
 			case 40: // down
 			case 83:
@@ -454,6 +456,7 @@ function init() {
 			case 39: // right
 			case 68:
 				// d
+				// lon = event.clientX
 				moveRight = true;
 				break;
 
@@ -583,6 +586,7 @@ function onDocumentMouseMove(event) {
 
 	isUserInteracting = true;
 	lon = event.clientX;
+	event.clientY = 0;
 	// lon = ( onPointerDownPointerX - event.clientX ) * -0.5 + onPointerDownLon;
 
 	// if ( isUserInteracting === true ) {
