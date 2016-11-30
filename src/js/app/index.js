@@ -15,9 +15,9 @@ let fovMax = 55;
 // let zoomed;
 // 
 let onPointerDownPointerX;
-let onPointerDownPointerY;
+// let onPointerDownPointerY;
 let onPointerDownLon;
-let onPointerDownLat;
+// let onPointerDownLat;
 // 
 // let selected;
 // let controls;
@@ -319,7 +319,7 @@ audio.play();
 
 let camera, container, controls, clock, info, marker, mesh, mousePos, renderer, raycaster, scene, spotLight, spotLightHelper, stats;
 // var MOVESPEED = 0, LOOKSPEED = 0.075, CAMERAMOVESPEED = MOVESPEED * 2;
-let isUserInteracting = false,
+let isUserInteracting = true,
 onMouseDownMouseX = 0, onMouseDownMouseY = 0,
 onMouseDownLon = 0,
 lat = 0, onMouseDownLat = 0,
@@ -476,9 +476,9 @@ function init() {
 	renderer.setPixelRatio( window.devicePixelRatio );
 	renderer.setSize( window.innerWidth, window.innerHeight );
 	container.appendChild( renderer.domElement );
-	container.addEventListener("mousedown", getPosition, false);
+	container.addEventListener("mousemove", getPosition, false);
 
-	document.addEventListener( 'mousedown', onDocumentMouseDown, false );
+	// document.addEventListener( 'mousedown', onDocumentMouseDown, false );
 	document.addEventListener( 'mousemove', onDocumentMouseMove, false );
 	document.addEventListener( 'mouseup', onDocumentMouseUp, false );
 	document.addEventListener( 'wheel', onDocumentMouseWheel, false );
@@ -546,25 +546,25 @@ function onWindowResize() {
 
 }
 
-function onDocumentMouseDown( event ) {
-
-	event.preventDefault();
-
-	isUserInteracting = true;
-
-	onPointerDownPointerX = event.clientX;
-	// onPointerDownPointerY = event.clientY;
-
-	onPointerDownLon = lon;
-	// onPointerDownLat = lat;
-
-}
+// function onDocumentMouseDown( event ) {
+// 
+// 	// event.preventDefault();
+// 
+// 	isUserInteracting = true;
+// 
+// 	onPointerDownPointerX = event.clientX;
+// 	// onPointerDownPointerY = event.clientY;
+// 
+// 	onPointerDownLon = lon;
+// 	// onPointerDownLat = lat;
+// 
+// }
 
 function onDocumentMouseMove( event ) {
 	
-	// console.log("IM MOVING YALL!!!!!!!");
 	isUserInteracting = true;
-	lon = ( onPointerDownPointerX - event.clientX ) * -0.5 + onPointerDownLon;
+	lon = event.clientX 
+	// lon = ( onPointerDownPointerX - event.clientX ) * -0.5 + onPointerDownLon;
 	
 	// if ( isUserInteracting === true ) {
 	// 	// onPointerDownLon = lon;
@@ -583,7 +583,7 @@ function onDocumentMouseUp( event ) {
 // Zoom in & out | Need to limit this to the starting point and a endind point
 function onDocumentMouseWheel( event ) {
 	
-	camera.fov += event.deltaY * 0.05;
+	camera.fov += event.deltaY * 0.01;
 	camera.updateProjectionMatrix();
 
 }
