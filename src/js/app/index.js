@@ -317,7 +317,7 @@ source.src = '/audio/AC-Trailer.mp3';
 audio.appendChild(source);
 audio.play();
 
-let camera, container, controls, clock, info, marker, mesh, renderer, raycaster, scene, spotLight, spotLightHelper;
+let camera, container, controls, clock, info, marker, mesh, mousePos, renderer, raycaster, scene, spotLight, spotLightHelper, stats;
 // var MOVESPEED = 0, LOOKSPEED = 0.075, CAMERAMOVESPEED = MOVESPEED * 2;
 let isUserInteracting = false,
 onMouseDownMouseX = 0, onMouseDownMouseY = 0,
@@ -358,8 +358,8 @@ function init() {
 
 	let material = new THREE.MeshBasicMaterial( {
 		map: new THREE.TextureLoader().load( 'textures/AnimusPanorama.jpg' ),
-		fog: true
-		
+		fog: true,
+		transparent: true	
 	});
 
 	mesh = new THREE.Mesh( geometry, material );
@@ -486,7 +486,6 @@ function init() {
 	document.addEventListener( 'keyup', onKeyUp, false );
 	// document.addEventListener("DOMContentLoaded", init, false);
 
-
 	document.addEventListener( 'dragover', function ( event ) {
 
 		event.preventDefault();
@@ -524,6 +523,17 @@ function init() {
 	}, false );
 
 	window.addEventListener( 'resize', onWindowResize, false );
+	
+	stats = new Stats();
+	stats.domElement.style.position = 'absolute';
+	stats.domElement.style.bottom = '0px';
+	stats.domElement.style.zIndex = 100;
+	container.appendChild( stats.domElement );
+	
+	// Create Rain
+	// let rainEngine = new ParticleEngine();
+	// rainEngine.setValues( Examples.rain );
+	// rainEngine.initialize();
 
 }
 
@@ -553,14 +563,14 @@ function onDocumentMouseDown( event ) {
 function onDocumentMouseMove( event ) {
 	
 	// console.log("IM MOVING YALL!!!!!!!");
-	// isUserInteracting = true;
-	// lon = ( onPointerDownPointerX - event.clientX ) * 0.1 + onPointerDownLon;
+	isUserInteracting = true;
+	lon = ( onPointerDownPointerX - event.clientX ) * -0.5 + onPointerDownLon;
 	
-	if ( isUserInteracting === true ) {
-		// onPointerDownLon = lon;
-		lon = ( onPointerDownPointerX - event.clientX ) * 0.1 + onPointerDownLon;
-		// lat = ( event.clientY - onPointerDownPointerY ) * 0.1 + onPointerDownLat;
-	}
+	// if ( isUserInteracting === true ) {
+	// 	// onPointerDownLon = lon;
+	// 	lon = ( onPointerDownPointerX - event.clientX ) * 0.1 + onPointerDownLon;
+	// 	// lat = ( event.clientY - onPointerDownPointerY ) * 0.1 + onPointerDownLat;
+	// }
 
 }
 
@@ -608,8 +618,12 @@ function update() {
 	// let delta = clock.getDelta(), speed = delta * CAMERAMOVESPEED;
 	// controls.update(delta);
 	// spotLight.target = marker;
+	// controls.update()
+	
 	
 	spotLightHelper.update()
+	stats.update()
+	// rainEngine.update(0.01 * 0.5)
 	renderer.render( scene, camera );
 
 }
