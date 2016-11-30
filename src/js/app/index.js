@@ -311,6 +311,11 @@ let onPointerDownLat;
 // }
 
 // Add Audio Loader
+let audio = document.createElement('audio');
+let source = document.createElement('source');
+source.src = '/audio/AC-Trailer.mp3';
+audio.appendChild(source);
+audio.play();
 
 let camera, container, controls, clock, info, marker, mesh, renderer, raycaster, scene, spotLight, spotLightHelper;
 // var MOVESPEED = 0, LOOKSPEED = 0.075, CAMERAMOVESPEED = MOVESPEED * 2;
@@ -334,27 +339,31 @@ let canJump = false;
 let prevTime = performance.now();
 let velocity = new THREE.Vector3();
 
+//************************************************************************//
+//                             Init Scene                                //
+//************************************************************************//
+
 function init() {
 
 	camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 1, 1100 );
 	camera.target = new THREE.Vector3( 0, 0, 0 );
 
 	scene = new THREE.Scene();
+	// scene.fog = new THREE.FogExp2(0x000000, 0.005);
+	scene.fog = new THREE.Fog(0x000000, 0.012);
+	
 
 	let geometry = new THREE.SphereGeometry( 500, 60, 400 );
 	geometry.scale( - 1, 1, 1 );
 
 	let material = new THREE.MeshBasicMaterial( {
-		map: new THREE.TextureLoader().load( 'textures/AnimusPanorama.jpg' )
-	} );
+		map: new THREE.TextureLoader().load( 'textures/AnimusPanorama.jpg' ),
+		fog: true
+		
+	});
 
 	mesh = new THREE.Mesh( geometry, material );
 	scene.add( mesh );
-	
-	// let circleGeometry = new THREE.CircleGeometry( 50, 32 );
-	// let circleMaterial = new THREE.MeshBasicMaterial( { color: 0xffff00 } );
-	// let circle = new THREE.Mesh( circleGeometry, circleMaterial );
-	// scene.add( circle );
 	
 	// controls = new THREE.FirstPersonControls( camera );
 	// controls.movementSpeed = MOVESPEED;
@@ -363,10 +372,10 @@ function init() {
 	// controls.noFly = true;
 	// clock = new THREE.Clock();
 	
-	// let flashlight = new THREE.SpotLight(0xffffff, 4, 40);
-	// camera.add(flashlight);
-	// flashlight.position.set(0,0,1);
-	// flashlight.target = camera;
+	let spotLight = new THREE.SpotLight(0xffffff, 4, 40);
+	camera.add(spotLight);
+	// spotLight.position.set(0, 0,1);
+	spotLight.target = camera;
 	
 	// let light = new THREE.SpotLight(0xffffff, 2.0, 1000);
 	// light.target = mesh;
@@ -375,37 +384,28 @@ function init() {
 	// let lightHelper = new THREE.SpotLightHelper(light);
 	// scene.add(lightHelper)
 	
-	spotLight = new THREE.SpotLight( 0xffffff, 2, 10 );
+	// spotLight = new THREE.SpotLight( 0xffffff, 2, 100 );
 	// spotLight.position.set(0, 0, 0 );
 	// spotLight.target = mesh
-	spotLight.position.set(0, 0, 0);
-	spotLight.castShadow = true;
+	// spotLight.position.set(20, 20, 20);
+	// spotLight.castShadow = true;
 	// spotLight.angle = Math.PI / 4;
-	spotLight.penumbra = 0.05;
-	spotLight.decay = 2;
-	spotLight.distance = 200;
-	spotLight.shadow.mapSize.width = 1024;
-	spotLight.shadow.mapSize.height = 1024;
-	spotLight.shadow.camera.near = 1;
-	spotLight.shadow.camera.far = 100;
+	// spotLight.penumbra = 0.05;
+	// spotLight.decay = 2;
+	// spotLight.distance = 200;
+	// spotLight.shadow.mapSize.width = 100;
+	// spotLight.shadow.mapSize.height = 100;
+	// spotLight.shadow.camera.near = 1;
+	// spotLight.shadow.camera.far = 10;
+	spotLight.position.set(-20, 60, -10);
+    spotLight.castShadow = true;
 	scene.add( spotLight );
-	camera.add(spotLight)
+	// camera.add(spotLight);
+	// scene.add(camera)
 
 	spotLightHelper = new THREE.SpotLightHelper( spotLight );
 	scene.add( spotLightHelper );
-	
-	// scene.fog = new THREE.Fog( 0xffffff, 0.015, 10 );
-	
-	// spotLight = new THREE.SpotLight(0xffffff, 2.2, 1000, Math.PI/10.5, 0.001);
-	// spotLight.castShadow = true;
-	// spotLight.position.set(0, 0, 0);
-	// spotLight.shadowMapWidth = 1;
-	// spotLight.shadowMapHeight = 100;
-	// spotLight.shadowCameraNear = 1;
-	// spotLight.shadowCameraFar = 1000;
-	// scene.add(camera)
-	// camera.add(spotLight);
-	// 
+		
 	// marker = new THREE.Object3D();
 	// marker.position.set(400, 300, 400);
 	// marker.add(spotLight);
@@ -469,7 +469,10 @@ function init() {
 		}
 	};
 
-	renderer = new THREE.WebGLRenderer();
+	renderer = new THREE.WebGLRenderer({
+		antialias: true,
+		alpha: true,
+	});
 	renderer.setPixelRatio( window.devicePixelRatio );
 	renderer.setSize( window.innerWidth, window.innerHeight );
 	container.appendChild( renderer.domElement );
