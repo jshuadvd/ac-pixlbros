@@ -310,6 +310,7 @@ let onPointerDownLon;
 // 	return p;
 // }
 
+
 // Add Audio Loader
 let audio = document.createElement('audio');
 let source = document.createElement('source');
@@ -317,27 +318,30 @@ source.src = '/audio/AC-Trailer.mp3';
 audio.appendChild(source);
 audio.play();
 
-let camera, container, controls, clock, info, marker, mesh, mousePos, renderer, raycaster, scene, spotLight, spotLightHelper, stats;
-// var MOVESPEED = 0, LOOKSPEED = 0.075, CAMERAMOVESPEED = MOVESPEED * 2;
+let camera, container, color, controls, clock, h, info, layer = false, marker, mesh, materials = [], mousePos, parameters, particles, rainGeometry, renderer, raycaster, scene, size, spotLight, spotLightHelper, sprite, stats; 
+
 let isUserInteracting = true,
 onMouseDownMouseX = 0, onMouseDownMouseY = 0,
 onMouseDownLon = 0,
 lat = 0, onMouseDownLat = 0,
 phi = 0, theta = 0;
 
+let rainDensity = 20000;
+
 container = document.getElementById( 'container' );
 // info = document.getElementById( 'info' );
 
 init();
+initRain();
 animate();
 
-let moveForward = false;
-let moveBackward = false;
-let moveLeft = false;
-let moveRight = false;
-let canJump = false;
-let prevTime = performance.now();
-let velocity = new THREE.Vector3();
+// let moveForward = false;
+// let moveBackward = false;
+// let moveLeft = false;
+// let moveRight = false;
+// let canJump = false;
+// let prevTime = performance.now();
+// let velocity = new THREE.Vector3();
 
 //************************************************************************//
 //                             Init Scene                                //
@@ -345,12 +349,13 @@ let velocity = new THREE.Vector3();
 
 function init() {
 
-	camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 1, 1100 );
+	camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 1, 2000 );
 	camera.target = new THREE.Vector3( 0, 0, 0 );
 
 	scene = new THREE.Scene();
+	// scene.fog = new THREE.FogExp2( 0x000000, 0.0008 );
 	// scene.fog = new THREE.FogExp2(0x000000, 0.005);
-	scene.fog = new THREE.Fog(0x000000, 0.012);
+	scene.fog = new THREE.Fog(0x000000, 0.0008);
 	
 
 	let geometry = new THREE.SphereGeometry( 500, 60, 400 );
@@ -363,41 +368,34 @@ function init() {
 	});
 	
     // instantiate a loader
-	var loader = new THREE.ImageLoader();
-
-	// load a image resource
-	loader.load(
-		// resource URL
-		'textures/assassins_creed_logo.png',
-		// Function when resource is loaded
-		function ( image ) {
-			// do something with it
-
-			// like drawing a part of it on a canvas
-			var canvas = document.createElement( 'canvas' );
-			var context = canvas.getContext( '2d' );
-			context.drawImage( image, 100, 100 );
-		},
-		// Function called when download progresses
-		function ( xhr ) {
-			console.log( (xhr.loaded / xhr.total * 100) + '% loaded' );
-		},
-		// Function called when download errors
-		function ( xhr ) {
-			console.log( 'An error happened' );
-		}
-	);
-	scene.add(loader)
+	// var loader = new THREE.ImageLoader();
+	// 
+	// // load a image resource
+	// loader.load(
+	// 	// resource URL
+	// 	'textures/assassins_creed_logo.png',
+	// 	// Function when resource is loaded
+	// 	function ( image ) {
+	// 		// do something with it
+	// 
+	// 		// like drawing a part of it on a canvas
+	// 		var canvas = document.createElement( 'canvas' );
+	// 		var context = canvas.getContext( '2d' );
+	// 		context.drawImage( image, 100, 100 );
+	// 	},
+	// 	// Function called when download progresses
+	// 	function ( xhr ) {
+	// 		console.log( (xhr.loaded / xhr.total * 100) + '% loaded' );
+	// 	},
+	// 	// Function called when download errors
+	// 	function ( xhr ) {
+	// 		console.log( 'An error happened' );
+	// 	}
+	// );
+	// scene.add(loader)
 
 	mesh = new THREE.Mesh( geometry, material );
 	scene.add( mesh );
-	
-	// controls = new THREE.FirstPersonControls( camera );
-	// controls.movementSpeed = MOVESPEED;
-	// controls.lookSpeed = LOOKSPEED;
-	// controls.lookVertical = false; // Temporary solution; play on flat surfaces only
-	// controls.noFly = true;
-	// clock = new THREE.Clock();
 	
 	let spotLight = new THREE.SpotLight(0xffffff, 4, 40);
 	camera.add(spotLight);
@@ -441,63 +439,65 @@ function init() {
 	controls = new THREE.PointerLockControls( camera );
 	scene.add( controls.getObject() );
 	
-	let onKeyDown = function ( event ) {
-		switch ( event.keyCode ) {
-			
-			case 38: // up
-			case 87: // w
-			moveForward = true;
-			break;
-			
-			case 37: // left
-			case 65: // a
-			// lon = event.clientX
-			moveLeft = true; 
-			break;
-			
-			case 40: // down
-			case 83: // s
-			moveBackward = true;
-			break;
-			
-			case 39: // right
-			case 68: // d
-			// lon = event.clientX
-			moveRight = true;
-			break;
-			
-			case 32: // space
-			if ( canJump === true ) velocity.y += 350;
-			canJump = false;
-			break;
-		}
-	};
+		
 	
-	let onKeyUp = function ( event ) {
-		switch( event.keyCode ) {
-			
-			case 38: // up
-			case 87: // w
-			moveForward = false;
-			break;
-			
-			case 37: // left
-			case 65: // a
-			moveLeft = false;
-			break;
-			
-			case 40: // down
-			case 83: // s
-			moveBackward = false;
-			break;
-			
-			case 39: // right
-			case 68: // d
-			moveRight = false;
-			break;
-			
-		}
-	};
+	// let onKeyDown = function ( event ) {
+	// 	switch ( event.keyCode ) {
+	// 		
+	// 		case 38: // up
+	// 		case 87: // w
+	// 		moveForward = true;
+	// 		break;
+	// 		
+	// 		case 37: // left
+	// 		case 65: // a
+	// 		// lon = event.clientX
+	// 		moveLeft = true; 
+	// 		break;
+	// 		
+	// 		case 40: // down
+	// 		case 83: // s
+	// 		moveBackward = true;
+	// 		break;
+	// 		
+	// 		case 39: // right
+	// 		case 68: // d
+	// 		// lon = event.clientX
+	// 		moveRight = true;
+	// 		break;
+	// 		
+	// 		case 32: // space
+	// 		if ( canJump === true ) velocity.y += 350;
+	// 		canJump = false;
+	// 		break;
+	// 	}
+	// };
+	// 
+	// let onKeyUp = function ( event ) {
+	// 	switch( event.keyCode ) {
+	// 		
+	// 		case 38: // up
+	// 		case 87: // w
+	// 		moveForward = false;
+	// 		break;
+	// 		
+	// 		case 37: // left
+	// 		case 65: // a
+	// 		moveLeft = false;
+	// 		break;
+	// 		
+	// 		case 40: // down
+	// 		case 83: // s
+	// 		moveBackward = false;
+	// 		break;
+	// 		
+	// 		case 39: // right
+	// 		case 68: // d
+	// 		moveRight = false;
+	// 		break;
+	// 		
+	// 	}
+	// };
 
 	renderer = new THREE.WebGLRenderer({
 		antialias: true,
@@ -506,14 +506,14 @@ function init() {
 	renderer.setPixelRatio( window.devicePixelRatio );
 	renderer.setSize( window.innerWidth, window.innerHeight );
 	container.appendChild( renderer.domElement );
-	container.addEventListener("mousemove", getPosition, false);
+	container.addEventListener("mousedown", getPosition, false);
 
 	// document.addEventListener( 'mousedown', onDocumentMouseDown, false );
 	document.addEventListener( 'mousemove', onDocumentMouseMove, false );
 	document.addEventListener( 'mouseup', onDocumentMouseUp, false );
 	document.addEventListener( 'wheel', onDocumentMouseWheel, false );
-	document.addEventListener( 'keydown', onKeyDown, false );
-	document.addEventListener( 'keyup', onKeyUp, false );
+	// document.addEventListener( 'keydown', onKeyDown, false );
+	// document.addEventListener( 'keyup', onKeyUp, false );
 	// document.addEventListener("DOMContentLoaded", init, false);
 
 	document.addEventListener( 'dragover', function ( event ) {
@@ -559,13 +559,97 @@ function init() {
 	stats.domElement.style.bottom = '0px';
 	stats.domElement.style.zIndex = 100;
 	container.appendChild( stats.domElement );
-	
-	// Create Rain
-	// let rainEngine = new ParticleEngine();
-	// rainEngine.setValues( Examples.rain );
-	// rainEngine.initialize();
-
 }
+
+function initRain() {
+	rainGeometry = new THREE.Geometry();
+
+	let sprite1 = THREE.ImageUtils.loadTexture( "textures/rain1.png" ),
+	sprite2 = THREE.ImageUtils.loadTexture( "textures/rain2.png" ),
+	sprite3 = THREE.ImageUtils.loadTexture( "textures/rain3.png" ),
+	sprite4 = THREE.ImageUtils.loadTexture( "textures/rain4.png" ),
+	sprite5 = THREE.ImageUtils.loadTexture( "textures/rain5.png" );
+
+	for (var i = 0; i < rainDensity; i++ ) {
+		var vertex = new THREE.Vector3();
+		vertex.x = Math.random() * 2000 - 1000;
+		vertex.y = Math.random() * 4000 + 500;
+		vertex.z = Math.random() * 2000 - 1000;
+
+		rainGeometry.vertices.push( vertex );
+	}
+
+	parameters = [ [ [1.0, 0.2, 0.5], 	sprite2, 20 ],
+				   [ [0.95, 0.1, 0.5], 	sprite3, 15 ],
+				   [ [0.90, 0.05, 0.5], sprite1, 10 ],
+				   [ [0.85, 0, 0.5], 	sprite5, 8 ],
+				   [ [0.80, 0, 0.5], 	sprite4, 5 ],
+				   ];
+
+	for (var i = 0; i < parameters.length; i++ ) {
+
+		color  = parameters[i][0];
+		sprite = parameters[i][1];
+		size   = parameters[i][2];
+
+		materials[i] = new THREE.PointCloudMaterial({ 
+			size: size, 
+			map: sprite, 
+			blending: THREE.AdditiveBlending, 
+			depthTest: false, 
+			transparent : true 
+		});
+		materials[i].color.setHSL( color[0], color[1], color[2] );
+
+		particles = new THREE.PointCloud( rainGeometry, materials[i] );
+
+		particles.rotation.z =  Math.random() * 0.20 + 0.10;
+
+		scene.add( particles );
+
+	}
+}
+
+function animateRain() {
+	let time = Date.now() * 1.00005;
+
+	for (var i = 0; i < scene.children.length; i ++ ) {
+
+		let object = scene.children[ i ];
+		
+		if ( object instanceof THREE.PointCloud ) {
+
+			if (i == 0) {
+				object.translateY(-10);
+			}
+
+			if (i > 0) {
+				if (layer)
+					object.translateY(-10);
+				else
+					if(scene.children[i-1].position.y < ((window.innerHeight * -1) / 2 - 1000))
+						object.translateY(-10);
+			}
+
+
+			if ((object.position.y < window.innerHeight * -1 * 5)) {
+					object.position.y = 500;
+					object.position.x = 0;
+					if (i == 0) layer = true;
+			}
+		}
+	}
+
+	for (var i = 0; i < materials.length; i ++ ) {
+
+		color = parameters[i][0];
+
+		h = ( 360 * ( color[0] + time ) % 360 ) / 360;
+		materials[i].color.setHSL( h, color[1], color[2] );
+
+	}
+}
+
 
 function onWindowResize() {
 
@@ -619,7 +703,7 @@ function onDocumentMouseWheel( event ) {
 }
 
 function animate() {
-
+	
 	requestAnimationFrame( animate );
 	update();
 
@@ -650,12 +734,11 @@ function update() {
 	// spotLight.target = marker;
 	// controls.update()
 	
-	
 	spotLightHelper.update()
 	stats.update()
 	// rainEngine.update(0.01 * 0.5)
 	renderer.render( scene, camera );
-
+	animateRain();
 }
 
 function getPosition(event) {
@@ -675,5 +758,7 @@ function getPosition(event) {
 	y -= container.offsetTop;	
 	// alert("x: " + x + "  y: " + y);
 	console.log("x: " + x + "  y: " + y);
-	
 }
+
+
+

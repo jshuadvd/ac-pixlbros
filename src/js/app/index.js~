@@ -1,5 +1,3 @@
-'use strict';
-
 // let camera;
 // let scene;
 // let renderer;
@@ -8,17 +6,17 @@
 // const onMouseDownMouseY = 0;
 // const onMouseDownLat = 0;
 // const onMouseDownLon = 0;
-var lon = 30;
+let lon = 30;
 // let lat = 0;
 // let phi = 0;
 // let theta = 0;
-var fovMin = 75;
-var fovMax = 55;
+let fovMin = 75;
+let fovMax = 55;
 // let zoomed;
 // 
-var onPointerDownPointerX = void 0;
+let onPointerDownPointerX;
 // let onPointerDownPointerY;
-var onPointerDownLon = void 0;
+let onPointerDownLon;
 // let onPointerDownLat;
 // 
 // let selected;
@@ -312,63 +310,36 @@ var onPointerDownLon = void 0;
 // 	return p;
 // }
 
-
 // Add Audio Loader
-var audio = document.createElement('audio');
-var source = document.createElement('source');
+let audio = document.createElement('audio');
+let source = document.createElement('source');
 source.src = '/audio/AC-Trailer.mp3';
 audio.appendChild(source);
 audio.play();
 
-var camera = void 0,
-    container = void 0,
-    color = void 0,
-    controls = void 0,
-    clock = void 0,
-    h = void 0,
-    info = void 0,
-    layer = false,
-    marker = void 0,
-    mesh = void 0,
-    materials = [],
-    mousePos = void 0,
-    parameters = void 0,
-    particles = void 0,
-    rainGeometry = void 0,
-    renderer = void 0,
-    raycaster = void 0,
-    scene = void 0,
-    size = void 0,
-    spotLight = void 0,
-    spotLightHelper = void 0,
-    sprite = void 0,
-    stats = void 0;
+let camera, container, color, controls, clock, h, info, marker, mesh, materials = [], mousePos, parameters, particles, rainGeometry, renderer, raycaster, scene, size, spotLight, spotLightHelper, sprite, stats;
 
-var isUserInteracting = true,
-    onMouseDownMouseX = 0,
-    onMouseDownMouseY = 0,
-    onMouseDownLon = 0,
-    lat = 0,
-    onMouseDownLat = 0,
-    phi = 0,
-    theta = 0;
+let isUserInteracting = true,
+onMouseDownMouseX = 0, onMouseDownMouseY = 0,
+onMouseDownLon = 0,
+lat = 0, onMouseDownLat = 0,
+phi = 0, theta = 0;
 
-var rainDensity = 20000;
+let rainDensity = 200000;
 
-container = document.getElementById('container');
+container = document.getElementById( 'container' );
 // info = document.getElementById( 'info' );
 
 init();
-initRain();
 animate();
 
-// let moveForward = false;
-// let moveBackward = false;
-// let moveLeft = false;
-// let moveRight = false;
-// let canJump = false;
-// let prevTime = performance.now();
-// let velocity = new THREE.Vector3();
+let moveForward = false;
+let moveBackward = false;
+let moveLeft = false;
+let moveRight = false;
+let canJump = false;
+let prevTime = performance.now();
+let velocity = new THREE.Vector3();
 
 //************************************************************************//
 //                             Init Scene                                //
@@ -376,24 +347,24 @@ animate();
 
 function init() {
 
-	camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 1, 2000);
-	camera.target = new THREE.Vector3(0, 0, 0);
+	camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 1, 1100 );
+	camera.target = new THREE.Vector3( 0, 0, 0 );
 
 	scene = new THREE.Scene();
-	// scene.fog = new THREE.FogExp2( 0x000000, 0.0008 );
 	// scene.fog = new THREE.FogExp2(0x000000, 0.005);
-	scene.fog = new THREE.Fog(0x000000, 0.0008);
+	scene.fog = new THREE.Fog(0x000000, 0.012);
+	
 
-	var geometry = new THREE.SphereGeometry(500, 60, 400);
-	geometry.scale(-1, 1, 1);
+	let geometry = new THREE.SphereGeometry( 500, 60, 400 );
+	geometry.scale( - 1, 1, 1 );
 
-	var material = new THREE.MeshBasicMaterial({
-		map: new THREE.TextureLoader().load('textures/AnimusPanorama.jpg'),
+	let material = new THREE.MeshBasicMaterial( {
+		map: new THREE.TextureLoader().load( 'textures/AnimusPanorama.jpg' ),
 		fog: true,
-		transparent: true
+		transparent: true	
 	});
-
-	// instantiate a loader
+	
+    // instantiate a loader
 	// var loader = new THREE.ImageLoader();
 	// 
 	// // load a image resource
@@ -420,21 +391,28 @@ function init() {
 	// );
 	// scene.add(loader)
 
-	mesh = new THREE.Mesh(geometry, material);
-	scene.add(mesh);
-
-	var spotLight = new THREE.SpotLight(0xffffff, 4, 40);
+	mesh = new THREE.Mesh( geometry, material );
+	scene.add( mesh );
+	
+	// controls = new THREE.FirstPersonControls( camera );
+	// controls.movementSpeed = MOVESPEED;
+	// controls.lookSpeed = LOOKSPEED;
+	// controls.lookVertical = false; // Temporary solution; play on flat surfaces only
+	// controls.noFly = true;
+	// clock = new THREE.Clock();
+	
+	let spotLight = new THREE.SpotLight(0xffffff, 4, 40);
 	camera.add(spotLight);
 	// spotLight.position.set(0, 0,1);
 	spotLight.target = camera;
-
+	
 	// let light = new THREE.SpotLight(0xffffff, 2.0, 1000);
 	// light.target = mesh;
 	// scene.add(light)
 	// 
 	// let lightHelper = new THREE.SpotLightHelper(light);
 	// scene.add(lightHelper)
-
+	
 	// spotLight = new THREE.SpotLight( 0xffffff, 2, 100 );
 	// spotLight.position.set(0, 0, 0 );
 	// spotLight.target = mesh
@@ -449,211 +427,187 @@ function init() {
 	// spotLight.shadow.camera.near = 1;
 	// spotLight.shadow.camera.far = 10;
 	spotLight.position.set(-20, 60, -10);
-	spotLight.castShadow = true;
-	scene.add(spotLight);
+    spotLight.castShadow = true;
+	scene.add( spotLight );
 	// camera.add(spotLight);
 	// scene.add(camera)
 
-	spotLightHelper = new THREE.SpotLightHelper(spotLight);
-	scene.add(spotLightHelper);
-
+	spotLightHelper = new THREE.SpotLightHelper( spotLight );
+	scene.add( spotLightHelper );
+		
 	// marker = new THREE.Object3D();
 	// marker.position.set(400, 300, 400);
 	// marker.add(spotLight);
 	// scene.add(marker);
-
-	controls = new THREE.PointerLockControls(camera);
-	scene.add(controls.getObject());
-
-	// let onKeyDown = function ( event ) {
-	// 	switch ( event.keyCode ) {
-	// 		
-	// 		case 38: // up
-	// 		case 87: // w
-	// 		moveForward = true;
-	// 		break;
-	// 		
-	// 		case 37: // left
-	// 		case 65: // a
-	// 		// lon = event.clientX
-	// 		moveLeft = true; 
-	// 		break;
-	// 		
-	// 		case 40: // down
-	// 		case 83: // s
-	// 		moveBackward = true;
-	// 		break;
-	// 		
-	// 		case 39: // right
-	// 		case 68: // d
-	// 		// lon = event.clientX
-	// 		moveRight = true;
-	// 		break;
-	// 		
-	// 		case 32: // space
-	// 		if ( canJump === true ) velocity.y += 350;
-	// 		canJump = false;
-	// 		break;
-	// 	}
-	// };
-	// 
-	// let onKeyUp = function ( event ) {
-	// 	switch( event.keyCode ) {
-	// 		
-	// 		case 38: // up
-	// 		case 87: // w
-	// 		moveForward = false;
-	// 		break;
-	// 		
-	// 		case 37: // left
-	// 		case 65: // a
-	// 		moveLeft = false;
-	// 		break;
-	// 		
-	// 		case 40: // down
-	// 		case 83: // s
-	// 		moveBackward = false;
-	// 		break;
-	// 		
-	// 		case 39: // right
-	// 		case 68: // d
-	// 		moveRight = false;
-	// 		break;
-	// 		
-	// 	}
-	// };
+	
+	controls = new THREE.PointerLockControls( camera );
+	scene.add( controls.getObject() );
+	
+	let onKeyDown = function ( event ) {
+		switch ( event.keyCode ) {
+			
+			case 38: // up
+			case 87: // w
+			moveForward = true;
+			break;
+			
+			case 37: // left
+			case 65: // a
+			// lon = event.clientX
+			moveLeft = true; 
+			break;
+			
+			case 40: // down
+			case 83: // s
+			moveBackward = true;
+			break;
+			
+			case 39: // right
+			case 68: // d
+			// lon = event.clientX
+			moveRight = true;
+			break;
+			
+			case 32: // space
+			if ( canJump === true ) velocity.y += 350;
+			canJump = false;
+			break;
+		}
+	};
+	
+	let onKeyUp = function ( event ) {
+		switch( event.keyCode ) {
+			
+			case 38: // up
+			case 87: // w
+			moveForward = false;
+			break;
+			
+			case 37: // left
+			case 65: // a
+			moveLeft = false;
+			break;
+			
+			case 40: // down
+			case 83: // s
+			moveBackward = false;
+			break;
+			
+			case 39: // right
+			case 68: // d
+			moveRight = false;
+			break;
+			
+		}
+	};
 
 	renderer = new THREE.WebGLRenderer({
 		antialias: true,
-		alpha: true
+		alpha: true,
 	});
-	renderer.setPixelRatio(window.devicePixelRatio);
-	renderer.setSize(window.innerWidth, window.innerHeight);
-	container.appendChild(renderer.domElement);
+	renderer.setPixelRatio( window.devicePixelRatio );
+	renderer.setSize( window.innerWidth, window.innerHeight );
+	container.appendChild( renderer.domElement );
 	container.addEventListener("mousedown", getPosition, false);
 
 	// document.addEventListener( 'mousedown', onDocumentMouseDown, false );
-	document.addEventListener('mousemove', onDocumentMouseMove, false);
-	document.addEventListener('mouseup', onDocumentMouseUp, false);
-	document.addEventListener('wheel', onDocumentMouseWheel, false);
-	// document.addEventListener( 'keydown', onKeyDown, false );
-	// document.addEventListener( 'keyup', onKeyUp, false );
+	document.addEventListener( 'mousemove', onDocumentMouseMove, false );
+	document.addEventListener( 'mouseup', onDocumentMouseUp, false );
+	document.addEventListener( 'wheel', onDocumentMouseWheel, false );
+	document.addEventListener( 'keydown', onKeyDown, false );
+	document.addEventListener( 'keyup', onKeyUp, false );
 	// document.addEventListener("DOMContentLoaded", init, false);
 
-	document.addEventListener('dragover', function (event) {
+	document.addEventListener( 'dragover', function ( event ) {
 
 		event.preventDefault();
 		event.dataTransfer.dropEffect = 'copy';
-	}, false);
 
-	document.addEventListener('dragenter', function (event) {
+	}, false );
+
+	document.addEventListener( 'dragenter', function ( event ) {
 
 		document.body.style.opacity = 0.5;
-	}, false);
 
-	document.addEventListener('dragleave', function (event) {
+	}, false );
+
+	document.addEventListener( 'dragleave', function ( event ) {
 
 		document.body.style.opacity = 1;
-	}, false);
 
-	document.addEventListener('drop', function (event) {
+	}, false );
+
+	document.addEventListener( 'drop', function ( event ) {
 
 		event.preventDefault();
 
-		var reader = new FileReader();
-		reader.addEventListener('load', function (event) {
+		let reader = new FileReader();
+		reader.addEventListener( 'load', function ( event ) {
 
 			material.map.image.src = event.target.result;
 			material.map.needsUpdate = true;
-		}, false);
-		reader.readAsDataURL(event.dataTransfer.files[0]);
+
+		}, false );
+		reader.readAsDataURL( event.dataTransfer.files[ 0 ] );
 
 		document.body.style.opacity = 1;
-	}, false);
 
-	window.addEventListener('resize', onWindowResize, false);
+	}, false );
 
+	window.addEventListener( 'resize', onWindowResize, false );
+	
 	stats = new Stats();
 	stats.domElement.style.position = 'absolute';
 	stats.domElement.style.bottom = '0px';
 	stats.domElement.style.zIndex = 100;
-	container.appendChild(stats.domElement);
+	container.appendChild( stats.domElement );
+	
+	// Init Rain
+	initRain();
 }
 
 function initRain() {
 	rainGeometry = new THREE.Geometry();
 
-	var sprite1 = THREE.ImageUtils.loadTexture("textures/rain1.png"),
-	    sprite2 = THREE.ImageUtils.loadTexture("textures/rain2.png"),
-	    sprite3 = THREE.ImageUtils.loadTexture("textures/rain3.png"),
-	    sprite4 = THREE.ImageUtils.loadTexture("textures/rain4.png"),
-	    sprite5 = THREE.ImageUtils.loadTexture("textures/rain5.png");
+	let sprite1 = THREE.ImageUtils.loadTexture( "textures/rain1.png" ),
+	sprite2 = THREE.ImageUtils.loadTexture( "textures/rain2.png" ),
+	sprite3 = THREE.ImageUtils.loadTexture( "textures/rain3.png" ),
+	sprite4 = THREE.ImageUtils.loadTexture( "textures/rain4.png" ),
+	sprite5 = THREE.ImageUtils.loadTexture( "textures/rain5.png" );
 
-	for (var i = 0; i < rainDensity; i++) {
+	for (var i = 0; i < rainDensity; i ++ ) {
+
 		var vertex = new THREE.Vector3();
 		vertex.x = Math.random() * 2000 - 1000;
 		vertex.y = Math.random() * 4000 + 500;
 		vertex.z = Math.random() * 2000 - 1000;
 
-		rainGeometry.vertices.push(vertex);
+		rainGeometry.vertices.push( vertex );
+
 	}
 
-	parameters = [[[1.0, 0.2, 0.5], sprite2, 20], [[0.95, 0.1, 0.5], sprite3, 15], [[0.90, 0.05, 0.5], sprite1, 10], [[0.85, 0, 0.5], sprite5, 8], [[0.80, 0, 0.5], sprite4, 5]];
+	parameters = [ [ [1.0, 0.2, 0.5], 	sprite2, 20 ],
+				   [ [0.95, 0.1, 0.5], 	sprite3, 15 ],
+				   [ [0.90, 0.05, 0.5], sprite1, 10 ],
+				   [ [0.85, 0, 0.5], 	sprite5, 8 ],
+				   [ [0.80, 0, 0.5], 	sprite4, 5 ],
+				   ];
 
-	for (var i = 0; i < parameters.length; i++) {
+	for (var i = 0; i < parameters.length; i ++ ) {
 
-		color = parameters[i][0];
+		color  = parameters[i][0];
 		sprite = parameters[i][1];
-		size = parameters[i][2];
+		size   = parameters[i][2];
 
-		materials[i] = new THREE.PointCloudMaterial({
-			size: size,
-			map: sprite,
-			blending: THREE.AdditiveBlending,
-			depthTest: false,
-			transparent: true
-		});
-		materials[i].color.setHSL(color[0], color[1], color[2]);
+		materials[i] = new THREE.PointCloudMaterial( { size: size, map: sprite, blending: THREE.AdditiveBlending, depthTest: false, transparent : true } );
+		materials[i].color.setHSL( color[0], color[1], color[2] );
 
-		particles = new THREE.PointCloud(rainGeometry, materials[i]);
+		particles = new THREE.PointCloud( rainGeometry, materials[i] );
 
-		particles.rotation.z = Math.random() * 0.20 + 0.10;
+		particles.rotation.z =  Math.random() * 0.20 + 0.10;
 
-		scene.add(particles);
-	}
-}
+		scene.add( particles );
 
-function animateRain() {
-	var time = Date.now() * 1.00005;
-
-	for (var i = 0; i < scene.children.length; i++) {
-
-		var object = scene.children[i];
-
-		if (object instanceof THREE.PointCloud) {
-
-			if (i == 0) {
-				object.translateY(-10);
-			}
-
-			if (i > 0) {
-				if (layer) object.translateY(-10);else if (scene.children[i - 1].position.y < window.innerHeight * -1 / 2 - 1000) object.translateY(-10);
-			}
-
-			if (object.position.y < window.innerHeight * -1 * 5) {
-				object.position.y = 500;
-				object.position.x = 0;
-				if (i == 0) layer = true;
-			}
-		}
-	}
-
-	for (var i = 0; i < materials.length; i++) {
-
-		color = parameters[i][0];
-
-		h = 360 * (color[0] + time) % 360 / 360;
-		materials[i].color.setHSL(h, color[1], color[2]);
 	}
 }
 
@@ -662,7 +616,8 @@ function onWindowResize() {
 	camera.aspect = window.innerWidth / window.innerHeight;
 	camera.updateProjectionMatrix();
 
-	renderer.setSize(window.innerWidth, window.innerHeight);
+	renderer.setSize( window.innerWidth, window.innerHeight );
+
 }
 
 // function onDocumentMouseDown( event ) {
@@ -679,13 +634,13 @@ function onWindowResize() {
 // 
 // }
 
-function onDocumentMouseMove(event) {
-
+function onDocumentMouseMove( event ) {
+	
 	isUserInteracting = true;
-	lon = event.clientX;
+	lon = event.clientX 
 	// event.clientY = 0
 	// lon = ( onPointerDownPointerX - event.clientX ) * -0.5 + onPointerDownLon;
-
+	
 	// if ( isUserInteracting === true ) {
 	// 	// onPointerDownLon = lon;
 	// 	lon = ( onPointerDownPointerX - event.clientX ) * 0.1 + onPointerDownLon;
@@ -693,71 +648,116 @@ function onDocumentMouseMove(event) {
 	// }
 }
 
-function onDocumentMouseUp(event) {
+function onDocumentMouseUp( event ) {
 
 	isUserInteracting = false;
+
 }
 
 // Zoom in & out | Need to limit this to the starting point and a endind point
-function onDocumentMouseWheel(event) {
-
+function onDocumentMouseWheel( event ) {
+	
 	camera.fov += event.deltaY * 0.01;
 	camera.updateProjectionMatrix();
+
 }
 
 function animate() {
-
-	requestAnimationFrame(animate);
+	animateRain();
+	
+	requestAnimationFrame( animate );
 	update();
+
 }
 
 function update() {
-
-	if (isUserInteracting === false) {
+		
+	if ( isUserInteracting === false ) {
 		// lon += 0.1;
 	}
 
-	lat = Math.max(-85, Math.min(85, lat));
-	phi = THREE.Math.degToRad(90 - lat);
-	theta = THREE.Math.degToRad(lon);
+	lat = Math.max( - 85, Math.min( 85, lat ) );
+	phi = THREE.Math.degToRad( 90 - lat );
+	theta = THREE.Math.degToRad( lon );
 
-	camera.target.x = 500 * Math.sin(phi) * Math.cos(theta);
+	camera.target.x = 500 * Math.sin( phi ) * Math.cos( theta );
 	// camera.target.y = 500 * Math.cos( phi );
-	camera.target.z = 500 * Math.sin(phi) * Math.sin(theta);
+	camera.target.z = 500 * Math.sin( phi ) * Math.sin( theta );
 
-	camera.lookAt(camera.target);
+	camera.lookAt( camera.target );
 
 	/*
- // distortion
- camera.position.copy( camera.target ).negate();
- */
+	// distortion
+	camera.position.copy( camera.target ).negate();
+	*/
 	// let delta = clock.getDelta(), speed = delta * CAMERAMOVESPEED;
 	// controls.update(delta);
 	// spotLight.target = marker;
 	// controls.update()
-
-	spotLightHelper.update();
-	stats.update();
+	
+	spotLightHelper.update()
+	stats.update()
 	// rainEngine.update(0.01 * 0.5)
-	renderer.render(scene, camera);
-	animateRain();
+	renderer.render( scene, camera );
+
+}
+
+function animateRain() {
+	let time = Date.now() * 0.00005;
+
+	for (var i = 0; i < scene.children.length; i ++ ) {
+
+		let object = scene.children[ i ];
+		
+		if ( object instanceof THREE.PointCloud ) {
+
+			if (i == 0) {
+				object.translateY(-10);
+			}
+
+			if (i > 0) {
+				if (layer)
+					object.translateY(-10);
+				else
+					if(scene.children[i-1].position.y < ((window.innerHeight * -1) / 2 - 1000))
+						object.translateY(-10);
+			}
+
+
+			if ((object.position.y < window.innerHeight * -1 * 5)) {
+					object.position.y = 500;
+					object.position.x = 0;
+					if (i == 0) layer = true;
+			}
+		}
+	}
+
+	for (var i = 0; i < materials.length; i ++ ) {
+
+		color = parameters[i][0];
+
+		h = ( 360 * ( color[0] + time ) % 360 ) / 360;
+		materials[i].color.setHSL( h, color[1], color[2] );
+
+	}
 }
 
 function getPosition(event) {
-	var x = new Number();
-	var y = new Number();
-
+	let x = new Number();
+	let y = new Number();
+	
 	if (event.x != undefined && event.y != undefined) {
 		x = event.x;
 		y = event.y;
-	} else {
-		// Firefox method to get the position
-		x = event.clientX + document.body.scrollLeft + document.documentElement.scrollLeft;
-		y = event.clientY + document.body.scrollTop + document.documentElement.scrollTop;
+	} else { // Firefox method to get the position
+		x = event.clientX + document.body.scrollLeft +
+		document.documentElement.scrollLeft;
+		y = event.clientY + document.body.scrollTop +
+		document.documentElement.scrollTop;
 	}
 	x -= container.offsetLeft;
-	y -= container.offsetTop;
+	y -= container.offsetTop;	
 	// alert("x: " + x + "  y: " + y);
 	console.log("x: " + x + "  y: " + y);
+	
 }
-//# sourceMappingURL=app.js.map
