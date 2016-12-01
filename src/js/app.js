@@ -624,14 +624,16 @@ function initRain() {
 }
 
 function animateRain() {
-	var time = Date.now() * 1.00005;
+	// console.log("I'M ANIMATING THINGS");
+	var time = Date.now() * 0.00005;
 
 	for (var i = 0; i < scene.children.length; i++) {
 
 		var object = scene.children[i];
 
+		// Not getting into the log here
 		if (object instanceof THREE.PointCloud) {
-
+			console.log("I'M ANIMATING THINGS");
 			if (i == 0) {
 				object.translateY(-10);
 			}
