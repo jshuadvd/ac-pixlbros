@@ -318,12 +318,14 @@ audio.appendChild(source);
 audio.play();
 
 let camera, container, controls, clock, info, marker, mesh, mousePos, renderer, raycaster, scene, spotLight, spotLightHelper, stats;
-// var MOVESPEED = 0, LOOKSPEED = 0.075, CAMERAMOVESPEED = MOVESPEED * 2;
+
 let isUserInteracting = true,
 onMouseDownMouseX = 0, onMouseDownMouseY = 0,
 onMouseDownLon = 0,
 lat = 0, onMouseDownLat = 0,
 phi = 0, theta = 0;
+
+let rainDensity = 20000;
 
 container = document.getElementById( 'container' );
 // info = document.getElementById( 'info' );
@@ -560,11 +562,8 @@ function init() {
 	stats.domElement.style.zIndex = 100;
 	container.appendChild( stats.domElement );
 	
-	// Create Rain
-	// let rainEngine = new ParticleEngine();
-	// rainEngine.setValues( Examples.rain );
-	// rainEngine.initialize();
-
+	// Init Rain
+	initRain();
 }
 
 function onWindowResize() {

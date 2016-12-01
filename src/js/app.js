@@ -333,7 +333,7 @@ var camera = void 0,
     spotLight = void 0,
     spotLightHelper = void 0,
     stats = void 0;
-// var MOVESPEED = 0, LOOKSPEED = 0.075, CAMERAMOVESPEED = MOVESPEED * 2;
+
 var isUserInteracting = true,
     onMouseDownMouseX = 0,
     onMouseDownMouseY = 0,
@@ -342,6 +342,8 @@ var isUserInteracting = true,
     onMouseDownLat = 0,
     phi = 0,
     theta = 0;
+
+var rainDensity = 20000;
 
 container = document.getElementById('container');
 // info = document.getElementById( 'info' );
@@ -580,10 +582,8 @@ function init() {
 	stats.domElement.style.zIndex = 100;
 	container.appendChild(stats.domElement);
 
-	// Create Rain
-	// let rainEngine = new ParticleEngine();
-	// rainEngine.setValues( Examples.rain );
-	// rainEngine.initialize();
+	// Init Rain
+	initRain();
 }
 
 function onWindowResize() {
