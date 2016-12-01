@@ -361,6 +361,33 @@ function init() {
 		fog: true,
 		transparent: true	
 	});
+	
+    // instantiate a loader
+	var loader = new THREE.ImageLoader();
+
+	// load a image resource
+	loader.load(
+		// resource URL
+		'textures/assassins_creed_logo.png',
+		// Function when resource is loaded
+		function ( image ) {
+			// do something with it
+
+			// like drawing a part of it on a canvas
+			var canvas = document.createElement( 'canvas' );
+			var context = canvas.getContext( '2d' );
+			context.drawImage( image, 100, 100 );
+		},
+		// Function called when download progresses
+		function ( xhr ) {
+			console.log( (xhr.loaded / xhr.total * 100) + '% loaded' );
+		},
+		// Function called when download errors
+		function ( xhr ) {
+			console.log( 'An error happened' );
+		}
+	);
+	scene.add(loader)
 
 	mesh = new THREE.Mesh( geometry, material );
 	scene.add( mesh );
@@ -424,7 +451,9 @@ function init() {
 			
 			case 37: // left
 			case 65: // a
-			moveLeft = true; break;
+			// lon = event.clientX
+			moveLeft = true; 
+			break;
 			
 			case 40: // down
 			case 83: // s
@@ -433,6 +462,7 @@ function init() {
 			
 			case 39: // right
 			case 68: // d
+			// lon = event.clientX
 			moveRight = true;
 			break;
 			
@@ -564,6 +594,7 @@ function onDocumentMouseMove( event ) {
 	
 	isUserInteracting = true;
 	lon = event.clientX 
+	// event.clientY = 0
 	// lon = ( onPointerDownPointerX - event.clientX ) * -0.5 + onPointerDownLon;
 	
 	// if ( isUserInteracting === true ) {
@@ -571,7 +602,6 @@ function onDocumentMouseMove( event ) {
 	// 	lon = ( onPointerDownPointerX - event.clientX ) * 0.1 + onPointerDownLon;
 	// 	// lat = ( event.clientY - onPointerDownPointerY ) * 0.1 + onPointerDownLat;
 	// }
-
 }
 
 function onDocumentMouseUp( event ) {
