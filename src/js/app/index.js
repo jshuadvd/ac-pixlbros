@@ -361,6 +361,33 @@ function init() {
 		fog: true,
 		transparent: true	
 	});
+	
+    // instantiate a loader
+	var loader = new THREE.ImageLoader();
+
+	// load a image resource
+	loader.load(
+		// resource URL
+		'textures/assassins_creed_logo.png',
+		// Function when resource is loaded
+		function ( image ) {
+			// do something with it
+
+			// like drawing a part of it on a canvas
+			var canvas = document.createElement( 'canvas' );
+			var context = canvas.getContext( '2d' );
+			context.drawImage( image, 100, 100 );
+		},
+		// Function called when download progresses
+		function ( xhr ) {
+			console.log( (xhr.loaded / xhr.total * 100) + '% loaded' );
+		},
+		// Function called when download errors
+		function ( xhr ) {
+			console.log( 'An error happened' );
+		}
+	);
+	scene.add(loader)
 
 	mesh = new THREE.Mesh( geometry, material );
 	scene.add( mesh );
@@ -567,7 +594,7 @@ function onDocumentMouseMove( event ) {
 	
 	isUserInteracting = true;
 	lon = event.clientX 
-	event.clientY = 0
+	// event.clientY = 0
 	// lon = ( onPointerDownPointerX - event.clientX ) * -0.5 + onPointerDownLon;
 	
 	// if ( isUserInteracting === true ) {
