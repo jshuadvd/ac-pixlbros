@@ -318,7 +318,7 @@ source.src = '/audio/AC-Trailer.mp3';
 audio.appendChild(source);
 audio.play();
 
-let camera, container, color, controls, clock, h, info, layer = false, marker, mesh, materials = [], mousePos, parameters, particles, rainGeometry, renderer, raycaster, scene, size, spotLight, spotLightHelper, sprite, stats; 
+let camera, container, color, controls, clock, delta, h, info, layer = false, logoGeo, logoMaterial, logoMesh, logoTexture, marker, mesh, materials = [], mousePos, parameters, particles, rainGeometry, renderer, raycaster, scene, size, smokeParticles = [], spotLight, spotLightHelper, sprite, stats; 
 
 let isUserInteracting = true,
 onMouseDownMouseX = 0, onMouseDownMouseY = 0,
@@ -364,43 +364,29 @@ function init() {
 	let material = new THREE.MeshBasicMaterial( {
 		map: new THREE.TextureLoader().load( 'textures/AnimusPanorama.jpg' ),
 		fog: true,
-		transparent: true	
+		// transparent: true	
 	});
 	
-    // instantiate a loader
-	// var loader = new THREE.ImageLoader();
+	// let logoGeo = THREE.PlaneGeometry( 5, 20, 32 );
+	// let logo = new THREE.MeshBasicMaterial({
+	// 	map: new THREE.TextureLoader().load( 'textures/assassins_creed_logo.jpg' ),
+	// })
+	
+	// let logoMesh = new THREE.Mesh(logoGeo, logo);
+	// scene.add(logoMesh)
 	// 
-	// // load a image resource
-	// loader.load(
-	// 	// resource URL
-	// 	'textures/assassins_creed_logo.png',
-	// 	// Function when resource is loaded
-	// 	function ( image ) {
-	// 		// do something with it
-	// 
-	// 		// like drawing a part of it on a canvas
-	// 		var canvas = document.createElement( 'canvas' );
-	// 		var context = canvas.getContext( '2d' );
-	// 		context.drawImage( image, 100, 100 );
-	// 	},
-	// 	// Function called when download progresses
-	// 	function ( xhr ) {
-	// 		console.log( (xhr.loaded / xhr.total * 100) + '% loaded' );
-	// 	},
-	// 	// Function called when download errors
-	// 	function ( xhr ) {
-	// 		console.log( 'An error happened' );
-	// 	}
-	// );
-	// scene.add(loader)
 
 	mesh = new THREE.Mesh( geometry, material );
 	scene.add( mesh );
 	
-	let spotLight = new THREE.SpotLight(0xffffff, 4, 40);
-	camera.add(spotLight);
+	// let spotLight = new THREE.SpotLight(0xffffff, 40, 40);
+	// camera.add(spotLight);
 	// spotLight.position.set(0, 0,1);
-	spotLight.target = camera;
+	// spotLight.target = mesh;
+	// add light
+	// let light = new THREE.DirectionalLight(0xffffff, 1);
+	// light.position.set(0,0,0);
+	// scene.add(light);
 	
 	// let light = new THREE.SpotLight(0xffffff, 2.0, 1000);
 	// light.target = mesh;
@@ -422,14 +408,14 @@ function init() {
 	// spotLight.shadow.mapSize.height = 100;
 	// spotLight.shadow.camera.near = 1;
 	// spotLight.shadow.camera.far = 10;
-	spotLight.position.set(-20, 60, -10);
-    spotLight.castShadow = true;
-	scene.add( spotLight );
+	// spotLight.position.set(-20, 60, -10);
+    // spotLight.castShadow = true;
+	// scene.add( spotLight );
 	// camera.add(spotLight);
 	// scene.add(camera)
 
-	spotLightHelper = new THREE.SpotLightHelper( spotLight );
-	scene.add( spotLightHelper );
+	// spotLightHelper = new THREE.SpotLightHelper( spotLight );
+	// scene.add( spotLightHelper );
 		
 	// marker = new THREE.Object3D();
 	// marker.position.set(400, 300, 400);
@@ -439,7 +425,35 @@ function init() {
 	controls = new THREE.PointerLockControls( camera );
 	scene.add( controls.getObject() );
 	
-		
+	clock = new THREE.Clock();
+	
+	THREE.ImageUtils.crossOrigin = ''; //Need this to pull in crossdomain images from AWS
+    
+	logoGeo = new THREE.PlaneGeometry(300,300);
+    THREE.ImageUtils.crossOrigin = ''; //Need this to pull in crossdomain images from AWS
+    logoTexture = THREE.ImageUtils.loadTexture('https://s3-us-west-2.amazonaws.com/s.cdpn.io/95637/quickText.png');
+    logoMaterial = new THREE.MeshLambertMaterial({color: 0x00ffff, opacity: 1.1, map: logoTexture, transparent: true, blending: THREE.AdditiveBlending})
+    logoMesh = new THREE.Mesh(logoGeo, logoMaterial);
+    logoMesh.position.z = 800;
+    scene.add(logoMesh);
+
+
+	//Smoke Light
+    let light = new THREE.DirectionalLight(0xffffff, 1.5);
+    light.position.set(-1, 0, 1);
+    scene.add(light);
+  
+    let smokeTexture = THREE.ImageUtils.loadTexture('https://s3-us-west-2.amazonaws.com/s.cdpn.io/95637/Smoke-Element.png');
+    let smokeMaterial = new THREE.MeshLambertMaterial({color: 0xffffff, map: smokeTexture, transparent: true});
+    let smokeGeo = new THREE.PlaneGeometry(500, 500);
+     
+    for (let p = 0; p < 150; p++) {
+        let particle = new THREE.Mesh(smokeGeo,smokeMaterial);
+        particle.position.set(Math.random()*500-250,Math.random()*500-250,Math.random()*1000-100);
+        particle.rotation.z = Math.random() * 360;
+        scene.add(particle);
+        smokeParticles.push(particle);
+    }	
 	
 	// let onKeyDown = function ( event ) {
 	// 	switch ( event.keyCode ) {
@@ -559,6 +573,8 @@ function init() {
 	stats.domElement.style.bottom = '0px';
 	stats.domElement.style.zIndex = 100;
 	container.appendChild( stats.domElement );
+	
+	document.body.appendChild( renderer.domElement );
 }
 
 function initRain() {
@@ -570,8 +586,8 @@ function initRain() {
 	sprite4 = THREE.ImageUtils.loadTexture( "textures/rain4.png" ),
 	sprite5 = THREE.ImageUtils.loadTexture( "textures/rain5.png" );
 
-	for (var i = 0; i < rainDensity; i++ ) {
-		var vertex = new THREE.Vector3();
+	for (let i = 0; i < rainDensity; i++ ) {
+		let vertex = new THREE.Vector3();
 		vertex.x = Math.random() * 2000 - 1000;
 		vertex.y = Math.random() * 4000 + 500;
 		vertex.z = Math.random() * 2000 - 1000;
@@ -586,7 +602,7 @@ function initRain() {
 				   [ [0.80, 0, 0.5], 	sprite4, 5 ],
 				   ];
 
-	for (var i = 0; i < parameters.length; i++ ) {
+	for (let i = 0; i < parameters.length; i++ ) {
 
 		color  = parameters[i][0];
 		sprite = parameters[i][1];
@@ -614,7 +630,7 @@ function animateRain() {
 	// console.log("I'M ANIMATING THINGS");
 	let time = Date.now() * 0.00005;
 
-	for (var i = 0; i < scene.children.length; i++ ) {
+	for (let i = 0; i < scene.children.length; i++ ) {
 
 		let object = scene.children[i];
 		
@@ -642,7 +658,7 @@ function animateRain() {
 		}
 	}
 
-	for (var i = 0; i < materials.length; i++ ) {
+	for (let i = 0; i < materials.length; i++ ) {
 
 		color = parameters[i][0];
 
@@ -736,11 +752,20 @@ function update() {
 	// spotLight.target = marker;
 	// controls.update()
 	
-	spotLightHelper.update()
+	// spotLightHelper.update()
 	stats.update()
+	delta = clock.getDelta();
+	evolveSmoke();
+	animateRain();
 	// rainEngine.update(0.01 * 0.5)
 	renderer.render( scene, camera );
-	animateRain();
+}
+
+function evolveSmoke() {
+    let sp = smokeParticles.length;
+    while(sp--) {
+        smokeParticles[sp].rotation.z += (delta * 0.2);
+    }
 }
 
 function getPosition(event) {

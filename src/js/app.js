@@ -325,9 +325,14 @@ var camera = void 0,
     color = void 0,
     controls = void 0,
     clock = void 0,
+    delta = void 0,
     h = void 0,
     info = void 0,
     layer = false,
+    logoGeo = void 0,
+    logoMaterial = void 0,
+    logoMesh = void 0,
+    logoTexture = void 0,
     marker = void 0,
     mesh = void 0,
     materials = [],
@@ -339,6 +344,7 @@ var camera = void 0,
     raycaster = void 0,
     scene = void 0,
     size = void 0,
+    smokeParticles = [],
     spotLight = void 0,
     spotLightHelper = void 0,
     sprite = void 0,
@@ -389,44 +395,29 @@ function init() {
 
 	var material = new THREE.MeshBasicMaterial({
 		map: new THREE.TextureLoader().load('textures/AnimusPanorama.jpg'),
-		fog: true,
-		transparent: true
+		fog: true
 	});
 
-	// instantiate a loader
-	// var loader = new THREE.ImageLoader();
+	// let logoGeo = THREE.PlaneGeometry( 5, 20, 32 );
+	// let logo = new THREE.MeshBasicMaterial({
+	// 	map: new THREE.TextureLoader().load( 'textures/assassins_creed_logo.jpg' ),
+	// })
+
+	// let logoMesh = new THREE.Mesh(logoGeo, logo);
+	// scene.add(logoMesh)
 	// 
-	// // load a image resource
-	// loader.load(
-	// 	// resource URL
-	// 	'textures/assassins_creed_logo.png',
-	// 	// Function when resource is loaded
-	// 	function ( image ) {
-	// 		// do something with it
-	// 
-	// 		// like drawing a part of it on a canvas
-	// 		var canvas = document.createElement( 'canvas' );
-	// 		var context = canvas.getContext( '2d' );
-	// 		context.drawImage( image, 100, 100 );
-	// 	},
-	// 	// Function called when download progresses
-	// 	function ( xhr ) {
-	// 		console.log( (xhr.loaded / xhr.total * 100) + '% loaded' );
-	// 	},
-	// 	// Function called when download errors
-	// 	function ( xhr ) {
-	// 		console.log( 'An error happened' );
-	// 	}
-	// );
-	// scene.add(loader)
 
 	mesh = new THREE.Mesh(geometry, material);
 	scene.add(mesh);
 
-	var spotLight = new THREE.SpotLight(0xffffff, 4, 40);
-	camera.add(spotLight);
+	// let spotLight = new THREE.SpotLight(0xffffff, 40, 40);
+	// camera.add(spotLight);
 	// spotLight.position.set(0, 0,1);
-	spotLight.target = camera;
+	// spotLight.target = mesh;
+	// add light
+	// let light = new THREE.DirectionalLight(0xffffff, 1);
+	// light.position.set(0,0,0);
+	// scene.add(light);
 
 	// let light = new THREE.SpotLight(0xffffff, 2.0, 1000);
 	// light.target = mesh;
@@ -448,14 +439,14 @@ function init() {
 	// spotLight.shadow.mapSize.height = 100;
 	// spotLight.shadow.camera.near = 1;
 	// spotLight.shadow.camera.far = 10;
-	spotLight.position.set(-20, 60, -10);
-	spotLight.castShadow = true;
-	scene.add(spotLight);
+	// spotLight.position.set(-20, 60, -10);
+	// spotLight.castShadow = true;
+	// scene.add( spotLight );
 	// camera.add(spotLight);
 	// scene.add(camera)
 
-	spotLightHelper = new THREE.SpotLightHelper(spotLight);
-	scene.add(spotLightHelper);
+	// spotLightHelper = new THREE.SpotLightHelper( spotLight );
+	// scene.add( spotLightHelper );
 
 	// marker = new THREE.Object3D();
 	// marker.position.set(400, 300, 400);
@@ -464,6 +455,35 @@ function init() {
 
 	controls = new THREE.PointerLockControls(camera);
 	scene.add(controls.getObject());
+
+	clock = new THREE.Clock();
+
+	THREE.ImageUtils.crossOrigin = ''; //Need this to pull in crossdomain images from AWS
+
+	logoGeo = new THREE.PlaneGeometry(300, 300);
+	THREE.ImageUtils.crossOrigin = ''; //Need this to pull in crossdomain images from AWS
+	logoTexture = THREE.ImageUtils.loadTexture('https://s3-us-west-2.amazonaws.com/s.cdpn.io/95637/quickText.png');
+	logoMaterial = new THREE.MeshLambertMaterial({ color: 0x00ffff, opacity: 1.1, map: logoTexture, transparent: true, blending: THREE.AdditiveBlending });
+	logoMesh = new THREE.Mesh(logoGeo, logoMaterial);
+	logoMesh.position.z = 800;
+	scene.add(logoMesh);
+
+	//Smoke Light
+	var light = new THREE.DirectionalLight(0xffffff, 1.5);
+	light.position.set(-1, 0, 1);
+	scene.add(light);
+
+	var smokeTexture = THREE.ImageUtils.loadTexture('https://s3-us-west-2.amazonaws.com/s.cdpn.io/95637/Smoke-Element.png');
+	var smokeMaterial = new THREE.MeshLambertMaterial({ color: 0xffffff, map: smokeTexture, transparent: true });
+	var smokeGeo = new THREE.PlaneGeometry(500, 500);
+
+	for (var p = 0; p < 150; p++) {
+		var particle = new THREE.Mesh(smokeGeo, smokeMaterial);
+		particle.position.set(Math.random() * 500 - 250, Math.random() * 500 - 250, Math.random() * 1000 - 100);
+		particle.rotation.z = Math.random() * 360;
+		scene.add(particle);
+		smokeParticles.push(particle);
+	}
 
 	// let onKeyDown = function ( event ) {
 	// 	switch ( event.keyCode ) {
@@ -578,6 +598,8 @@ function init() {
 	stats.domElement.style.bottom = '0px';
 	stats.domElement.style.zIndex = 100;
 	container.appendChild(stats.domElement);
+
+	document.body.appendChild(renderer.domElement);
 }
 
 function initRain() {
@@ -600,22 +622,22 @@ function initRain() {
 
 	parameters = [[[1.0, 0.2, 0.5], sprite2, 20], [[0.95, 0.1, 0.5], sprite3, 15], [[0.90, 0.05, 0.5], sprite1, 10], [[0.85, 0, 0.5], sprite5, 8], [[0.80, 0, 0.5], sprite4, 5]];
 
-	for (var i = 0; i < parameters.length; i++) {
+	for (var _i = 0; _i < parameters.length; _i++) {
 
-		color = parameters[i][0];
-		sprite = parameters[i][1];
-		size = parameters[i][2];
+		color = parameters[_i][0];
+		sprite = parameters[_i][1];
+		size = parameters[_i][2];
 
-		materials[i] = new THREE.PointCloudMaterial({
+		materials[_i] = new THREE.PointCloudMaterial({
 			size: size,
 			map: sprite,
 			blending: THREE.AdditiveBlending,
 			depthTest: false,
 			transparent: true
 		});
-		materials[i].color.setHSL(color[0], color[1], color[2]);
+		materials[_i].color.setHSL(color[0], color[1], color[2]);
 
-		particles = new THREE.PointCloud(rainGeometry, materials[i]);
+		particles = new THREE.PointCloud(rainGeometry, materials[_i]);
 
 		particles.rotation.z = Math.random() * 0.20 + 0.10;
 
@@ -650,12 +672,12 @@ function animateRain() {
 		}
 	}
 
-	for (var i = 0; i < materials.length; i++) {
+	for (var _i2 = 0; _i2 < materials.length; _i2++) {
 
-		color = parameters[i][0];
+		color = parameters[_i2][0];
 
 		h = 360 * (color[0] + time) % 360 / 360;
-		materials[i].color.setHSL(h, color[1], color[2]);
+		materials[_i2].color.setHSL(h, color[1], color[2]);
 	}
 }
 
@@ -738,11 +760,20 @@ function update() {
 	// spotLight.target = marker;
 	// controls.update()
 
-	spotLightHelper.update();
+	// spotLightHelper.update()
 	stats.update();
+	delta = clock.getDelta();
+	evolveSmoke();
+	animateRain();
 	// rainEngine.update(0.01 * 0.5)
 	renderer.render(scene, camera);
-	animateRain();
+}
+
+function evolveSmoke() {
+	var sp = smokeParticles.length;
+	while (sp--) {
+		smokeParticles[sp].rotation.z += delta * 0.2;
+	}
 }
 
 function getPosition(event) {
