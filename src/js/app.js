@@ -339,6 +339,7 @@ var camera = void 0,
     mousePos = void 0,
     parameters = void 0,
     particles = void 0,
+    rainDensity = 20000,
     rainGeometry = void 0,
     renderer = void 0,
     raycaster = void 0,
@@ -358,8 +359,6 @@ var isUserInteracting = true,
     onMouseDownLat = 0,
     phi = 0,
     theta = 0;
-
-var rainDensity = 20000;
 
 container = document.getElementById('container');
 // info = document.getElementById( 'info' );
@@ -458,14 +457,19 @@ function init() {
 
 	clock = new THREE.Clock();
 
-	THREE.ImageUtils.crossOrigin = ''; //Need this to pull in crossdomain images from AWS
+	// logoGeo = new THREE.PlaneGeometry(300,300);
+	// THREE.ImageUtils.crossOrigin = ''; //Need this to pull in crossdomain images from AWS
+	// logoTexture = THREE.ImageUtils.loadTexture('https://s3-us-west-2.amazonaws.com/s.cdpn.io/95637/quickText.png');
+	// logoMaterial = new THREE.MeshLambertMaterial({color: 0x00ffff, opacity: 0.1, map: logoTexture, transparent: true, blending: THREE.AdditiveBlending})
+	// logoMesh = new THREE.Mesh(logoGeo, logoMaterial);
+	// logoMesh.position.z = 800;
+	// scene.add(logoMesh);
 
-	logoGeo = new THREE.PlaneGeometry(300, 300);
+	logoGeo = new THREE.PlaneGeometry(1024, 1024);
 	THREE.ImageUtils.crossOrigin = ''; //Need this to pull in crossdomain images from AWS
-	logoTexture = THREE.ImageUtils.loadTexture('https://s3-us-west-2.amazonaws.com/s.cdpn.io/95637/quickText.png');
-	logoMaterial = new THREE.MeshLambertMaterial({ color: 0x00ffff, opacity: 1.1, map: logoTexture, transparent: true, blending: THREE.AdditiveBlending });
+	logoTexture = THREE.ImageUtils.loadTexture('/textures/AC-Logo.png');
+	logoMaterial = new THREE.MeshLambertMaterial({ color: 0xffffff, opacity: 1.1, map: logoTexture });
 	logoMesh = new THREE.Mesh(logoGeo, logoMaterial);
-	logoMesh.position.z = 800;
 	scene.add(logoMesh);
 
 	//Smoke Light

@@ -318,15 +318,13 @@ source.src = '/audio/AC-Trailer.mp3';
 audio.appendChild(source);
 audio.play();
 
-let camera, container, color, controls, clock, delta, h, info, layer = false, logoGeo, logoMaterial, logoMesh, logoTexture, marker, mesh, materials = [], mousePos, parameters, particles, rainGeometry, renderer, raycaster, scene, size, smokeParticles = [], spotLight, spotLightHelper, sprite, stats; 
+let camera, container, color, controls, clock, delta, h, info, layer = false, logoGeo, logoMaterial, logoMesh, logoTexture, marker, mesh, materials = [], mousePos, parameters, particles, rainDensity = 20000, rainGeometry, renderer, raycaster, scene, size, smokeParticles = [], spotLight, spotLightHelper, sprite, stats; 
 
 let isUserInteracting = true,
 onMouseDownMouseX = 0, onMouseDownMouseY = 0,
 onMouseDownLon = 0,
 lat = 0, onMouseDownLat = 0,
 phi = 0, theta = 0;
-
-let rainDensity = 20000;
 
 container = document.getElementById( 'container' );
 // info = document.getElementById( 'info' );
@@ -364,7 +362,6 @@ function init() {
 	let material = new THREE.MeshBasicMaterial( {
 		map: new THREE.TextureLoader().load( 'textures/AnimusPanorama.jpg' ),
 		fog: true,
-		// transparent: true	
 	});
 	
 	// let logoGeo = THREE.PlaneGeometry( 5, 20, 32 );
@@ -427,17 +424,22 @@ function init() {
 	
 	clock = new THREE.Clock();
 	
-	THREE.ImageUtils.crossOrigin = ''; //Need this to pull in crossdomain images from AWS
     
-	logoGeo = new THREE.PlaneGeometry(300,300);
+	// logoGeo = new THREE.PlaneGeometry(300,300);
+    // THREE.ImageUtils.crossOrigin = ''; //Need this to pull in crossdomain images from AWS
+    // logoTexture = THREE.ImageUtils.loadTexture('https://s3-us-west-2.amazonaws.com/s.cdpn.io/95637/quickText.png');
+    // logoMaterial = new THREE.MeshLambertMaterial({color: 0x00ffff, opacity: 0.1, map: logoTexture, transparent: true, blending: THREE.AdditiveBlending})
+    // logoMesh = new THREE.Mesh(logoGeo, logoMaterial);
+    // logoMesh.position.z = 800;
+    // scene.add(logoMesh);
+	
+	logoGeo = new THREE.PlaneGeometry(1024, 1024);
     THREE.ImageUtils.crossOrigin = ''; //Need this to pull in crossdomain images from AWS
-    logoTexture = THREE.ImageUtils.loadTexture('https://s3-us-west-2.amazonaws.com/s.cdpn.io/95637/quickText.png');
-    logoMaterial = new THREE.MeshLambertMaterial({color: 0x00ffff, opacity: 1.1, map: logoTexture, transparent: true, blending: THREE.AdditiveBlending})
+    logoTexture = THREE.ImageUtils.loadTexture('/textures/AC-Logo.png');
+    logoMaterial = new THREE.MeshLambertMaterial({color: 0xffffff, opacity: 1.1, map: logoTexture})
     logoMesh = new THREE.Mesh(logoGeo, logoMaterial);
-    logoMesh.position.z = 800;
     scene.add(logoMesh);
-
-
+	
 	//Smoke Light
     let light = new THREE.DirectionalLight(0xffffff, 1.5);
     light.position.set(-1, 0, 1);
