@@ -423,7 +423,6 @@ function init() {
 	scene.add( controls.getObject() );
 	
 	clock = new THREE.Clock();
-	
     
 	// logoGeo = new THREE.PlaneGeometry(300,300);
     // THREE.ImageUtils.crossOrigin = ''; //Need this to pull in crossdomain images from AWS
@@ -434,9 +433,13 @@ function init() {
     // scene.add(logoMesh);
 	
 	logoGeo = new THREE.PlaneGeometry(1024, 1024);
-    THREE.ImageUtils.crossOrigin = ''; //Need this to pull in crossdomain images from AWS
+    THREE.ImageUtils.crossOrigin = ''; 
     logoTexture = THREE.ImageUtils.loadTexture('/textures/AC-Logo.png');
-    logoMaterial = new THREE.MeshLambertMaterial({color: 0xffffff, opacity: 1.1, map: logoTexture})
+    logoMaterial = new THREE.MeshLambertMaterial({
+		color: 0xffffff, 
+		opacity: 2.1, 
+		map: logoTexture
+	})
     logoMesh = new THREE.Mesh(logoGeo, logoMaterial);
     scene.add(logoMesh);
 	
@@ -446,7 +449,11 @@ function init() {
     scene.add(light);
   
     let smokeTexture = THREE.ImageUtils.loadTexture('https://s3-us-west-2.amazonaws.com/s.cdpn.io/95637/Smoke-Element.png');
-    let smokeMaterial = new THREE.MeshLambertMaterial({color: 0xffffff, map: smokeTexture, transparent: true});
+    let smokeMaterial = new THREE.MeshLambertMaterial({
+		color: 0xffffff, 
+		map: smokeTexture, 
+		transparent: true
+	});
     let smokeGeo = new THREE.PlaneGeometry(500, 500);
      
     for (let p = 0; p < 150; p++) {
@@ -524,10 +531,10 @@ function init() {
 	container.appendChild( renderer.domElement );
 	container.addEventListener("mousedown", getPosition, false);
 
-	// document.addEventListener( 'mousedown', onDocumentMouseDown, false );
 	document.addEventListener( 'mousemove', onDocumentMouseMove, false );
 	document.addEventListener( 'mouseup', onDocumentMouseUp, false );
 	document.addEventListener( 'wheel', onDocumentMouseWheel, false );
+	// document.addEventListener( 'mousedown', onDocumentMouseDown, false );
 	// document.addEventListener( 'keydown', onKeyDown, false );
 	// document.addEventListener( 'keyup', onKeyUp, false );
 	// document.addEventListener("DOMContentLoaded", init, false);
@@ -621,7 +628,7 @@ function initRain() {
 
 		particles = new THREE.PointCloud( rainGeometry, materials[i] );
 
-		particles.rotation.z =  Math.random() * 0.20 + 0.10;
+		particles.rotation.z = Math.random() * 0.20 + 0.10;
 
 		scene.add( particles );
 
@@ -698,8 +705,6 @@ function onDocumentMouseMove( event ) {
 	
 	isUserInteracting = true;
 	lon = event.clientX 
-	// event.clientY = 0
-	// lon = ( onPointerDownPointerX - event.clientX ) * -0.5 + onPointerDownLon;
 	
 	// if ( isUserInteracting === true ) {
 	// 	// onPointerDownLon = lon;
