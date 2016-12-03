@@ -313,6 +313,24 @@ var onPointerDownLon = void 0;
 // }
 
 
+//************************************************************************//
+//                             Init Loader                                //
+//************************************************************************//
+
+
+var manager = new THREE.LoadingManager();
+
+manager.onProgress = function (item, loaded, total) {
+	item = 'textures/AC-Logo.png';
+	console.log(item, loaded, total);
+};
+manager.onLoad = function () {
+	console.log('all items loaded');
+};
+manager.onError = function () {
+	console.log('there has been an error');
+};
+
 // Add Audio Loader
 var audio = document.createElement('audio');
 var source = document.createElement('source');
@@ -364,7 +382,6 @@ container = document.getElementById('container');
 // info = document.getElementById( 'info' );
 
 init();
-initRain();
 animate();
 
 // let moveForward = false;
@@ -376,7 +393,7 @@ animate();
 // let velocity = new THREE.Vector3();
 
 //************************************************************************//
-//                             Init Scene                                //
+//                             Init Scene                                 //
 //************************************************************************//
 
 function init() {
@@ -480,6 +497,10 @@ function init() {
 	var light = new THREE.DirectionalLight(0xffffff, 1.5);
 	light.position.set(-1, 0, 1);
 	scene.add(light);
+
+	var directionalLight = new THREE.DirectionalLight(0xffffff);
+	directionalLight.position.set(1, 1, 1).normalize();
+	scene.add(directionalLight);
 
 	var smokeTexture = THREE.ImageUtils.loadTexture('https://s3-us-west-2.amazonaws.com/s.cdpn.io/95637/Smoke-Element.png');
 	var smokeMaterial = new THREE.MeshLambertMaterial({
@@ -611,6 +632,8 @@ function init() {
 	stats.domElement.style.zIndex = 100;
 	container.appendChild(stats.domElement);
 
+	initRain();
+
 	document.body.appendChild(renderer.domElement);
 }
 
@@ -721,7 +744,6 @@ function onDocumentMouseMove(event) {
 	lon = event.clientX;
 
 	// if ( isUserInteracting === true ) {
-	// 	// onPointerDownLon = lon;
 	// 	lon = ( onPointerDownPointerX - event.clientX ) * 0.1 + onPointerDownLon;
 	// 	// lat = ( event.clientY - onPointerDownPointerY ) * 0.1 + onPointerDownLat;
 	// }
