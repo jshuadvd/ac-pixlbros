@@ -383,6 +383,10 @@ function init() {
 		fog: true,
 	});
 	
+	mesh = new THREE.Mesh( geometry, material );
+	scene.add( mesh );
+	
+	stats = initStats()
 	// let logoGeo = THREE.PlaneGeometry( 5, 20, 32 );
 	// let logo = new THREE.MeshBasicMaterial({
 	// 	map: new THREE.TextureLoader().load( 'textures/assassins_creed_logo.jpg' ),
@@ -392,8 +396,6 @@ function init() {
 	// scene.add(logoMesh)
 	// 
 
-	mesh = new THREE.Mesh( geometry, material );
-	scene.add( mesh );
 	
 	// let spotLight = new THREE.SpotLight(0xffffff, 40, 40);
 	// camera.add(spotLight);
@@ -599,12 +601,6 @@ function init() {
 	}, false );
 
 	window.addEventListener( 'resize', onWindowResize, false );
-	
-	stats = new Stats();
-	stats.domElement.style.position = 'absolute';
-	stats.domElement.style.bottom = '0px';
-	stats.domElement.style.zIndex = 100;
-	container.appendChild( stats.domElement );
 	
 	initRain();
 	
@@ -816,6 +812,18 @@ function getPosition(event) {
 	y -= container.offsetTop;	
 	// alert("x: " + x + "  y: " + y);
 	console.log("x: " + x + "  y: " + y);
+}
+
+function initStats() {
+	var stats = new Stats();
+	stats.setMode(0); // 0: fps, 1: ms
+	// Align top-left
+	stats.domElement.style.position = 'absolute';
+	stats.domElement.style.left = '0px';
+	stats.domElement.style.top = '0px';
+	document.getElementById("Stats-output").appendChild(stats.domElement);
+	return stats;
+}
 }
 
 
