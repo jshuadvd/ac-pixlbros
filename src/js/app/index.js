@@ -45,7 +45,7 @@ audio.appendChild(source);
 //                              Variables                           	  //
 //************************************************************************//
 
-let camera, container, color, controls, clock, delta, deviceControls, h, hsParticles = [], info, layer = false, logoGeo, logoMaterial, logoMesh, logoTexture, marker, mesh, materials = [], mousePos, parameters, particles, rainDensity = 20000, rainGeometry, renderer, raycaster, scene, size, smokeParticles = [], spotLight, spotLightHelper, sprite, stats; 
+let camera, container, color, controls, clock, delta, deviceControls, h, hsParticles = [], info, layer = false, logoGeo, logoMaterial, logoMesh, logoTexture, marker, mesh, materials = [], mouse, mousePos, objects = [], parameters, particles, particleMaterial, rainDensity = 20000, rainGeometry, raycaster, renderer, scene, size, smokeParticles = [], spotLight, spotLightHelper, sprite, stats; 
 
 let isUserInteracting = true,
 onMouseDownMouseX = 0, onMouseDownMouseY = 0,
@@ -67,7 +67,7 @@ function init() {
 
 	camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 1, 2000 );
 	camera.target = new THREE.Vector3( 0, 0, 0 );
-
+	console.log(camera.target);
 	scene = new THREE.Scene();
 	// scene.fog = new THREE.FogExp2( 0x000000, 0.0008 );
 	// scene.fog = new THREE.FogExp2(0x000000, 0.005);
@@ -87,6 +87,47 @@ function init() {
 	stats = initStats()
 	
 	deviceControls = new THREE.DeviceOrientationControls( camera );
+	
+	raycaster = new THREE.Raycaster();
+	mouse = new THREE.Vector2();
+	
+	// Build items for raycaster clicks
+	let boxGeometry = new THREE.BoxGeometry( 100, 100, 100 );
+
+	for ( let i = 0; i < 10; i ++ ) {
+
+		let object = new THREE.Mesh( boxGeometry, new THREE.MeshBasicMaterial( { color: Math.random() * 0xffffff, opacity: 0.5 } ) );
+		object.position.x = Math.random() * 800 - 200;
+		object.position.y = Math.random() * 800 - 200;
+		object.position.z = Math.random() * 800 - 200;
+
+		object.scale.x = Math.random() * 2 + 1;
+		object.scale.y = Math.random() * 2 + 1;
+		object.scale.z = Math.random() * 2 + 1;
+
+		object.rotation.x = Math.random() * 2 * Math.PI;
+		object.rotation.y = Math.random() * 2 * Math.PI;
+		object.rotation.z = Math.random() * 2 * Math.PI;
+
+		scene.add( object );
+
+		objects.push( object );
+
+	}
+	
+	let PI2 = Math.PI * 2;
+	particleMaterial = new THREE.SpriteCanvasMaterial( {
+
+		color: 0x000000,
+		program: function ( context ) {
+
+			context.beginPath();
+			context.arc( 0, 0, 0.5, 0, PI2, true );
+			context.fill();
+
+		}
+
+	} );
 	
 	// let logoGeo = THREE.PlaneGeometry( 5, 20, 32 );
 	// let logo = new THREE.MeshBasicMaterial({
@@ -173,9 +214,11 @@ function init() {
 	renderer.setSize( window.innerWidth, window.innerHeight );
 	container.appendChild( renderer.domElement );
 	container.addEventListener("mousemove", getPosition, false);
-
+	
+	document.addEventListener( 'mousedown', onDocumentMouseDown, false );
 	document.addEventListener( 'mousemove', onDocumentMouseMove, false );
 	document.addEventListener( 'mouseup', onDocumentMouseUp, false );
+	document.addEventListener( 'touchstart', onDocumentTouchStart, false );
 	document.addEventListener( 'wheel', onDocumentMouseWheel, false );
 	// document.addEventListener( 'mousedown', onDocumentMouseDown, false );
 	// document.addEventListener( 'keydown', onKeyDown, false );
@@ -274,7 +317,7 @@ function buildHotspot() {
     let logoGeo = new THREE.PlaneGeometry(75, 75);
 	
 	let hotspot = new THREE.Mesh(logoGeo, logoMaterial);
-	hotspot.position.set(10, 10, 10);
+	hotspot.position.set(100, -20, -20);
 	hotspot.rotation.y = 1.1;
 	scene.add(hotspot);
      
@@ -391,6 +434,48 @@ function onWindowResize() {
 	renderer.setSize( window.innerWidth, window.innerHeight );
 }
 
+function onDocumentTouchStart( event ) {
+	
+	event.preventDefault();
+	
+	event.clientX = event.touches[0].clientX;
+	event.clientY = event.touches[0].clientY;
+	onDocumentMouseDown( event );
+	
+}
+
+function onDocumentMouseDown( event ) {
+	
+	event.preventDefault();
+	
+	mouse.x = ( event.clientX / renderer.domElement.clientWidth ) * 2 - 1;
+	mouse.y = - ( event.clientY / renderer.domElement.clientHeight ) * 2 + 1;
+	
+	raycaster.setFromCamera( mouse, camera );
+	
+	var intersects = raycaster.intersectObjects( objects );
+	
+	if ( intersects.length > 0 ) {
+		
+		intersects[ 0 ].object.material.color.setHex( Math.random() * 0xffffff );
+		
+		var particle = new THREE.Sprite( particleMaterial );
+		particle.position.copy( intersects[ 0 ].point );
+		particle.scale.x = particle.scale.y = 16;
+		scene.add( particle );
+		
+	}
+	
+	/*
+	// Parse all the faces
+	for ( var i in intersects ) {
+	
+	intersects[ i ].face.material[ 0 ].color.setHex( Math.random() * 0xffffff | 0x80000000 );
+	
+}
+*/
+}
+
 function onDocumentMouseMove( event ) {
 	isUserInteracting = true;
 	lon = event.clientX 
@@ -451,6 +536,12 @@ function update() {
 	evolveHotspot();
 	animateRain();
 	// rainEngine.update(0.01 * 0.5)
+	theta += 0.1;
+	// let radius = 600;
+	// camera.position.x = radius * Math.sin( THREE.Math.degToRad( theta ) );
+	// camera.position.y = radius * Math.sin( THREE.Math.degToRad( theta ) );
+	// camera.position.z = radius * Math.cos( THREE.Math.degToRad( theta ) );
+	// camera.lookAt( scene.position );
 	renderer.render( scene, camera );
 }
 
