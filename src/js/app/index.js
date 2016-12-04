@@ -270,15 +270,32 @@ function buildHotspots() {
 	loader = new THREE.JSONLoader();
 	loader.load('/js/ac-logo.js', function(geometry) {
 		hotspots = hotspotLocations.map( (hotspotLocation) => {
-			console.log('hotspotLocation', hotspotLocation)
-			let hotspot = new THREE.Mesh(geometry, new THREE.MeshBasicMaterial( { color: '#2ffc47', opacity: 1 } ));
-			hotspot.position.set(hotspotLocation[0], hotspotLocation[1], hotspotLocation[2]);
-			hotspot.scale.x = 8
-			hotspot.scale.y = 10
-			hotspot.scale.z = 8
-			hotspot.rotation.y = 3
-			scene.add(hotspot);
-			return hotspot;
+			geometry.center();
+			let scale = 10;
+			let hotspot = new THREE.Mesh(geometry, new THREE.MeshBasicMaterial( { color: '#870000', opacity: 1 } ));
+
+			var box = new THREE.Box3().setFromObject(hotspot);
+			hotspot.scale.x = hotspot.scale.y = hotspot.scale.z = scale
+			hotspot.rotation.x = Math.PI
+
+			// hotspot.scale.x = 8
+			// hotspot.scale.y = 10
+			// hotspot.scale.z = 8
+			// hotspot.rotation.y = 3
+
+			let hitboxGeo = new THREE.BoxBufferGeometry( box.getSize().x * scale, 1000, 10 );
+			let hitboxMat = new THREE.MeshBasicMaterial({wireframe: true});
+			// // hitboxMat.visible = false
+			let hitboxMesh = new THREE.Mesh( hitboxGeo, hitboxMat );
+
+			var group = new THREE.Group();
+			group.position.set(hotspotLocation[0], hotspotLocation[1], hotspotLocation[2]);
+			scene.add(group);
+			group.add(hotspot);
+			group.add(hitboxMesh);
+
+			return group;
+
 		});
 	});
 }
@@ -341,34 +358,34 @@ function buildHotspot() {
 	
 	// for ( let i = 0; i < 10; i ++ ) {
 		
-		let logoTexture = THREE.ImageUtils.loadTexture('/textures/animus_red_logo.png');
-		logoTexture.crossOrigin = 'anonymous';
+		// let logoTexture = THREE.ImageUtils.loadTexture('/textures/animus_red_logo.png');
+		// logoTexture.crossOrigin = 'anonymous';
 		
-		let logoMaterial = new THREE.MeshLambertMaterial({
-			color: 0xffffff, 
-			map: logoTexture, 
-			transparent: true
-		});
+		// let logoMaterial = new THREE.MeshLambertMaterial({
+		// 	color: 0xffffff, 
+		// 	map: logoTexture, 
+		// 	transparent: true
+		// });
 		
-		let logoGeo = new THREE.PlaneGeometry(40, 60);
-		// let hotspots = [];
+		// let logoGeo = new THREE.PlaneGeometry(40, 60);
+		// // let hotspots = [];
 		
-		hotspot = new THREE.Mesh(logoGeo, logoMaterial);
+		// hotspot = new THREE.Mesh(logoGeo, logoMaterial);
 		
-		// hotspot.position.x = Math.random() * 800 - 400;
-		// hotspot.position.y = 0;
-		// hotspot.position.z = -400;
-		// 
-		// hotspot.scale.x = Math.random() * 2 + 1;
-		// hotspot.scale.y = Math.random() * 2 + 1;
-		// hotspot.scale.z = Math.random() * 2 + 1;
-		// 
-		// hotspot.rotation.x = Math.random() * 2 * Math.PI;
-		// hotspot.rotation.y = Math.random() * 2 * Math.PI;
-		// hotspot.rotation.z = Math.random() * 2 * Math.PI;
-		hotspot.position.set(-45, 0, -400);
-		// hotspot.rotation.x = 0.1;
-		scene.add(hotspot);
+		// // hotspot.position.x = Math.random() * 800 - 400;
+		// // hotspot.position.y = 0;
+		// // hotspot.position.z = -400;
+		// // 
+		// // hotspot.scale.x = Math.random() * 2 + 1;
+		// // hotspot.scale.y = Math.random() * 2 + 1;
+		// // hotspot.scale.z = Math.random() * 2 + 1;
+		// // 
+		// // hotspot.rotation.x = Math.random() * 2 * Math.PI;
+		// // hotspot.rotation.y = Math.random() * 2 * Math.PI;
+		// // hotspot.rotation.z = Math.random() * 2 * Math.PI;
+		// hotspot.position.set(-45, 0, -400);
+		// // hotspot.rotation.x = 0.1;
+		// scene.add(hotspot);
 		
 		// hotspots.push(hotspot)		
 	// }	
@@ -390,15 +407,6 @@ function evolveHotspot() {
     while(hs--) {
         hsParticles[hs].rotation.z += (delta * 0.2);
     }
-}
-
-function rotateHotspot() {
-	// console.log('rotateHotspot', hotspots.length);
-	// hotspots.forEach((hotspot) => {
-	// 	console.log(hotspot);
-	// 	// hotspot.rotation.y += rotateSpeed 
-	// });
-    // hotspot.rotation.y += rotateSpeed;
 }
 
 function initRain() {
@@ -536,7 +544,7 @@ function onDocumentMouseDown( event ) {
 }
 
 function rotateHotspots() {
-	// hotspots.forEach( hotspot => hotspot.rotation.y += rotateSpeed );
+	hotspots.forEach( hotspot => hotspot.rotation.y += rotateSpeed * 0.5 );
 }
 
 function onDocumentMouseMove( event ) {
@@ -564,13 +572,13 @@ function onDocumentMouseWheel( event ) {
 	camera.updateProjectionMatrix();
 }
 
-function animate() {	
+function animate() {
 	requestAnimationFrame( animate );
 	update();
 	renderer.setSize( window.innerWidth, window.innerHeight );
 }
 
-function update() {		
+function update() {
 	// if ( isUserInteracting === false ) {
 	// 	// lon += 0.1;
 	// }
