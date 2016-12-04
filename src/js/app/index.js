@@ -47,6 +47,11 @@ audio.appendChild(source);
 
 let camera, container, color, controls, clock, delta, deviceControls, h, hotspot, hsParticles = [], info, layer = false, logoGeo, logoMaterial, logoMesh, logoTexture, marker, mesh, materials = [], mouse, mousePos, objects = [], parameters, particles, particleMaterial, rainDensity = 20000, rainGeometry, raycaster, renderer, rotateSpeed = 0.1, scene, size, smokeParticles = [], spotLight, spotLightHelper, sprite, stats; 
 
+let hotspots = [];
+let hotspotLocations = [
+	[-45, 0, -400]
+];
+
 let isUserInteracting = true,
 onMouseDownMouseX = 0, onMouseDownMouseY = 0,
 onMouseDownLon = 0,
@@ -58,16 +63,16 @@ container = document.getElementById( 'container' );
 init();
 animate();
 
-
 //************************************************************************//
 //                             Init Scene                                 //
 //************************************************************************//
+
+let loader;
 
 function init() {
 
 	camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 1, 2000 );
 	camera.target = new THREE.Vector3( 0, 0, 0 );
-	console.log(camera.target);
 	scene = new THREE.Scene();
 	// scene.fog = new THREE.FogExp2( 0x000000, 0.0008 );
 	// scene.fog = new THREE.FogExp2(0x000000, 0.005);
@@ -92,29 +97,8 @@ function init() {
 	mouse = new THREE.Vector2();
 	
 	// Build items for raycaster clicks
-	let boxGeometry = new THREE.BoxGeometry( 100, 100, 100 );
+	buildHotspots();
 
-	for ( let i = 0; i < 10; i ++ ) {
-
-		let object = new THREE.Mesh( boxGeometry, new THREE.MeshBasicMaterial( { color: Math.random() * 0xffffff, opacity: 0.5 } ) );
-		object.position.x = Math.random() * 800 - 200;
-		object.position.y = Math.random() * 800 - 200;
-		object.position.z = Math.random() * 800 - 200;
-
-		object.scale.x = Math.random() * 2 + 1;
-		object.scale.y = Math.random() * 2 + 1;
-		object.scale.z = Math.random() * 2 + 1;
-
-		object.rotation.x = Math.random() * 2 * Math.PI;
-		object.rotation.y = Math.random() * 2 * Math.PI;
-		object.rotation.z = Math.random() * 2 * Math.PI;
-
-		scene.add( object );
-
-		objects.push( object );
-
-	}
-	
 	let PI2 = Math.PI * 2;
 	particleMaterial = new THREE.SpriteCanvasMaterial( {
 
@@ -225,6 +209,8 @@ function init() {
 	// document.addEventListener( 'keyup', onKeyUp, false );
 	// document.addEventListener("DOMContentLoaded", init, false);
 
+	document.addEventListener('click', click, false);
+
 	document.addEventListener( 'dragover', function ( event ) {
 
 		event.preventDefault();
@@ -268,6 +254,42 @@ function init() {
 	buildHotspot();
 	
 	document.body.appendChild( renderer.domElement );
+}
+
+
+function buildHotspots() {
+	loader = new THREE.JSONLoader();
+	loader.load('/js/ac-logo.js', function(geometry) {
+		hotspots = hotspotLocations.map( (hotspotLocation) => {
+			console.log('hotspotLocation', hotspotLocation)
+			let hotspot = new THREE.Mesh(geometry, new THREE.MeshBasicMaterial( { color: '#2ffc47', opacity: 1 } ));
+			hotspot.position.set(hotspotLocation[0], hotspotLocation[1], hotspotLocation[2]);
+			hotspot.scale.x = 10
+			hotspot.scale.y = 10
+			hotspot.scale.z = 10
+			hotspot.rotation.x = 3
+			scene.add(hotspot);
+			return hotspot;
+		});
+	});
+}
+
+function click() {
+	var vector = new THREE.Vector3();
+
+	vector.set(
+	    ( event.clientX / window.innerWidth ) * 2 - 1,
+	    - ( event.clientY / window.innerHeight ) * 2 + 1,
+	    0.5 );
+
+	vector.unproject( camera );
+
+	var dir = vector.sub( camera.position ).normalize();
+
+	var distance = - camera.position.z / dir.z;
+
+	var pos = camera.position.clone().add( dir.multiplyScalar( distance ) );
+	console.log('click', pos);
 }
 
 function buildSmoke() {
@@ -320,7 +342,7 @@ function buildHotspot() {
 		});
 		
 		let logoGeo = new THREE.PlaneGeometry(40, 60);
-		let hotspots = [];
+		// let hotspots = [];
 		
 		hotspot = new THREE.Mesh(logoGeo, logoMaterial);
 		
@@ -339,7 +361,7 @@ function buildHotspot() {
 		// hotspot.rotation.x = 0.1;
 		scene.add(hotspot);
 		
-		hotspots.push(hotspot)		
+		// hotspots.push(hotspot)		
 	// }	
 	
      let light = new THREE.DirectionalLight(0xffffff, 1.5);
@@ -362,7 +384,12 @@ function evolveHotspot() {
 }
 
 function rotateHotspot() {
-    hotspot.rotation.y += rotateSpeed;
+	// console.log('rotateHotspot', hotspots.length);
+	// hotspots.forEach((hotspot) => {
+	// 	console.log(hotspot);
+	// 	// hotspot.rotation.y += rotateSpeed 
+	// });
+    // hotspot.rotation.y += rotateSpeed;
 }
 
 function initRain() {
@@ -499,6 +526,10 @@ function onDocumentMouseDown( event ) {
 */
 }
 
+function rotateHotspots() {
+	hotspots.forEach( hotspot => hotspot.rotation.y += rotateSpeed );
+}
+
 function onDocumentMouseMove( event ) {
 	isUserInteracting = true;
 	lon = event.clientX 
@@ -559,7 +590,8 @@ function update() {
 	evolveSmoke();
 	evolveHotspot();
 	animateRain();
-	rotateHotspot();
+	// rotateHotspot();
+	rotateHotspots();
 	// rainEngine.update(0.01 * 0.5)
 	theta += 0.1;
 	// let radius = 600;
