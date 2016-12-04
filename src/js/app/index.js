@@ -271,7 +271,7 @@ function init() {
 }
 
 function buildSmoke() {
-	//Smoke Light
+	// Smoke Light
     let light = new THREE.DirectionalLight(0xffffff, 1.5);
     light.position.set(-1, 0, 1);
     scene.add(light);
@@ -308,26 +308,43 @@ function evolveSmoke() {
 function buildHotspot() {
 	THREE.ImageUtils.crossOrigin = ''; 
 	
-	let logoTexture = THREE.ImageUtils.loadTexture('/textures/animus_red_logo.png');
-	logoTexture.crossOrigin = 'anonymous';
+	// for ( let i = 0; i < 10; i ++ ) {
+		
+		let logoTexture = THREE.ImageUtils.loadTexture('/textures/animus_red_logo.png');
+		logoTexture.crossOrigin = 'anonymous';
+		
+		let logoMaterial = new THREE.MeshLambertMaterial({
+			color: 0xffffff, 
+			map: logoTexture, 
+			transparent: true
+		});
+		
+		let logoGeo = new THREE.PlaneGeometry(40, 60);
+		let hotspots = [];
+		
+		hotspot = new THREE.Mesh(logoGeo, logoMaterial);
+		
+		// hotspot.position.x = Math.random() * 800 - 400;
+		// hotspot.position.y = 0;
+		// hotspot.position.z = -400;
+		// 
+		// hotspot.scale.x = Math.random() * 2 + 1;
+		// hotspot.scale.y = Math.random() * 2 + 1;
+		// hotspot.scale.z = Math.random() * 2 + 1;
+		// 
+		// hotspot.rotation.x = Math.random() * 2 * Math.PI;
+		// hotspot.rotation.y = Math.random() * 2 * Math.PI;
+		// hotspot.rotation.z = Math.random() * 2 * Math.PI;
+		hotspot.position.set(-45, 0, -400);
+		// hotspot.rotation.x = 0.1;
+		scene.add(hotspot);
+		
+		hotspots.push(hotspot)		
+	// }	
 	
-    let logoMaterial = new THREE.MeshLambertMaterial({
-		color: 0xffffff, 
-		map: logoTexture, 
-		transparent: true
-	});
-	
-    let logoGeo = new THREE.PlaneGeometry(40, 60);
-	
-	hotspot = new THREE.Mesh(logoGeo, logoMaterial);
-	hotspot.position.set(-45, 0, -400);
-	// hotspot.rotation.x = 0.1;
-	scene.add(hotspot);
-	
-	let light = new THREE.DirectionalLight(0xffffff, 1.5);
-    light.position.set(-1, 0, 1);
-    scene.add(light);
-     
+     let light = new THREE.DirectionalLight(0xffffff, 1.5);
+	 light.position.set(-1, 0, 1);
+	 scene.add(light);
     // for (let p = 0; p < 50; p++) {
     //     let particle = new THREE.Mesh(logoGeo, logoMaterial);
     //     particle.position.set(Math.random()*500-250,Math.random()*500-250,Math.random()*1000-100);
@@ -342,6 +359,10 @@ function evolveHotspot() {
     while(hs--) {
         hsParticles[hs].rotation.z += (delta * 0.2);
     }
+}
+
+function rotateHotspot() {
+    hotspot.rotation.y += rotateSpeed;
 }
 
 function initRain() {
@@ -389,7 +410,6 @@ function initRain() {
 		particles.rotation.z = Math.random() * 0.20 + 0.10;
 
 		scene.add( particles );
-
 	}
 }
 
@@ -401,8 +421,8 @@ function animateRain() {
 
 		let object = scene.children[i];
 		
-		// Not getting into the log here
 		if ( object instanceof THREE.PointCloud ) {
+			// Not getting into the log here
 			console.log("I'M ANIMATING THINGS");
 			if (i == 0) {
 				object.translateY(-10);
@@ -415,7 +435,6 @@ function animateRain() {
 					if(scene.children[i-1].position.y < ((window.innerHeight * -1) / 2 - 1000))
 						object.translateY(-10);
 			}
-
 
 			if ((object.position.y < window.innerHeight * -1 * 5)) {
 					object.position.y = 500;
@@ -442,13 +461,10 @@ function onWindowResize() {
 }
 
 function onDocumentTouchStart( event ) {
-	
 	event.preventDefault();
-	
 	event.clientX = event.touches[0].clientX;
 	event.clientY = event.touches[0].clientY;
 	onDocumentMouseDown( event );
-	
 }
 
 function onDocumentMouseDown( event ) {
@@ -585,13 +601,3 @@ function initStats() {
 	container.appendChild(stats.domElement);
 	return stats;
 }
-
-
-function rotateHotspot() {
-    hotspot.rotation.y += rotateSpeed;
-
-}
-
-
-
-
