@@ -49,7 +49,16 @@ let camera, container, color, controls, clock, delta, deviceControls, h, hotspot
 
 let hotspots = [];
 let hotspotLocations = [
-	[-45, 0, -400]
+	[-20, 0, -475], // -475Z
+	[145, 0, -475], // -475Z
+	[345, 0, -205], // -475Z
+	[-235, 0, -435], // -435Z
+	[-445, 0, -25], // -405Z
+	[450, 0, 90],
+	[400, 0, 225],
+	[65, 0, 400],
+	[-95, 0, 400],
+	[-270, 0, 105]
 ];
 
 let isUserInteracting = true,
@@ -264,10 +273,10 @@ function buildHotspots() {
 			console.log('hotspotLocation', hotspotLocation)
 			let hotspot = new THREE.Mesh(geometry, new THREE.MeshBasicMaterial( { color: '#2ffc47', opacity: 1 } ));
 			hotspot.position.set(hotspotLocation[0], hotspotLocation[1], hotspotLocation[2]);
-			hotspot.scale.x = 10
+			hotspot.scale.x = 8
 			hotspot.scale.y = 10
-			hotspot.scale.z = 10
-			hotspot.rotation.x = 3
+			hotspot.scale.z = 8
+			hotspot.rotation.y = 3
 			scene.add(hotspot);
 			return hotspot;
 		});
@@ -527,7 +536,7 @@ function onDocumentMouseDown( event ) {
 }
 
 function rotateHotspots() {
-	hotspots.forEach( hotspot => hotspot.rotation.y += rotateSpeed );
+	// hotspots.forEach( hotspot => hotspot.rotation.y += rotateSpeed );
 }
 
 function onDocumentMouseMove( event ) {
