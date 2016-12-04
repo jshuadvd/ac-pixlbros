@@ -1,316 +1,16 @@
 'use strict';
 
-// let camera;
-// let scene;
-// let renderer;
-// let isUserInteracting = false;
-// const onMouseDownMouseX = 0;
-// const onMouseDownMouseY = 0;
-// const onMouseDownLat = 0;
-// const onMouseDownLon = 0;
 var lon = 30;
 // let lat = 0;
 // let phi = 0;
 // let theta = 0;
 var fovMin = 75;
 var fovMax = 55;
-// let zoomed;
-// 
+var zoomed = void 0;
+
 var onPointerDownPointerX = void 0;
-// let onPointerDownPointerY;
 var onPointerDownLon = void 0;
 // let onPointerDownLat;
-// 
-// let selected;
-// let controls;
-// let timeline;
-// 
-// // Init audio 
-// let audio = document.getElementById('player');
-// audio.play();
-// audio.volume = 1;
-// audio.crossOrigin = "anonymous";
-// 
-// 
-// init();
-// animate();
-// 
-// function init() {
-// 	let container;
-// 	let mesh;
-// 	container = document.getElementById('container');
-// 	camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 1, 1500);
-// 	// camera.position.set( 0, 0, 60 );
-// 	camera.target = new THREE.Vector3(0, 0, 0);
-// 
-// 	lat = Math.max(-85, Math.min(85,lat));
-// 	phi = THREE.Math.degToRad(90-lat);
-// 	theta = THREE.Math.degToRad(lon);
-// 	camera.target.x = 500;
-// 	camera.lookAt(camera.target);
-// 
-// 	scene = new THREE.Scene();
-// 	scene.add(camera)
-// 	const geometry = new THREE.SphereGeometry(500, 60, 40);
-// 	geometry.scale(-1, 1, 1);
-// 	const material = new THREE.MeshBasicMaterial({
-// 		map: new THREE.TextureLoader().load('textures/AnimusPanorama.jpg')
-// 	});
-// 	mesh = new THREE.Mesh(geometry, material);
-// 	mesh.name = 'scene';
-// 	scene.add(mesh);
-// 	
-// 
-// 
-// 	// add light
-// 	// let light = new THREE.DirectionalLight('white', 1);
-// 	// light.position.set(-4,4,4);
-// 	// light.name = 'Back light';
-// 	// scene.add(light);
-// 	
-// 	// Add spotlight for case focus
-// 	// let spotLight = new THREE.SpotLight(0xffffff, 2.2, 1000, Math.PI/10.5, 0.001);
-// 	// spotLight.castShadow = true;
-// 	// spotLight.position.set(52, 75, 50);
-// 	// spotLight.shadowMapWidth = 1024;
-// 	// spotLight.shadowMapHeight = 1024;
-// 	// spotLight.shadowCameraNear = 1;
-// 	// spotLight.shadowCameraFar = 1000;
-// 	// scene.add(spotLight);
-// 	
-// 	// Add marker to set initial position for click
-// 	let marker = new THREE.Object3D();
-// 	marker.position.set(0,0,0);
-// 	// marker.add(spotLight);
-// 	scene.add(marker);
-// 
-// 	// add a sphere to click
-// 	// let mat2 = new THREE.MeshLambertMaterial({side: THREE.DoubleSide, color: '#f4d742'});
-// 	// let object = new THREE.Mesh(new THREE.SphereGeometry(4,20,20),mat2);
-// 	// object.position.set( 40, 0, 0 );
-// 	// object.name = 'Object 1';
-// 	// scene.add(object);
-// 
-// 	renderer = new THREE.WebGLRenderer();
-// 	renderer.setPixelRatio(window.devicePixelRatio);
-// 	renderer.setSize(window.innerWidth, window.innerHeight);
-// 	container.appendChild(renderer.domElement);
-// 
-// 	// set up controls
-// 	controls = new THREE.TrackballControls(camera);
-// 	controls.rotateSpeed = 3.6;
-// 	controls.zoomSpeed = 0.8;
-// 	controls.panSpeed = 1;
-// 	controls.noZoom = false;
-// 	controls.noPan = false;
-// 	controls.staticMoving = false;
-// 	controls.dynamicDampingFactor = 0.12;
-// 	controls.enabled = true;
-// 	
-// 	TweenLite.ticker.addEventListener('tick', render );
-// 
-// 	timeline = new TimelineLite({
-// 		onStart: function(){
-// 			TweenLite.ticker.removeEventListener("tick", controls.update );
-// 			controls.enabled = false;
-// 		},
-// 		onComplete: function(){
-// 			TweenLite.ticker.addEventListener("tick", controls.update );
-// 			controls.position0.copy(camera.position);
-// 			controls.reset();
-// 			controls.enabled = true;
-// 		}
-// 	});
-// 
-// 	// set up click handlers
-// 	// document.addEventListener('mousedown', onDocumentMouseDown, false);
-// 	// document.addEventListener('mousemove', onDocumentMouseMove, false);
-// 	document.addEventListener('mouseup', onDocumentMouseUp, false);
-// 	window.addEventListener('resize', onWindowResize, false);
-// 	document.addEventListener('mousedown', mouseDown, false);
-// 	TweenLite.ticker.addEventListener("tick", controls.update);
-// 	
-// }
-// 
-// let startX
-// let startY
-// let easing = 'Expo.easeInOut';
-// 
-// function getDistance(object) {
-// 	const helper = new THREE.BoundingBoxHelper(object, 0xff0000);
-// 	helper.update();
-// 
-// 	let width = helper.scale.x;
-// 	let height = helper.scale.y;
-// 
-// 	// Set camera distance
-// 	const vFOV = camera.fov * Math.PI / 180;
-// 
-// 	const ratio = 2 * Math.tan( vFOV / 2 );
-// 	const screen = ratio * camera.aspect;
-// 	const size = Math.max(height,width);
-// 	const distance = (size / screen) + (helper.box.max.z / screen);
-// 
-// 	return distance;
-// };
-// 
-// function reset() {
-// 
-// 	var pos = { x: 0, y: 0 };
-// 	const distance = 60;
-// 	const speed = 1;
-//  
-// 	if ( camera.parent !== scene ) {
-// 		var pos = camera.position.clone();
-// 		camera.parent.localToWorld(camera.position);
-// 		scene.add(camera);
-// 	}
-//  
-// 	timeline.clear();
-// 	timeline.to( camera.position, speed, { 
-// 	x: pos.x, 
-// 	y: pos.y, 
-// 	z: distance, 
-// 	ease: easing 
-// 	}, 0);
-//  	timeline.to( camera.rotation, speed, { x: 0, y: 0, z: 0, ease: easing}, 0);
-// 
-// }; 
-// 
-// function zoom(object) {
-// 
-// 	const pos = camera.position.clone();
-// 	object.worldToLocal(camera.position);
-// 	object.add(camera);
-// 
-// 	const speed = 1;
-// 	timeline.clear();
-// 
-// 	timeline.to( camera.position, speed, {
-// 		x: pos.x,
-// 		y: pos.y,
-// 		z: getDistance(object),
-// 		ease: easing
-// 	},0);
-// 
-// };
-// 
-// function mouseDown(e) {
-// 	const x = ( e.touches ? e.touches[0].clientX : e.clientX );
-// 	const y = ( e.touches ? e.touches[0].clientY : e.clientY );
-// 	const mouse = {
-// 		x: ( x / window.innerWidth ) * 2 - 1,
-// 		y: - ( y / window.innerHeight ) * 2 + 1
-// 	};
-// 	const vector = new THREE.Vector3( mouse.x, mouse.y ).unproject( camera );
-// 	const raycaster = new THREE.Raycaster(camera.position, vector.sub(camera.position).normalize());
-// 	const intersects = raycaster.intersectObject( scene, true );
-// 	if(intersects.length > 0 && intersects[0].object !== selected && intersects[0].object.name !== 'scene') {
-// 		selected = intersects[0].object;
-// 		console.log(selected);
-// 		zoom(selected);
-// 	} else {
-// 		selected = null;
-// 		reset(); 
-// 	}
-// }
-// 
-// function onWindowResize() {
-// 	camera.aspect = window.innerWidth / window.innerHeight;
-// 	camera.updateProjectionMatrix();
-// 	renderer.setSize(window.innerWidth, window.innerHeight);
-// }
-// 
-// function onDocumentMouseDown(event) {
-// 	event.preventDefault();
-// 	isUserInteracting = true;
-// 	onPointerDownPointerX = event.clientX;
-// 	onPointerDownPointerY = event.clientY;
-// 	onPointerDownLon = lon;
-// 	onPointerDownLat = lat;
-// }
-// 
-// function onDocumentMouseWheel( event ) {
-// 	console.log('event', camera.fov)
-// 
-// 	camera.fov += event.deltaY * 0.05;
-// 	camera.updateProjectionMatrix();
-// 
-// }
-// 
-// function onDocumentMouseMove(event) {
-// 	if (isUserInteracting === true) {
-// 		lon = (onPointerDownPointerX - event.clientX) * 0.1 + onPointerDownLon;
-// 	}
-// }
-// 
-// function onDocumentMouseUp(event) {
-// 	isUserInteracting = false;
-// }
-// 
-// function onDocumentClick(event) {
-// 	camera.fov = zoomed ? fovMin : fovMax
-// 	// i = zoomed ? -1 : 1
-// 	zoomed = !zoomed
-// 	tween
-// 	// .onUpdate(() => {
-// 	// 	camera.fov = 
-// 	// })
-// 	.start();
-// 
-// 
-// 	// int = setInterval(() => {
-// 	// 	val = val + 0.05*i;
-// 	// 	camera.fov = val;
-// 	// 	i++;
-// 	// 	console.log(val);
-// 	// 	if(val > 85) {
-// 	// 		clearInterval(int)
-// 	// 	}
-// 	// },30);
-// }
-// 
-// // var coords = { x: 0, y: 0 };
-// // var tween = new TWEEN.Tween({x: 75})
-// //     .to({x: 85}, 1000)
-// //     .onUpdate(function() {
-// //     	camera.fov = this.x
-// //     })
-// 
-// function animate() {
-// 	requestAnimationFrame(animate);
-// 	update();
-// }
-// 
-// function render() {
-// 	renderer.render(scene, camera);
-// }
-// 
-// function update(time) {
-// 	lat = Math.max(-85, Math.min(85, lat));
-// 	phi = THREE.Math.degToRad(90 - lat);
-// 	theta = THREE.Math.degToRad(lon);
-// 	camera.target.x = 500 * Math.sin(phi) * Math.cos(theta);
-// 	camera.target.y = 500 * Math.cos(phi);
-// 	camera.target.z = 500 * Math.sin(phi) * Math.sin(theta);
-// 	camera.lookAt(camera.target);
-// 	// TWEEN.update(time);
-// 	// camera.fov = camera.fov += 0.1 
-// 	// console.log(camera.fov)
-// 	camera.updateProjectionMatrix();
-// 	render();
-// }
-// 
-// function  orbit(origin, h, v, distance) {    
-// 	origin = origin || new THREE.Vector3();    
-// 	var p = new THREE.Vector3();    
-// 	var phi = v * Math.PI / 180;    
-// 	var theta = h * Math.PI / 180;    
-// 	p.x = (distance * Math.sin(phi) * Math.cos(theta)) + origin.x;    
-// 	p.z = (distance * Math.sin(phi) * Math.sin(theta)) + origin.z;    
-// 	p.y = (distance * Math.cos(phi)) + origin.y;    
-// 	return p;
-// }
 
 
 //************************************************************************//
@@ -326,17 +26,25 @@ manager.onProgress = function (item, loaded, total) {
 };
 manager.onLoad = function () {
 	console.log('all items loaded');
+	return item;
 };
 manager.onError = function () {
 	console.log('there has been an error');
 };
 
-// Add Audio Loader
+//************************************************************************//
+//                             Init Audio                                 //
+//************************************************************************//
+
 var audio = document.createElement('audio');
 var source = document.createElement('source');
 source.src = '/audio/AC-Trailer.mp3';
 audio.appendChild(source);
-audio.play();
+// audio.play();
+
+//************************************************************************//
+//                              Variables                           	  //
+//************************************************************************//
 
 var camera = void 0,
     container = void 0,
@@ -344,7 +52,9 @@ var camera = void 0,
     controls = void 0,
     clock = void 0,
     delta = void 0,
+    deviceControls = void 0,
     h = void 0,
+    hsParticles = [],
     info = void 0,
     layer = false,
     logoGeo = void 0,
@@ -379,18 +89,9 @@ var isUserInteracting = true,
     theta = 0;
 
 container = document.getElementById('container');
-// info = document.getElementById( 'info' );
 
 init();
 animate();
-
-// let moveForward = false;
-// let moveBackward = false;
-// let moveLeft = false;
-// let moveRight = false;
-// let canJump = false;
-// let prevTime = performance.now();
-// let velocity = new THREE.Vector3();
 
 //************************************************************************//
 //                             Init Scene                                 //
@@ -414,6 +115,13 @@ function init() {
 		fog: true
 	});
 
+	mesh = new THREE.Mesh(geometry, material);
+	scene.add(mesh);
+
+	stats = initStats();
+
+	deviceControls = new THREE.DeviceOrientationControls(camera);
+
 	// let logoGeo = THREE.PlaneGeometry( 5, 20, 32 );
 	// let logo = new THREE.MeshBasicMaterial({
 	// 	map: new THREE.TextureLoader().load( 'textures/assassins_creed_logo.jpg' ),
@@ -423,8 +131,6 @@ function init() {
 	// scene.add(logoMesh)
 	// 
 
-	mesh = new THREE.Mesh(geometry, material);
-	scene.add(mesh);
 
 	// let spotLight = new THREE.SpotLight(0xffffff, 40, 40);
 	// camera.add(spotLight);
@@ -482,99 +188,16 @@ function init() {
 	// logoMesh.position.z = 800;
 	// scene.add(logoMesh);
 
-	logoGeo = new THREE.PlaneGeometry(1024, 1024);
-	THREE.ImageUtils.crossOrigin = '';
-	logoTexture = THREE.ImageUtils.loadTexture('/textures/AC-Logo.png');
-	logoMaterial = new THREE.MeshLambertMaterial({
-		color: 0xffffff,
-		opacity: 2.1,
-		map: logoTexture
-	});
-	logoMesh = new THREE.Mesh(logoGeo, logoMaterial);
-	scene.add(logoMesh);
-
-	//Smoke Light
-	var light = new THREE.DirectionalLight(0xffffff, 1.5);
-	light.position.set(-1, 0, 1);
-	scene.add(light);
-
-	var directionalLight = new THREE.DirectionalLight(0xffffff);
-	directionalLight.position.set(1, 1, 1).normalize();
-	scene.add(directionalLight);
-
-	var smokeTexture = THREE.ImageUtils.loadTexture('https://s3-us-west-2.amazonaws.com/s.cdpn.io/95637/Smoke-Element.png');
-	var smokeMaterial = new THREE.MeshLambertMaterial({
-		color: 0xffffff,
-		map: smokeTexture,
-		transparent: true
-	});
-	var smokeGeo = new THREE.PlaneGeometry(500, 500);
-
-	for (var p = 0; p < 150; p++) {
-		var particle = new THREE.Mesh(smokeGeo, smokeMaterial);
-		particle.position.set(Math.random() * 500 - 250, Math.random() * 500 - 250, Math.random() * 1000 - 100);
-		particle.rotation.z = Math.random() * 360;
-		scene.add(particle);
-		smokeParticles.push(particle);
-	}
-
-	// let onKeyDown = function ( event ) {
-	// 	switch ( event.keyCode ) {
-	// 		
-	// 		case 38: // up
-	// 		case 87: // w
-	// 		moveForward = true;
-	// 		break;
-	// 		
-	// 		case 37: // left
-	// 		case 65: // a
-	// 		// lon = event.clientX
-	// 		moveLeft = true; 
-	// 		break;
-	// 		
-	// 		case 40: // down
-	// 		case 83: // s
-	// 		moveBackward = true;
-	// 		break;
-	// 		
-	// 		case 39: // right
-	// 		case 68: // d
-	// 		// lon = event.clientX
-	// 		moveRight = true;
-	// 		break;
-	// 		
-	// 		case 32: // space
-	// 		if ( canJump === true ) velocity.y += 350;
-	// 		canJump = false;
-	// 		break;
-	// 	}
-	// };
-	// 
-	// let onKeyUp = function ( event ) {
-	// 	switch( event.keyCode ) {
-	// 		
-	// 		case 38: // up
-	// 		case 87: // w
-	// 		moveForward = false;
-	// 		break;
-	// 		
-	// 		case 37: // left
-	// 		case 65: // a
-	// 		moveLeft = false;
-	// 		break;
-	// 		
-	// 		case 40: // down
-	// 		case 83: // s
-	// 		moveBackward = false;
-	// 		break;
-	// 		
-	// 		case 39: // right
-	// 		case 68: // d
-	// 		moveRight = false;
-	// 		break;
-	// 		
-	// 	}
-	// };
+	// logoGeo = new THREE.PlaneGeometry(1024, 1024);
+	// THREE.ImageUtils.crossOrigin = ''; 
+	// logoTexture = THREE.ImageUtils.loadTexture('/textures/AC-Logo.png');
+	// logoMaterial = new THREE.MeshLambertMaterial({
+	// 	// color: 0xffffff, 
+	// 	opacity: 2.1, 
+	// 	map: logoTexture
+	// })
+	// logoMesh = new THREE.Mesh(logoGeo, logoMaterial);
+	// scene.add(logoMesh);
 
 	renderer = new THREE.WebGLRenderer({
 		antialias: true,
@@ -583,7 +206,7 @@ function init() {
 	renderer.setPixelRatio(window.devicePixelRatio);
 	renderer.setSize(window.innerWidth, window.innerHeight);
 	container.appendChild(renderer.domElement);
-	container.addEventListener("mousedown", getPosition, false);
+	container.addEventListener("mousemove", getPosition, false);
 
 	document.addEventListener('mousemove', onDocumentMouseMove, false);
 	document.addEventListener('mouseup', onDocumentMouseUp, false);
@@ -626,15 +249,77 @@ function init() {
 
 	window.addEventListener('resize', onWindowResize, false);
 
-	stats = new Stats();
-	stats.domElement.style.position = 'absolute';
-	stats.domElement.style.bottom = '0px';
-	stats.domElement.style.zIndex = 100;
-	container.appendChild(stats.domElement);
-
 	initRain();
+	buildSmoke();
+	buildHotspot();
 
 	document.body.appendChild(renderer.domElement);
+}
+
+function buildSmoke() {
+	//Smoke Light
+	var light = new THREE.DirectionalLight(0xffffff, 1.5);
+	light.position.set(-1, 0, 1);
+	scene.add(light);
+
+	var directionalLight = new THREE.DirectionalLight(0xffffff);
+	directionalLight.position.set(1, 1, 1).normalize();
+	scene.add(directionalLight);
+
+	var smokeTexture = THREE.ImageUtils.loadTexture('https://s3-us-west-2.amazonaws.com/s.cdpn.io/95637/Smoke-Element.png');
+	var smokeMaterial = new THREE.MeshLambertMaterial({
+		color: 0xffffff,
+		map: smokeTexture,
+		transparent: true
+	});
+	var smokeGeo = new THREE.PlaneGeometry(500, 500);
+
+	for (var p = 0; p < 150; p++) {
+		var particle = new THREE.Mesh(smokeGeo, smokeMaterial);
+		particle.position.set(Math.random() * 500 - 250, Math.random() * 500 - 250, Math.random() * 1000 - 100);
+		particle.rotation.z = Math.random() * 360;
+		scene.add(particle);
+		smokeParticles.push(particle);
+	}
+}
+
+function evolveSmoke() {
+	var sp = smokeParticles.length;
+	while (sp--) {
+		smokeParticles[sp].rotation.z += delta * 0.2;
+	}
+}
+
+function buildHotspot() {
+	THREE.ImageUtils.crossOrigin = '';
+	var logoTexture = THREE.ImageUtils.loadTexture('/textures/animus_red_logo.png');
+	logoTexture.crossOrigin = 'anonymous';
+	var logoMaterial = new THREE.MeshLambertMaterial({
+		color: 0xffffff,
+		map: logoTexture,
+		transparent: true
+	});
+	var logoGeo = new THREE.PlaneGeometry(75, 75);
+
+	var hotspot = new THREE.Mesh(logoGeo, logoMaterial);
+	hotspot.position.set(10, 10, 10);
+	hotspot.rotation.y = 1.1;
+	scene.add(hotspot);
+
+	// for (let p = 0; p < 50; p++) {
+	//     let particle = new THREE.Mesh(logoGeo, logoMaterial);
+	//     particle.position.set(Math.random()*500-250,Math.random()*500-250,Math.random()*1000-100);
+	//     particle.rotation.z = Math.random() * 360;
+	//     scene.add(particle);
+	//     hsParticles.push(particle);
+	// }	
+}
+
+function evolveHotspot() {
+	var hs = hsParticles.length;
+	while (hs--) {
+		hsParticles[hs].rotation.z += delta * 0.2;
+	}
 }
 
 function initRain() {
@@ -717,32 +402,14 @@ function animateRain() {
 }
 
 function onWindowResize() {
-
 	camera.aspect = window.innerWidth / window.innerHeight;
 	camera.updateProjectionMatrix();
-
 	renderer.setSize(window.innerWidth, window.innerHeight);
 }
 
-// function onDocumentMouseDown( event ) {
-// 
-// 	// event.preventDefault();
-// 
-// 	isUserInteracting = true;
-// 
-// 	onPointerDownPointerX = event.clientX;
-// 	// onPointerDownPointerY = event.clientY;
-// 
-// 	onPointerDownLon = lon;
-// 	// onPointerDownLat = lat;
-// 
-// }
-
 function onDocumentMouseMove(event) {
-
 	isUserInteracting = true;
 	lon = event.clientX;
-
 	// if ( isUserInteracting === true ) {
 	// 	lon = ( onPointerDownPointerX - event.clientX ) * 0.1 + onPointerDownLon;
 	// 	// lat = ( event.clientY - onPointerDownPointerY ) * 0.1 + onPointerDownLat;
@@ -750,29 +417,31 @@ function onDocumentMouseMove(event) {
 }
 
 function onDocumentMouseUp(event) {
-
 	isUserInteracting = false;
 }
 
 // Zoom in & out | Need to limit this to the starting point and a endind point
 function onDocumentMouseWheel(event) {
-
-	camera.fov += event.deltaY * 0.01;
+	// if (camera.fov > 75) {
+	// 	camera.fov = 75
+	// } else {
+	// 	camera.fov += event.deltaY * 0.01;
+	// 	camera.updateProjectionMatrix();
+	// }
+	camera.fov += event.deltaY * 0.02;
 	camera.updateProjectionMatrix();
 }
 
 function animate() {
-
 	requestAnimationFrame(animate);
 	update();
+	renderer.setSize(window.innerWidth, window.innerHeight);
 }
 
 function update() {
-
-	if (isUserInteracting === false) {
-		// lon += 0.1;
-	}
-
+	// if ( isUserInteracting === false ) {
+	// 	// lon += 0.1;
+	// }
 	lat = Math.max(-85, Math.min(85, lat));
 	phi = THREE.Math.degToRad(90 - lat);
 	theta = THREE.Math.degToRad(lon);
@@ -780,7 +449,6 @@ function update() {
 	camera.target.x = 500 * Math.sin(phi) * Math.cos(theta);
 	// camera.target.y = 500 * Math.cos( phi );
 	camera.target.z = 500 * Math.sin(phi) * Math.sin(theta);
-
 	camera.lookAt(camera.target);
 
 	/*
@@ -796,16 +464,10 @@ function update() {
 	stats.update();
 	delta = clock.getDelta();
 	evolveSmoke();
+	evolveHotspot();
 	animateRain();
 	// rainEngine.update(0.01 * 0.5)
 	renderer.render(scene, camera);
-}
-
-function evolveSmoke() {
-	var sp = smokeParticles.length;
-	while (sp--) {
-		smokeParticles[sp].rotation.z += delta * 0.2;
-	}
 }
 
 function getPosition(event) {
@@ -824,5 +486,18 @@ function getPosition(event) {
 	y -= container.offsetTop;
 	// alert("x: " + x + "  y: " + y);
 	console.log("x: " + x + "  y: " + y);
+}
+
+function initStats() {
+	// stats.setMode(0); // 0: fps, 1: ms
+	// Align top-left
+	stats = new Stats();
+	stats.domElement.style.position = 'absolute';
+	// stats.domElement.style.bottom = '0px';
+	stats.domElement.style.left = '0px';
+	stats.domElement.style.top = '0px';
+	stats.domElement.style.zIndex = 100;
+	container.appendChild(stats.domElement);
+	return stats;
 }
 //# sourceMappingURL=app.js.map
