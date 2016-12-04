@@ -45,7 +45,7 @@ audio.appendChild(source);
 //                              Variables                           	  //
 //************************************************************************//
 
-let camera, container, color, controls, clock, delta, deviceControls, h, hsParticles = [], info, layer = false, logoGeo, logoMaterial, logoMesh, logoTexture, marker, mesh, materials = [], mouse, mousePos, objects = [], parameters, particles, particleMaterial, rainDensity = 20000, rainGeometry, raycaster, renderer, scene, size, smokeParticles = [], spotLight, spotLightHelper, sprite, stats; 
+let camera, container, color, controls, clock, delta, deviceControls, h, hotspot, hsParticles = [], info, layer = false, logoGeo, logoMaterial, logoMesh, logoTexture, marker, mesh, materials = [], mouse, mousePos, objects = [], parameters, particles, particleMaterial, rainDensity = 20000, rainGeometry, raycaster, renderer, rotateSpeed = 0.1, scene, size, smokeParticles = [], spotLight, spotLightHelper, sprite, stats; 
 
 let isUserInteracting = true,
 onMouseDownMouseX = 0, onMouseDownMouseY = 0,
@@ -264,7 +264,7 @@ function init() {
 	window.addEventListener( 'resize', onWindowResize, false );
 	
 	initRain();
-	buildSmoke();
+	// buildSmoke();
 	buildHotspot();
 	
 	document.body.appendChild( renderer.domElement );
@@ -307,19 +307,26 @@ function evolveSmoke() {
 
 function buildHotspot() {
 	THREE.ImageUtils.crossOrigin = ''; 
+	
 	let logoTexture = THREE.ImageUtils.loadTexture('/textures/animus_red_logo.png');
 	logoTexture.crossOrigin = 'anonymous';
+	
     let logoMaterial = new THREE.MeshLambertMaterial({
 		color: 0xffffff, 
 		map: logoTexture, 
 		transparent: true
 	});
-    let logoGeo = new THREE.PlaneGeometry(75, 75);
 	
-	let hotspot = new THREE.Mesh(logoGeo, logoMaterial);
-	hotspot.position.set(100, -20, -20);
-	hotspot.rotation.y = 1.1;
+    let logoGeo = new THREE.PlaneGeometry(40, 60);
+	
+	hotspot = new THREE.Mesh(logoGeo, logoMaterial);
+	hotspot.position.set(-45, 0, -400);
+	// hotspot.rotation.x = 0.1;
 	scene.add(hotspot);
+	
+	let light = new THREE.DirectionalLight(0xffffff, 1.5);
+    light.position.set(-1, 0, 1);
+    scene.add(light);
      
     // for (let p = 0; p < 50; p++) {
     //     let particle = new THREE.Mesh(logoGeo, logoMaterial);
@@ -532,9 +539,11 @@ function update() {
 	// spotLightHelper.update()
 	stats.update()
 	delta = clock.getDelta();
+
 	evolveSmoke();
 	evolveHotspot();
 	animateRain();
+	rotateHotspot();
 	// rainEngine.update(0.01 * 0.5)
 	theta += 0.1;
 	// let radius = 600;
@@ -575,6 +584,12 @@ function initStats() {
 	stats.domElement.style.zIndex = 100;
 	container.appendChild(stats.domElement);
 	return stats;
+}
+
+
+function rotateHotspot() {
+    hotspot.rotation.y += rotateSpeed;
+
 }
 
 

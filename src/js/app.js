@@ -54,6 +54,7 @@ var camera = void 0,
     delta = void 0,
     deviceControls = void 0,
     h = void 0,
+    hotspot = void 0,
     hsParticles = [],
     info = void 0,
     layer = false,
@@ -74,6 +75,7 @@ var camera = void 0,
     rainGeometry = void 0,
     raycaster = void 0,
     renderer = void 0,
+    rotateSpeed = 0.1,
     scene = void 0,
     size = void 0,
     smokeParticles = [],
@@ -294,7 +296,7 @@ function init() {
 	window.addEventListener('resize', onWindowResize, false);
 
 	initRain();
-	buildSmoke();
+	// buildSmoke();
 	buildHotspot();
 
 	document.body.appendChild(renderer.domElement);
@@ -336,19 +338,26 @@ function evolveSmoke() {
 
 function buildHotspot() {
 	THREE.ImageUtils.crossOrigin = '';
+
 	var logoTexture = THREE.ImageUtils.loadTexture('/textures/animus_red_logo.png');
 	logoTexture.crossOrigin = 'anonymous';
+
 	var logoMaterial = new THREE.MeshLambertMaterial({
 		color: 0xffffff,
 		map: logoTexture,
 		transparent: true
 	});
-	var logoGeo = new THREE.PlaneGeometry(75, 75);
 
-	var hotspot = new THREE.Mesh(logoGeo, logoMaterial);
-	hotspot.position.set(100, -20, -20);
-	hotspot.rotation.y = 1.1;
+	var logoGeo = new THREE.PlaneGeometry(40, 60);
+
+	hotspot = new THREE.Mesh(logoGeo, logoMaterial);
+	hotspot.position.set(-45, 0, -400);
+	// hotspot.rotation.x = 0.1;
 	scene.add(hotspot);
+
+	var light = new THREE.DirectionalLight(0xffffff, 1.5);
+	light.position.set(-1, 0, 1);
+	scene.add(light);
 
 	// for (let p = 0; p < 50; p++) {
 	//     let particle = new THREE.Mesh(logoGeo, logoMaterial);
@@ -547,9 +556,11 @@ function update() {
 	// spotLightHelper.update()
 	stats.update();
 	delta = clock.getDelta();
+
 	evolveSmoke();
 	evolveHotspot();
 	animateRain();
+	rotateHotspot();
 	// rainEngine.update(0.01 * 0.5)
 	theta += 0.1;
 	// let radius = 600;
@@ -589,5 +600,9 @@ function initStats() {
 	stats.domElement.style.zIndex = 100;
 	container.appendChild(stats.domElement);
 	return stats;
+}
+
+function rotateHotspot() {
+	hotspot.rotation.y += rotateSpeed;
 }
 //# sourceMappingURL=app.js.map
