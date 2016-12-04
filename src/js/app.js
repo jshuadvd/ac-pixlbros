@@ -40,7 +40,7 @@ var audio = document.createElement('audio');
 var source = document.createElement('source');
 source.src = '/audio/AC-Trailer.mp3';
 audio.appendChild(source);
-audio.play();
+// audio.play();
 
 //************************************************************************//
 //                              Variables                           	  //
@@ -52,7 +52,9 @@ var camera = void 0,
     controls = void 0,
     clock = void 0,
     delta = void 0,
+    deviceControls = void 0,
     h = void 0,
+    hsParticles = [],
     info = void 0,
     layer = false,
     logoGeo = void 0,
@@ -117,6 +119,9 @@ function init() {
 	scene.add(mesh);
 
 	stats = initStats();
+
+	deviceControls = new THREE.DeviceOrientationControls(camera);
+
 	// let logoGeo = THREE.PlaneGeometry( 5, 20, 32 );
 	// let logo = new THREE.MeshBasicMaterial({
 	// 	map: new THREE.TextureLoader().load( 'textures/assassins_creed_logo.jpg' ),
@@ -183,74 +188,16 @@ function init() {
 	// logoMesh.position.z = 800;
 	// scene.add(logoMesh);
 
-	logoGeo = new THREE.PlaneGeometry(1024, 1024);
-	THREE.ImageUtils.crossOrigin = '';
-	logoTexture = THREE.ImageUtils.loadTexture('/textures/AC-Logo.png');
-	logoMaterial = new THREE.MeshLambertMaterial({
-		// color: 0xffffff, 
-		opacity: 2.1,
-		map: logoTexture
-	});
-	logoMesh = new THREE.Mesh(logoGeo, logoMaterial);
-	scene.add(logoMesh);
-
-	// let onKeyDown = function ( event ) {
-	// 	switch ( event.keyCode ) {
-	// 		
-	// 		case 38: // up
-	// 		case 87: // w
-	// 		moveForward = true;
-	// 		break;
-	// 		
-	// 		case 37: // left
-	// 		case 65: // a
-	// 		// lon = event.clientX
-	// 		moveLeft = true; 
-	// 		break;
-	// 		
-	// 		case 40: // down
-	// 		case 83: // s
-	// 		moveBackward = true;
-	// 		break;
-	// 		
-	// 		case 39: // right
-	// 		case 68: // d
-	// 		// lon = event.clientX
-	// 		moveRight = true;
-	// 		break;
-	// 		
-	// 		case 32: // space
-	// 		if ( canJump === true ) velocity.y += 350;
-	// 		canJump = false;
-	// 		break;
-	// 	}
-	// };
-	// 
-	// let onKeyUp = function ( event ) {
-	// 	switch( event.keyCode ) {
-	// 		
-	// 		case 38: // up
-	// 		case 87: // w
-	// 		moveForward = false;
-	// 		break;
-	// 		
-	// 		case 37: // left
-	// 		case 65: // a
-	// 		moveLeft = false;
-	// 		break;
-	// 		
-	// 		case 40: // down
-	// 		case 83: // s
-	// 		moveBackward = false;
-	// 		break;
-	// 		
-	// 		case 39: // right
-	// 		case 68: // d
-	// 		moveRight = false;
-	// 		break;
-	// 		
-	// 	}
-	// };
+	// logoGeo = new THREE.PlaneGeometry(1024, 1024);
+	// THREE.ImageUtils.crossOrigin = ''; 
+	// logoTexture = THREE.ImageUtils.loadTexture('/textures/AC-Logo.png');
+	// logoMaterial = new THREE.MeshLambertMaterial({
+	// 	// color: 0xffffff, 
+	// 	opacity: 2.1, 
+	// 	map: logoTexture
+	// })
+	// logoMesh = new THREE.Mesh(logoGeo, logoMaterial);
+	// scene.add(logoMesh);
 
 	renderer = new THREE.WebGLRenderer({
 		antialias: true,
@@ -259,7 +206,7 @@ function init() {
 	renderer.setPixelRatio(window.devicePixelRatio);
 	renderer.setSize(window.innerWidth, window.innerHeight);
 	container.appendChild(renderer.domElement);
-	container.addEventListener("mousedown", getPosition, false);
+	container.addEventListener("mousemove", getPosition, false);
 
 	document.addEventListener('mousemove', onDocumentMouseMove, false);
 	document.addEventListener('mouseup', onDocumentMouseUp, false);
@@ -303,6 +250,8 @@ function init() {
 	window.addEventListener('resize', onWindowResize, false);
 
 	initRain();
+	buildSmoke();
+	buildHotspot();
 
 	document.body.appendChild(renderer.domElement);
 }
@@ -338,6 +287,38 @@ function evolveSmoke() {
 	var sp = smokeParticles.length;
 	while (sp--) {
 		smokeParticles[sp].rotation.z += delta * 0.2;
+	}
+}
+
+function buildHotspot() {
+	THREE.ImageUtils.crossOrigin = '';
+	var logoTexture = THREE.ImageUtils.loadTexture('/textures/animus_red_logo.png');
+	logoTexture.crossOrigin = 'anonymous';
+	var logoMaterial = new THREE.MeshLambertMaterial({
+		color: 0xffffff,
+		map: logoTexture,
+		transparent: true
+	});
+	var logoGeo = new THREE.PlaneGeometry(75, 75);
+
+	var hotspot = new THREE.Mesh(logoGeo, logoMaterial);
+	hotspot.position.set(10, 10, 10);
+	hotspot.rotation.y = 1.1;
+	scene.add(hotspot);
+
+	// for (let p = 0; p < 50; p++) {
+	//     let particle = new THREE.Mesh(logoGeo, logoMaterial);
+	//     particle.position.set(Math.random()*500-250,Math.random()*500-250,Math.random()*1000-100);
+	//     particle.rotation.z = Math.random() * 360;
+	//     scene.add(particle);
+	//     hsParticles.push(particle);
+	// }	
+}
+
+function evolveHotspot() {
+	var hs = hsParticles.length;
+	while (hs--) {
+		hsParticles[hs].rotation.z += delta * 0.2;
 	}
 }
 
@@ -421,18 +402,14 @@ function animateRain() {
 }
 
 function onWindowResize() {
-
 	camera.aspect = window.innerWidth / window.innerHeight;
 	camera.updateProjectionMatrix();
-
 	renderer.setSize(window.innerWidth, window.innerHeight);
 }
 
 function onDocumentMouseMove(event) {
-
 	isUserInteracting = true;
 	lon = event.clientX;
-
 	// if ( isUserInteracting === true ) {
 	// 	lon = ( onPointerDownPointerX - event.clientX ) * 0.1 + onPointerDownLon;
 	// 	// lat = ( event.clientY - onPointerDownPointerY ) * 0.1 + onPointerDownLat;
@@ -440,29 +417,31 @@ function onDocumentMouseMove(event) {
 }
 
 function onDocumentMouseUp(event) {
-
 	isUserInteracting = false;
 }
 
 // Zoom in & out | Need to limit this to the starting point and a endind point
 function onDocumentMouseWheel(event) {
-
-	camera.fov += event.deltaY * 0.01;
+	// if (camera.fov > 75) {
+	// 	camera.fov = 75
+	// } else {
+	// 	camera.fov += event.deltaY * 0.01;
+	// 	camera.updateProjectionMatrix();
+	// }
+	camera.fov += event.deltaY * 0.02;
 	camera.updateProjectionMatrix();
 }
 
 function animate() {
-
 	requestAnimationFrame(animate);
 	update();
+	renderer.setSize(window.innerWidth, window.innerHeight);
 }
 
 function update() {
-
-	if (isUserInteracting === false) {
-		// lon += 0.1;
-	}
-
+	// if ( isUserInteracting === false ) {
+	// 	// lon += 0.1;
+	// }
 	lat = Math.max(-85, Math.min(85, lat));
 	phi = THREE.Math.degToRad(90 - lat);
 	theta = THREE.Math.degToRad(lon);
@@ -470,7 +449,6 @@ function update() {
 	camera.target.x = 500 * Math.sin(phi) * Math.cos(theta);
 	// camera.target.y = 500 * Math.cos( phi );
 	camera.target.z = 500 * Math.sin(phi) * Math.sin(theta);
-
 	camera.lookAt(camera.target);
 
 	/*
@@ -486,6 +464,7 @@ function update() {
 	stats.update();
 	delta = clock.getDelta();
 	evolveSmoke();
+	evolveHotspot();
 	animateRain();
 	// rainEngine.update(0.01 * 0.5)
 	renderer.render(scene, camera);

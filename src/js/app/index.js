@@ -39,13 +39,13 @@ let audio = document.createElement('audio');
 let source = document.createElement('source');
 source.src = '/audio/AC-Trailer.mp3';
 audio.appendChild(source);
-audio.play();
+// audio.play();
 
 //************************************************************************//
 //                              Variables                           	  //
 //************************************************************************//
 
-let camera, container, color, controls, clock, delta, h, info, layer = false, logoGeo, logoMaterial, logoMesh, logoTexture, marker, mesh, materials = [], mousePos, parameters, particles, rainDensity = 20000, rainGeometry, renderer, raycaster, scene, size, smokeParticles = [], spotLight, spotLightHelper, sprite, stats; 
+let camera, container, color, controls, clock, delta, deviceControls, h, hsParticles = [], info, layer = false, logoGeo, logoMaterial, logoMesh, logoTexture, marker, mesh, materials = [], mousePos, parameters, particles, rainDensity = 20000, rainGeometry, renderer, raycaster, scene, size, smokeParticles = [], spotLight, spotLightHelper, sprite, stats; 
 
 let isUserInteracting = true,
 onMouseDownMouseX = 0, onMouseDownMouseY = 0,
@@ -85,6 +85,8 @@ function init() {
 	scene.add( mesh );
 	
 	stats = initStats()
+	
+	deviceControls = new THREE.DeviceOrientationControls( camera );
 	
 	// let logoGeo = THREE.PlaneGeometry( 5, 20, 32 );
 	// let logo = new THREE.MeshBasicMaterial({
@@ -152,16 +154,16 @@ function init() {
     // logoMesh.position.z = 800;
     // scene.add(logoMesh);
 	
-	logoGeo = new THREE.PlaneGeometry(1024, 1024);
-    THREE.ImageUtils.crossOrigin = ''; 
-    logoTexture = THREE.ImageUtils.loadTexture('/textures/AC-Logo.png');
-    logoMaterial = new THREE.MeshLambertMaterial({
-		// color: 0xffffff, 
-		opacity: 2.1, 
-		map: logoTexture
-	})
-    logoMesh = new THREE.Mesh(logoGeo, logoMaterial);
-    scene.add(logoMesh);
+	// logoGeo = new THREE.PlaneGeometry(1024, 1024);
+    // THREE.ImageUtils.crossOrigin = ''; 
+    // logoTexture = THREE.ImageUtils.loadTexture('/textures/AC-Logo.png');
+    // logoMaterial = new THREE.MeshLambertMaterial({
+	// 	// color: 0xffffff, 
+	// 	opacity: 2.1, 
+	// 	map: logoTexture
+	// })
+    // logoMesh = new THREE.Mesh(logoGeo, logoMaterial);
+    // scene.add(logoMesh);
 	
 	renderer = new THREE.WebGLRenderer({
 		antialias: true,
@@ -170,7 +172,7 @@ function init() {
 	renderer.setPixelRatio( window.devicePixelRatio );
 	renderer.setSize( window.innerWidth, window.innerHeight );
 	container.appendChild( renderer.domElement );
-	container.addEventListener("mousedown", getPosition, false);
+	container.addEventListener("mousemove", getPosition, false);
 
 	document.addEventListener( 'mousemove', onDocumentMouseMove, false );
 	document.addEventListener( 'mouseup', onDocumentMouseUp, false );
@@ -219,6 +221,8 @@ function init() {
 	window.addEventListener( 'resize', onWindowResize, false );
 	
 	initRain();
+	buildSmoke();
+	buildHotspot();
 	
 	document.body.appendChild( renderer.domElement );
 }
@@ -255,6 +259,38 @@ function evolveSmoke() {
     let sp = smokeParticles.length;
     while(sp--) {
         smokeParticles[sp].rotation.z += (delta * 0.2);
+    }
+}
+
+function buildHotspot() {
+	THREE.ImageUtils.crossOrigin = ''; 
+	let logoTexture = THREE.ImageUtils.loadTexture('/textures/animus_red_logo.png');
+	logoTexture.crossOrigin = 'anonymous';
+    let logoMaterial = new THREE.MeshLambertMaterial({
+		color: 0xffffff, 
+		map: logoTexture, 
+		transparent: true
+	});
+    let logoGeo = new THREE.PlaneGeometry(75, 75);
+	
+	let hotspot = new THREE.Mesh(logoGeo, logoMaterial);
+	hotspot.position.set(10, 10, 10);
+	hotspot.rotation.y = 1.1;
+	scene.add(hotspot);
+     
+    // for (let p = 0; p < 50; p++) {
+    //     let particle = new THREE.Mesh(logoGeo, logoMaterial);
+    //     particle.position.set(Math.random()*500-250,Math.random()*500-250,Math.random()*1000-100);
+    //     particle.rotation.z = Math.random() * 360;
+    //     scene.add(particle);
+    //     hsParticles.push(particle);
+    // }	
+}
+
+function evolveHotspot() {
+    let hs = hsParticles.length;
+    while(hs--) {
+        hsParticles[hs].rotation.z += (delta * 0.2);
     }
 }
 
@@ -369,20 +405,27 @@ function onDocumentMouseUp( event ) {
 }
 
 // Zoom in & out | Need to limit this to the starting point and a endind point
-function onDocumentMouseWheel( event ) {	
-	camera.fov += event.deltaY * 0.01;
+function onDocumentMouseWheel( event ) {
+	// if (camera.fov > 75) {
+	// 	camera.fov = 75
+	// } else {
+	// 	camera.fov += event.deltaY * 0.01;
+	// 	camera.updateProjectionMatrix();
+	// }
+	camera.fov += event.deltaY * 0.02;
 	camera.updateProjectionMatrix();
 }
 
 function animate() {	
 	requestAnimationFrame( animate );
 	update();
+	renderer.setSize( window.innerWidth, window.innerHeight );
 }
 
 function update() {		
-	if ( isUserInteracting === false ) {
-		// lon += 0.1;
-	}
+	// if ( isUserInteracting === false ) {
+	// 	// lon += 0.1;
+	// }
 	lat = Math.max( - 85, Math.min( 85, lat ) );
 	phi = THREE.Math.degToRad( 90 - lat );
 	theta = THREE.Math.degToRad( lon );
@@ -405,6 +448,7 @@ function update() {
 	stats.update()
 	delta = clock.getDelta();
 	evolveSmoke();
+	evolveHotspot();
 	animateRain();
 	// rainEngine.update(0.01 * 0.5)
 	renderer.render( scene, camera );
