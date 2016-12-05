@@ -85,12 +85,35 @@ var camera = void 0,
     stats = void 0;
 
 var hotspots = [];
-var hotspotLocations = [[-20, 0, -475], // -475Z
-[145, 0, -475], // -475Z
-[345, 0, -205], // -475Z
-[-235, 0, -435], // -435Z
-[-445, 0, -25], // -405Z
-[450, 0, 90], [400, 0, 225], [65, 0, 400], [-95, 0, 400], [-270, 0, 105]];
+var hotspotObjects = [{
+	content: {
+		header: '',
+		body: ''
+	},
+	feature: {
+		type: 'mesh',
+		location: ''
+	},
+	position: [-20, 0, -475]
+}, {
+	position: [145, 0, -475]
+}, {
+	position: [345, 0, -205]
+}, {
+	position: [-235, 0, -435]
+}, {
+	position: [-445, 0, -25]
+}, {
+	position: [450, 0, 90]
+}, {
+	position: [400, 0, 225]
+}, {
+	position: [65, 0, 400]
+}, {
+	position: [-95, 0, 400]
+}, {
+	position: [-270, 0, 105]
+}];
 
 var isUserInteracting = true,
     onMouseDownMouseX = 0,
@@ -248,7 +271,7 @@ function init() {
 function buildHotspots() {
 	loader = new THREE.JSONLoader();
 	loader.load('/js/ac-logo.js', function (geometry) {
-		hotspots = hotspotLocations.map(function (hotspotLocation, index) {
+		hotspots = hotspotObjects.map(function (hotspotObject, index) {
 			geometry.center();
 			var scale = 10;
 			var hotspot = new THREE.Mesh(geometry, new THREE.MeshBasicMaterial({ color: '#870000', opacity: 1 }));
@@ -256,17 +279,37 @@ function buildHotspots() {
 			var box = new THREE.Box3().setFromObject(hotspot);
 			hotspot.scale.x = hotspot.scale.y = hotspot.scale.z = scale;
 			hotspot.rotation.x = Math.PI;
+			console.log('hotspotObject', hotspotObject);
+			hotspot.hotspot = hotspotObject;
+
+			// auto generate some stuff!
+			// {
+			// 	content: {
+			// 		header: '',
+			// 		body: ''
+			// 	},
+			// 	feature: {
+			// 		type: 'mesh',
+			// 		location: ''
+			// 	},
+			// 	position: [-20, 0, -475],
+			// },
+			hotspot.hotspot.content = {};
+			hotspot.hotspot.content.header = hotspot.name;
+			hotspot.hotspot.content.body = Math.random().toString(36).substring(7);
 
 			// hotspot.scale.x = 8
 			// hotspot.scale.y = 10
 			// hotspot.scale.z = 8
 			// hotspot.rotation.y = 3
 
-			var hitboxGeo = new THREE.BoxBufferGeometry(box.getSize().x * scale * 1.2, 200, 10);
+			var hitboxGeo = new THREE.BoxBufferGeometry(box.getSize().x * scale * 1.2, 200, box.getSize().x * scale * 1.2);
 			var hitboxMat = new THREE.MeshBasicMaterial({ wireframe: true });
 			// // hitboxMat.visible = false
 			var hitboxMesh = new THREE.Mesh(hitboxGeo, hitboxMat);
 			hitboxMesh.name = 'hitbox-' + index;
+
+			var hotspotLocation = hotspotObject.position;
 
 			var group = new THREE.Group();
 			group.name = 'group-' + index;
@@ -477,15 +520,20 @@ function checkRaycasterCollisions() {
 	raycaster.setFromCamera(mouse, camera);
 	var intersects = raycaster.intersectObjects(scene.children, true);
 	// @todo: we need to add deselect here
-	intersects.filter(function (intersect) {
+	var items = intersects.filter(function (intersect) {
 		return intersect.object.name.match(/hitbox/);
-	}).forEach(function (item) {
-		var target = item.object.parent.children[0];
-		if (selectedObjects.indexOf(target) === -1) {
-			addSelectedObject(target);
-			outlinePass.selectedObjects = selectedObjects;
-		}
 	});
+	if (items.length) {
+		items.forEach(function (item) {
+			var target = item.object.parent.children[0];
+			if (selectedObjects.indexOf(target) === -1) {
+				addSelectedObject(target);
+			}
+		});
+	} else {
+		selectedObjects = [];
+	}
+	outlinePass.selectedObjects = selectedObjects;
 }
 
 function hideModal() {
@@ -496,41 +544,47 @@ function hideModal() {
 		} });
 }
 
-function spawnModal() {
+function renderFeatureMesh() {
+	if ($('.feature canvas').length) return;
+	var feature = $('.feature');
+	var featureScene = new THREE.Scene();
+	var featureCamera = new THREE.PerspectiveCamera(70, feature.width() / feature.height(), 1, 1000);
+	var geometry = new THREE.BoxBufferGeometry(200, 200, 200);
+	var material = new THREE.MeshBasicMaterial();
+	var mesh = new THREE.Mesh(geometry, material);
+	scene.add(mesh);
+	var featureRenderer = new THREE.WebGLRenderer();
+	featureRenderer.setPixelRatio(window.devicePixelRatio);
+	featureRenderer.setSize(300, 200);
+	// renderer.setSize(feature.width(), feature.height());
+	feature.append(renderer.domElement);
+	featureAnimate(featureRenderer, featureScene, featureCamera);
+}
+
+function featureAnimate(featureRenderer, featureScene, featureCamera) {
+	console.log('featureRenderer', featureRenderer);
+	// requestAnimationFrame( featureAnimate );
+	// featureRenderer.render( featureScene, featureCamera );
+}
+
+function spawnModal(hotspot) {
 	$('.modal-container .close').on('click', hideModal);
+	$('.modal .content h1').text(hotspot.content.header);
+	$('.modal .content p').text(hotspot.content.body);
+	// renderFeatureMesh();
 }
 
 function onDocumentMouseDown(event) {
 
 	if (selectedObjects.length) {
-		console.log('DO STUFF', camera.fov);
+		console.log('DO STUFF');
+		var _hotspot = selectedObjects[0].hotspot;
 		var duration = 550 / 1000;
 		zoomed = true;
 		TweenMax.to($('.modal-container'), 0.3, { autoAlpha: 1, display: 'block' });
-		TweenMax.to(camera, duration, { fov: 50, onComplete: spawnModal });
+		TweenMax.to(camera, duration, { fov: 50, onComplete: spawnModal(_hotspot) });
 		// selectedObjects[0]
 	}
-
-	// checkRaycasterCollisions();
-
-	// raycaster.setFromCamera(mouse, camera);
-	// let intersects = raycaster.intersectObjects(scene.children, true);
-	// intersects.filter( intersect => intersect.object.name.match(/hitbox/) )
-	// .forEach((item) => {
-	// 	let target = item.object.parent.children[0]
-	// 	// target.material.color.set(Math.random() * 0xffffff)
-	// 	addSelectedObject(target)
-	// 	outlinePass.selectedObjects = selectedObjects
-	// })
-	// intersects.forEach((intersect) => {
-	// 	console.log('intersect', intersect.object.name);
-	// 	let object = intersect.object;
-	// 	if(object.name !== 'scene') {
-	// 		object.parent.children[0].material.color.set(Math.random() * 0xffffff)
-	// 		addSelectedObject(object);
-	// 		outlinePass.selectedObjects = object;
-	// 	}
-	// });
 }
 
 function rotateHotspots() {
@@ -541,7 +595,6 @@ function rotateHotspots() {
 
 function onDocumentMouseMove(event) {
 	isUserInteracting = true;
-	console.log('mousemove', zoomed);
 	if (!zoomed) {
 		lon = event.clientX;
 	}
