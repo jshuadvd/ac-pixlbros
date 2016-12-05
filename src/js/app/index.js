@@ -10,7 +10,7 @@ let onPointerDownPointerX;
 let onPointerDownLon;
 // let onPointerDownLat;
 let blocked = false;
-
+let curPosX = 0;
 
 //************************************************************************//
 //                             Init Loader                                //
@@ -21,14 +21,14 @@ let manager = new THREE.LoadingManager();
 
 manager.onProgress = function (item, loaded, total) {
 	item = 'textures/AC-Logo.png'
-    console.log(item, loaded, total);
+	console.log(item, loaded, total);
 };
 manager.onLoad = function () {
-    console.log('all items loaded');
+	console.log('all items loaded');
 	return item
 };
 manager.onError = function () {
-    console.log('there has been an error');
+	console.log('there has been an error');
 };
 
 
@@ -105,92 +105,68 @@ let outlinePass;
 let composer;
 let effectFXAA;
 let controlsEnabled;
+let showingModal = false;
 
-// var havePointerLock = 'pointerLockElement' in document || 'mozPointerLockElement' in document || 'webkitPointerLockElement' in document;
+var havePointerLock = 'pointerLockElement' in document || 'mozPointerLockElement' in document || 'webkitPointerLockElement' in document;
 
-// if (havePointerLock) {
+if (havePointerLock) {
+	var element = document.body;
+	var pointerlockchange = function(event) {
+		if(showingModal) return;
+		if (document.pointerLockElement === element || document.mozPointerLockElement === element || document.webkitPointerLockElement === element) {
+			controlsEnabled = true;
+			// controls.enabled = true;
+			blocker.style.display = 'none';
+		} else {
+			// controls.enabled = false;
+			controlsEnabled = false;
+			blocker.style.display = '-webkit-box';
+			blocker.style.display = '-moz-box';
+			blocker.style.display = 'box';
+			instructions.style.display = '';
+		}
+	};
 
-//     var element = document.body;
+	var pointerlockerror = function(event) {
+		instructions.style.display = '';
+	};
 
-//     var pointerlockchange = function(event) {
+	// Hook pointer lock state change events
+	document.addEventListener('pointerlockchange', pointerlockchange, false);
+	document.addEventListener('mozpointerlockchange', pointerlockchange, false);
+	document.addEventListener('webkitpointerlockchange', pointerlockchange, false);
 
-//         if (document.pointerLockElement === element || document.mozPointerLockElement === element || document.webkitPointerLockElement === element) {
+	document.addEventListener('pointerlockerror', pointerlockerror, false);
+	document.addEventListener('mozpointerlockerror', pointerlockerror, false);
+	document.addEventListener('webkitpointerlockerror', pointerlockerror, false);
 
-//             controlsEnabled = true;
-//             controls.enabled = true;
+	instructions.addEventListener('click', function(event) {
+		instructions.style.display = 'none';
+		// Ask the browser to lock the pointer
+		pointerLock();
+	}, false);
+} else {
+	instructions.innerHTML = 'Your browser doesn\'t seem to support Pointer Lock API';
+}
 
-//             blocker.style.display = 'none';
-
-//         } else {
-
-//             controls.enabled = false;
-
-//             blocker.style.display = '-webkit-box';
-//             blocker.style.display = '-moz-box';
-//             blocker.style.display = 'box';
-
-//             instructions.style.display = '';
-
-//         }
-
-//     };
-
-//     var pointerlockerror = function(event) {
-
-//         instructions.style.display = '';
-
-//     };
-
-//     // Hook pointer lock state change events
-//     document.addEventListener('pointerlockchange', pointerlockchange, false);
-//     document.addEventListener('mozpointerlockchange', pointerlockchange, false);
-//     document.addEventListener('webkitpointerlockchange', pointerlockchange, false);
-
-//     document.addEventListener('pointerlockerror', pointerlockerror, false);
-//     document.addEventListener('mozpointerlockerror', pointerlockerror, false);
-//     document.addEventListener('webkitpointerlockerror', pointerlockerror, false);
-
-//     instructions.addEventListener('click', function(event) {
-
-//         instructions.style.display = 'none';
-
-//         // Ask the browser to lock the pointer
-//         element.requestPointerLock = element.requestPointerLock || element.mozRequestPointerLock || element.webkitRequestPointerLock;
-
-//         if (/Firefox/i.test(navigator.userAgent)) {
-
-//             var fullscreenchange = function(event) {
-
-//                 if (document.fullscreenElement === element || document.mozFullscreenElement === element || document.mozFullScreenElement === element) {
-
-//                     document.removeEventListener('fullscreenchange', fullscreenchange);
-//                     document.removeEventListener('mozfullscreenchange', fullscreenchange);
-
-//                     element.requestPointerLock();
-//                 }
-
-//             };
-
-//             document.addEventListener('fullscreenchange', fullscreenchange, false);
-//             document.addEventListener('mozfullscreenchange', fullscreenchange, false);
-
-//             element.requestFullscreen = element.requestFullscreen || element.mozRequestFullscreen || element.mozRequestFullScreen || element.webkitRequestFullscreen;
-
-//             element.requestFullscreen();
-
-//         } else {
-
-//             element.requestPointerLock();
-
-//         }
-
-//     }, false);
-
-// } else {
-
-//     instructions.innerHTML = 'Your browser doesn\'t seem to support Pointer Lock API';
-
-// }
+function pointerLock() {
+	element.requestPointerLock = element.requestPointerLock || element.mozRequestPointerLock || element.webkitRequestPointerLock;
+	if (/Firefox/i.test(navigator.userAgent)) {
+		var fullscreenchange = function(event) {
+			if (document.fullscreenElement === element || document.mozFullscreenElement === element || document.mozFullScreenElement === element) {
+				document.removeEventListener('fullscreenchange', fullscreenchange);
+				document.removeEventListener('mozfullscreenchange', fullscreenchange);
+				element.requestPointerLock();
+			}
+		};
+		document.addEventListener('fullscreenchange', fullscreenchange, false);
+		document.addEventListener('mozfullscreenchange', fullscreenchange, false);
+		element.requestFullscreen = element.requestFullscreen || element.mozRequestFullscreen || element.mozRequestFullScreen || element.webkitRequestFullscreen;
+		element.requestFullscreen();
+	} else {
+		element.requestPointerLock();
+	}
+}
 
 init();
 animate();
@@ -235,6 +211,15 @@ function init() {
 	
 	// Build items for raycaster clicks
 	buildHotspots();
+
+	// temp sphere
+	// var sphereMaterial = new THREE.MeshNormalMaterial();
+	// var sphereGeometry = new THREE.SphereGeometry(200, 200, 200);
+	// var sphere = new THREE.Mesh( sphereGeometry, sphereMaterial );
+	// // sphere.position.set(0, 0, 0);
+	// sphere.position.set(0, 0, 200);
+	// // sphere.position.set(-60, 55, 0);
+	// scene.add( sphere );
 
 	controls = new THREE.PointerLockControls(camera);
 	scene.add(controls.getObject());
@@ -392,37 +377,37 @@ function buildHotspots() {
 
 function buildSmoke() {
 	// Smoke Light
-    let light = new THREE.DirectionalLight(0xffffff, 1.5);
-    light.position.set(-1, 0, 1);
-    scene.add(light);
+	let light = new THREE.DirectionalLight(0xffffff, 1.5);
+	light.position.set(-1, 0, 1);
+	scene.add(light);
 	
 	let directionalLight = new THREE.DirectionalLight(0xffffff);
-    directionalLight.position.set(1, 1, 1).normalize();
-    scene.add(directionalLight);
+	directionalLight.position.set(1, 1, 1).normalize();
+	scene.add(directionalLight);
   
-    let smokeTexture = THREE.ImageUtils.loadTexture('https://s3-us-west-2.amazonaws.com/s.cdpn.io/95637/Smoke-Element.png');
-    let smokeMaterial = new THREE.MeshLambertMaterial({
+	let smokeTexture = THREE.ImageUtils.loadTexture('https://s3-us-west-2.amazonaws.com/s.cdpn.io/95637/Smoke-Element.png');
+	let smokeMaterial = new THREE.MeshLambertMaterial({
 		color: 0xffffff, 
 		map: smokeTexture, 
 		transparent: true
 	});
-    let smokeGeo = new THREE.PlaneGeometry(500, 500);
-     
-    for (let p = 0; p < 150; p++) {
-        let particle = new THREE.Mesh(smokeGeo,smokeMaterial);
-        particle.position.set(Math.random()*500-250,Math.random()*500-250,Math.random()*1000-100);
-        particle.rotation.z = Math.random() * 360;
-        scene.add(particle);
-        smokeParticles.push(particle);
-    }	
+	let smokeGeo = new THREE.PlaneGeometry(500, 500);
+	 
+	for (let p = 0; p < 150; p++) {
+		let particle = new THREE.Mesh(smokeGeo,smokeMaterial);
+		particle.position.set(Math.random()*500-250,Math.random()*500-250,Math.random()*1000-100);
+		particle.rotation.z = Math.random() * 360;
+		scene.add(particle);
+		smokeParticles.push(particle);
+	}	
 }
 
 
 function evolveSmoke() {
-    let sp = smokeParticles.length;
-    while(sp--) {
-        smokeParticles[sp].rotation.z += (delta * 0.2);
-    }
+	let sp = smokeParticles.length;
+	while(sp--) {
+		smokeParticles[sp].rotation.z += (delta * 0.2);
+	}
 }
 
 function buildHotspot() {
@@ -462,23 +447,23 @@ function buildHotspot() {
 		// hotspots.push(hotspot)		
 	// }	
 	
-     let light = new THREE.DirectionalLight(0xffffff, 1.5);
+	 let light = new THREE.DirectionalLight(0xffffff, 1.5);
 	 light.position.set(-1, 0, 1);
 	 scene.add(light);
-    // for (let p = 0; p < 50; p++) {
-    //     let particle = new THREE.Mesh(logoGeo, logoMaterial);
-    //     particle.position.set(Math.random()*500-250,Math.random()*500-250,Math.random()*1000-100);
-    //     particle.rotation.z = Math.random() * 360;
-    //     scene.add(particle);
-    //     hsParticles.push(particle);
-    // }	
+	// for (let p = 0; p < 50; p++) {
+	//     let particle = new THREE.Mesh(logoGeo, logoMaterial);
+	//     particle.position.set(Math.random()*500-250,Math.random()*500-250,Math.random()*1000-100);
+	//     particle.rotation.z = Math.random() * 360;
+	//     scene.add(particle);
+	//     hsParticles.push(particle);
+	// }	
 }
 
 function evolveHotspot() {
-    let hs = hsParticles.length;
-    while(hs--) {
-        hsParticles[hs].rotation.z += (delta * 0.2);
-    }
+	let hs = hsParticles.length;
+	while(hs--) {
+		hsParticles[hs].rotation.z += (delta * 0.2);
+	}
 }
 
 function initRain() {
@@ -614,6 +599,8 @@ function checkRaycasterCollisions() {
 
 function hideModal() {
 	let duration = 550/1000
+	showingModal = false;
+	pointerLock();
 	TweenMax.to($('.modal-container') , 0.3, {autoAlpha: 0})
 	TweenMax.to(camera, duration, {fov: 75, onComplete: function() {
 		blocked = false;
@@ -681,13 +668,15 @@ function spawnModal(hotspot) {
 
 function onDocumentMouseDown( event ) {
 
-	if(blocked) {
+	if(!controlsEnabled) return;
 
-	} else if(selectedObjects.length) {
+	if(selectedObjects.length) {
 		console.log('DO STUFF', );
 		let hotspot = selectedObjects[0].hotspot;
 		let duration = 550/1000
-		blocked = true;
+		showingModal = true;
+		controlsEnabled = false;
+		document.exitPointerLock();
 		TweenMax.to($('.modal-container') , 0.3, {autoAlpha: 1})
 		TweenMax.to(camera, duration, {fov: 50, onComplete: spawnModal(hotspot)})
 		// selectedObjects[0]
@@ -700,9 +689,13 @@ function rotateHotspots() {
 
 function onDocumentMouseMove( event ) {
 	isUserInteracting = true;
-	console.log('onDocumentMouseMove');
-	if(!blocked) {
-		lon = event.clientX 
+	
+	var movementX = event.movementX || event.mozMovementX || event.webkitMovementX || 0;
+	var movementY = event.movementY || event.mozMovementY || event.webkitMovementY || 0;
+
+	if(controlsEnabled) {
+		curPosX += movementX;
+		lon = curPosX
 	}
 	// if ( isUserInteracting === true ) {
 	// 	lon = ( onPointerDownPointerX - event.clientX ) * 0.1 + onPointerDownLon;
