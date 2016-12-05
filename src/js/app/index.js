@@ -16,19 +16,19 @@ let curPosX = 0;
 //                             Init Loader                                //
 //************************************************************************//
 
+var bar = new ProgressBar.Path('.st0', {
+	easing: 'easeInOut',
+	duration: 1400
+});
+bar.set(0)
 
-let manager = new THREE.LoadingManager();
-
-manager.onProgress = function (item, loaded, total) {
-	item = 'textures/AC-Logo.png'
-	console.log(item, loaded, total);
-};
-manager.onLoad = function () {
-	console.log('all items loaded');
-	return item
-};
-manager.onError = function () {
-	console.log('there has been an error');
+THREE.DefaultLoadingManager.onProgress = function ( item, loaded, total ) {
+	let percent = loaded/total
+	bar.animate(percent, function() {
+		TweenMax.to($('#loader') , 0.3, {autoAlpha: 0, display: 'none'});
+	});
+	let fixed = (percent*100).toFixed(0);
+	$('text').html(`${fixed}%`);
 };
 
 
@@ -40,7 +40,7 @@ let audio = document.createElement('audio');
 let source = document.createElement('source');
 source.src = '/audio/AC-Trailer.mp3';
 audio.appendChild(source);
-audio.play();
+// audio.play();
 
 //************************************************************************//
 //                              Variables                           	  //

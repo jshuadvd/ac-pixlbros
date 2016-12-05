@@ -18,19 +18,19 @@ var curPosX = 0;
 //                             Init Loader                                //
 //************************************************************************//
 
+var bar = new ProgressBar.Path('.st0', {
+	easing: 'easeInOut',
+	duration: 1400
+});
+bar.set(0);
 
-var manager = new THREE.LoadingManager();
-
-manager.onProgress = function (item, loaded, total) {
-	item = 'textures/AC-Logo.png';
-	console.log(item, loaded, total);
-};
-manager.onLoad = function () {
-	console.log('all items loaded');
-	return item;
-};
-manager.onError = function () {
-	console.log('there has been an error');
+THREE.DefaultLoadingManager.onProgress = function (item, loaded, total) {
+	var percent = loaded / total;
+	bar.animate(percent, function () {
+		TweenMax.to($('#loader'), 0.3, { autoAlpha: 0, display: 'none' });
+	});
+	var fixed = (percent * 100).toFixed(0);
+	$('text').html(fixed + '%');
 };
 
 //************************************************************************//
@@ -41,7 +41,7 @@ var audio = document.createElement('audio');
 var source = document.createElement('source');
 source.src = '/audio/AC-Trailer.mp3';
 audio.appendChild(source);
-audio.play();
+// audio.play();
 
 //************************************************************************//
 //                              Variables                           	  //
