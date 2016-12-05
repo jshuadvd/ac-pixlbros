@@ -625,40 +625,69 @@ function checkRaycasterCollisions() {
 
 function hideModal() {
 	var duration = 550 / 1000;
-	TweenMax.to($('.modal-container'), 0.3, { autoAlpha: 0, display: 'none' });
+	TweenMax.to($('.modal-container'), 0.3, { autoAlpha: 0 });
 	TweenMax.to(camera, duration, { fov: 75, onComplete: function onComplete() {
 			blocked = false;
 		} });
 }
 
 function renderFeatureMesh() {
-	if ($('.feature canvas').length) return;
 	var feature = $('.feature');
-	var featureScene = new THREE.Scene();
-	var featureCamera = new THREE.PerspectiveCamera(70, feature.width() / feature.height(), 1, 1000);
-	var geometry = new THREE.BoxBufferGeometry(200, 200, 200);
-	var material = new THREE.MeshBasicMaterial();
-	var mesh = new THREE.Mesh(geometry, material);
-	scene.add(mesh);
-	var featureRenderer = new THREE.WebGLRenderer();
-	featureRenderer.setPixelRatio(window.devicePixelRatio);
-	featureRenderer.setSize(300, 200);
-	// renderer.setSize(feature.width(), feature.height());
-	feature.append(renderer.domElement);
-	featureAnimate(featureRenderer, featureScene, featureCamera);
-}
 
-function featureAnimate(featureRenderer, featureScene, featureCamera) {
-	console.log('featureRenderer', featureRenderer);
-	// requestAnimationFrame( featureAnimate );
-	// featureRenderer.render( featureScene, featureCamera );
+	if (feature.find('canvas').length) return;
+	var scene = new THREE.Scene();
+	var camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+
+	var renderer = new THREE.WebGLRenderer();
+	renderer.setSize(feature.width(), feature.height());
+	feature.append(renderer.domElement);
+
+	var geometry = new THREE.CubeGeometry(5, 5, 5);
+	var material = new THREE.MeshLambertMaterial({
+		color: 0x00fff0
+	});
+	var cube = new THREE.Mesh(geometry, material);
+	scene.add(cube);
+
+	camera.position.z = 12;
+
+	var pointLight = new THREE.PointLight(0xFFFFFF);
+
+	pointLight.position.x = 10;
+	pointLight.position.y = 50;
+	pointLight.position.z = 130;
+
+	scene.add(pointLight);
+
+	var reqAnimFrame = window.requestAnimationFrame || window.webkitRequestAnimationFrame || window.mozRequestAnimationFrame || window.msRequestAnimationFrame;
+
+	var render = function render() {
+		reqAnimFrame(render);
+
+		var delta = Math.random() * (0.06 - 0.02) + 0.02;
+
+		cube.rotation.x += delta;
+		cube.rotation.y += delta;
+		cube.rotation.z -= delta;
+
+		renderer.render(scene, camera);
+	};
+
+	render();
 }
 
 function spawnModal(hotspot) {
+	$('.modal-container').css({ top: 0 });
 	$('.modal-container .close').on('click', hideModal);
+	$('.overlay').on('click', hideModal);
+	$(document).on('keydown', function (event) {
+		if (event.charCode === 0) {
+			hideModal();
+		}
+	});
 	$('.modal .content h1').text(hotspot.content.header);
 	$('.modal .content p').text(hotspot.content.body);
-	// renderFeatureMesh();
+	renderFeatureMesh();
 }
 
 function onDocumentMouseDown(event) {
@@ -668,7 +697,7 @@ function onDocumentMouseDown(event) {
 		var _hotspot = selectedObjects[0].hotspot;
 		var duration = 550 / 1000;
 		blocked = true;
-		TweenMax.to($('.modal-container'), 0.3, { autoAlpha: 1, display: 'block' });
+		TweenMax.to($('.modal-container'), 0.3, { autoAlpha: 1 });
 		TweenMax.to(camera, duration, { fov: 50, onComplete: spawnModal(_hotspot) });
 		// selectedObjects[0]
 	}
