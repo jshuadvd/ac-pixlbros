@@ -119,7 +119,7 @@ function init() {
 	scene = new THREE.Scene();
 	// scene.fog = new THREE.FogExp2( 0x000000, 0.0008 );
 	// scene.fog = new THREE.FogExp2(0x000000, 0.005);
-	scene.fog = new THREE.Fog(0x000000, 0.0008);
+	// scene.fog = new THREE.Fog(0x000000, 0.0008);
 
 	var geometry = new THREE.SphereGeometry(500, 60, 400);
 	geometry.scale(-1, 1, 1);
@@ -130,6 +130,7 @@ function init() {
 	});
 
 	mesh = new THREE.Mesh(geometry, material);
+	mesh.name = 'scene';
 	scene.add(mesh);
 
 	stats = initStats();
@@ -143,17 +144,18 @@ function init() {
 	buildHotspots();
 
 	var PI2 = Math.PI * 2;
-	particleMaterial = new THREE.SpriteCanvasMaterial({
+	// particleMaterial = new THREE.SpriteCanvasMaterial( {
 
-		color: 0x000000,
-		program: function program(context) {
+	// 	color: 0x000000,
+	// 	program: function ( context ) {
 
-			context.beginPath();
-			context.arc(0, 0, 0.5, 0, PI2, true);
-			context.fill();
-		}
+	// 		context.beginPath();
+	// 		context.arc( 0, 0, 0.5, 0, PI2, true );
+	// 		context.fill();
 
-	});
+	// 	}
+
+	// } );
 
 	// let logoGeo = THREE.PlaneGeometry( 5, 20, 32 );
 	// let logo = new THREE.MeshBasicMaterial({
@@ -251,7 +253,7 @@ function init() {
 	// document.addEventListener( 'keyup', onKeyUp, false );
 	// document.addEventListener("DOMContentLoaded", init, false);
 
-	document.addEventListener('click', click, false);
+	// document.addEventListener('click', click, false);
 
 	document.addEventListener('dragover', function (event) {
 
@@ -296,11 +298,11 @@ function init() {
 function buildHotspots() {
 	loader = new THREE.JSONLoader();
 	loader.load('/js/ac-logo.js', function (geometry) {
-		hotspots = hotspotLocations.map(function (hotspotLocation) {
+		hotspots = hotspotLocations.map(function (hotspotLocation, index) {
 			geometry.center();
 			var scale = 10;
 			var hotspot = new THREE.Mesh(geometry, new THREE.MeshBasicMaterial({ color: '#870000', opacity: 1 }));
-
+			hotspot.name = 'hotspot-' + index;
 			var box = new THREE.Box3().setFromObject(hotspot);
 			hotspot.scale.x = hotspot.scale.y = hotspot.scale.z = scale;
 			hotspot.rotation.x = Math.PI;
@@ -310,12 +312,14 @@ function buildHotspots() {
 			// hotspot.scale.z = 8
 			// hotspot.rotation.y = 3
 
-			var hitboxGeo = new THREE.BoxBufferGeometry(box.getSize().x * scale, 1000, 10);
+			var hitboxGeo = new THREE.BoxBufferGeometry(box.getSize().x * scale * 1.2, 200, 10);
 			var hitboxMat = new THREE.MeshBasicMaterial({ wireframe: true });
 			// // hitboxMat.visible = false
 			var hitboxMesh = new THREE.Mesh(hitboxGeo, hitboxMat);
+			hitboxMesh.name = 'hitbox-' + index;
 
 			var group = new THREE.Group();
+			group.name = 'group-' + index;
 			group.position.set(hotspotLocation[0], hotspotLocation[1], hotspotLocation[2]);
 			scene.add(group);
 			group.add(hotspot);
@@ -324,21 +328,6 @@ function buildHotspots() {
 			return group;
 		});
 	});
-}
-
-function click() {
-	var vector = new THREE.Vector3();
-
-	vector.set(event.clientX / window.innerWidth * 2 - 1, -(event.clientY / window.innerHeight) * 2 + 1, 0.5);
-
-	vector.unproject(camera);
-
-	var dir = vector.sub(camera.position).normalize();
-
-	var distance = -camera.position.z / dir.z;
-
-	var pos = camera.position.clone().add(dir.multiplyScalar(distance));
-	console.log('click', pos);
 }
 
 function buildSmoke() {
@@ -524,34 +513,14 @@ function onDocumentTouchStart(event) {
 }
 
 function onDocumentMouseDown(event) {
-
-	event.preventDefault();
-
-	mouse.x = event.clientX / renderer.domElement.clientWidth * 2 - 1;
-	mouse.y = -(event.clientY / renderer.domElement.clientHeight) * 2 + 1;
-
 	raycaster.setFromCamera(mouse, camera);
-
-	var intersects = raycaster.intersectObjects(objects);
-
-	if (intersects.length > 0) {
-
-		intersects[0].object.material.color.setHex(Math.random() * 0xffffff);
-
-		var particle = new THREE.Sprite(particleMaterial);
-		particle.position.copy(intersects[0].point);
-		particle.scale.x = particle.scale.y = 16;
-		scene.add(particle);
-	}
-
-	/*
- // Parse all the faces
- for ( var i in intersects ) {
- 
- intersects[ i ].face.material[ 0 ].color.setHex( Math.random() * 0xffffff | 0x80000000 );
- 
- }
- */
+	var intersects = raycaster.intersectObjects(scene.children, true);
+	intersects.forEach(function (intersect) {
+		var object = intersect.object;
+		if (object.name !== 'scene') {
+			object.parent.children[0].material.color.set(Math.random() * 0xffffff);
+		}
+	});
 }
 
 function rotateHotspots() {
