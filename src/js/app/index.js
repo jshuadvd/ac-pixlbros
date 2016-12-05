@@ -85,6 +85,15 @@ animate();
 
 function init() {
 
+	var width = window.innerWidth || 1;
+	var height = window.innerHeight || 1;
+	var devicePixelRatio = window.devicePixelRatio || 1;
+	renderer = new THREE.WebGLRenderer( { antialias: false } );
+	renderer.shadowMap.enabled = true;
+	renderer.setClearColor( 0xa0a0a0 );
+	renderer.setPixelRatio( 1 );
+	renderer.setSize( width, height );
+
 	camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 1, 2000 );
 	camera.target = new THREE.Vector3( 0, 0, 0 );
 	scene = new THREE.Scene();
@@ -115,12 +124,12 @@ function init() {
 	scene.add( controls.getObject() );
 	
 	clock = new THREE.Clock();
-	renderer = new THREE.WebGLRenderer({
-		antialias: true,
-		alpha: true,
-	});
-	renderer.setPixelRatio( window.devicePixelRatio );
-	renderer.setSize( window.innerWidth, window.innerHeight );
+	// renderer = new THREE.WebGLRenderer({
+	// 	antialias: true,
+	// 	alpha: true,
+	// });
+	// renderer.setPixelRatio( window.devicePixelRatio );
+	// renderer.setSize( window.innerWidth, window.innerHeight );
 
 	// postprocessing
 	composer = new THREE.EffectComposer( renderer );
@@ -129,13 +138,24 @@ function init() {
 	outlinePass = new THREE.OutlinePass( new THREE.Vector2(window.innerWidth, window.innerHeight), scene, camera);
 
 	outlinePass.edgeStrength = 10.0;
-	outlinePass.edgeGlow = 1.0;
+	outlinePass.edgeGlow = 10.0;
 	outlinePass.edgeThickness = 4.0;
-	outlinePass.pulsePeriod = 0;
-	// outlinePass.visibleEdgeColor = "#ffffff"
-
+	outlinePass.pulsePeriod = 5;
+	outlinePass.visibleEdgeColor = {r: 60, g: 60, b: 60}
 
 	composer.addPass( outlinePass );
+	var onLoad = function(texture) {
+	    outlinePass.patternTexture = texture;
+	    texture.wrapS = THREE.RepeatWrapping;
+	    texture.wrapT = THREE.RepeatWrapping;
+	};
+	var lod = new THREE.TextureLoader();
+	lod.load(
+	    // resource URL
+	    'textures/tri_pattern.jpg',
+	    // Function when resource is loaded
+	    onLoad
+	);
 
 	effectFXAA = new THREE.ShaderPass(THREE.FXAAShader);
 	effectFXAA.uniforms['resolution'].value.set(1 / window.innerWidth, 1 / window.innerHeight );
@@ -432,6 +452,7 @@ function onDocumentTouchStart( event ) {
 }
 
 function addSelectedObject(object) {
+	console.log('addSelectedObject', object.name)
 	selectedObjects = [];
 	selectedObjects.push(object);
 }
@@ -439,14 +460,22 @@ function addSelectedObject(object) {
 function onDocumentMouseDown( event ) {
 	raycaster.setFromCamera(mouse, camera);
 	let intersects = raycaster.intersectObjects(scene.children, true);
-	intersects.forEach((intersect) => { 
-		let object = intersect.object;
-		if(object.name !== 'scene') {
-			object.parent.children[0].material.color.set(Math.random() * 0xffffff)
-			addSelectedObject(object);
-			outlinePass.selectedObjects = object;
-		}
-	});
+	intersects.filter( intersect => intersect.object.name.match(/hitbox/) )
+	.forEach((item) => {
+		let target = item.object.parent.children[0]
+		// target.material.color.set(Math.random() * 0xffffff)
+		addSelectedObject(target)
+		outlinePass.selectedObjects = selectedObjects
+	})
+	// intersects.forEach((intersect) => {
+	// 	console.log('intersect', intersect.object.name);
+	// 	let object = intersect.object;
+	// 	if(object.name !== 'scene') {
+	// 		object.parent.children[0].material.color.set(Math.random() * 0xffffff)
+	// 		addSelectedObject(object);
+	// 		outlinePass.selectedObjects = object;
+	// 	}
+	// });
 }
 
 function rotateHotspots() {
@@ -512,7 +541,7 @@ function update() {
 
 	evolveSmoke();
 	evolveHotspot();
-	animateRain();
+	// animateRain();
 	// rotateHotspot();
 	rotateHotspots();
 	// rainEngine.update(0.01 * 0.5)
