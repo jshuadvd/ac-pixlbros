@@ -3,7 +3,7 @@ let lon = 30;
 // let phi = 0;
 // let theta = 0;
 let fovMin = 75;
-let fovMax = 55;
+let fovMax = 50;
 // let zoomed = false;
 
 let onPointerDownPointerX;
@@ -602,7 +602,7 @@ function hideModal() {
 	showingModal = false;
 	pointerLock();
 	TweenMax.to($('.modal-container') , 0.3, {autoAlpha: 0})
-	TweenMax.to(camera, duration, {fov: 75, onComplete: function() {
+	TweenMax.to(camera, duration, {fov: fovMin, onComplete: function() {
 		blocked = false;
 	}})
 }
@@ -678,7 +678,7 @@ function onDocumentMouseDown( event ) {
 		controlsEnabled = false;
 		document.exitPointerLock();
 		TweenMax.to($('.modal-container') , 0.3, {autoAlpha: 1})
-		TweenMax.to(camera, duration, {fov: 50, onComplete: spawnModal(hotspot)})
+		TweenMax.to(camera, duration, {fov: fovMax, onComplete: spawnModal(hotspot)})
 		// selectedObjects[0]
 	}
 }

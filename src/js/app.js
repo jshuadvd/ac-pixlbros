@@ -5,7 +5,7 @@ var lon = 30;
 // let phi = 0;
 // let theta = 0;
 var fovMin = 75;
-var fovMax = 55;
+var fovMax = 50;
 // let zoomed = false;
 
 var onPointerDownPointerX = void 0;
@@ -614,7 +614,7 @@ function hideModal() {
 	showingModal = false;
 	pointerLock();
 	TweenMax.to($('.modal-container'), 0.3, { autoAlpha: 0 });
-	TweenMax.to(camera, duration, { fov: 75, onComplete: function onComplete() {
+	TweenMax.to(camera, duration, { fov: fovMin, onComplete: function onComplete() {
 			blocked = false;
 		} });
 }
@@ -690,7 +690,7 @@ function onDocumentMouseDown(event) {
 		controlsEnabled = false;
 		document.exitPointerLock();
 		TweenMax.to($('.modal-container'), 0.3, { autoAlpha: 1 });
-		TweenMax.to(camera, duration, { fov: 50, onComplete: spawnModal(_hotspot) });
+		TweenMax.to(camera, duration, { fov: fovMax, onComplete: spawnModal(_hotspot) });
 		// selectedObjects[0]
 	}
 }
