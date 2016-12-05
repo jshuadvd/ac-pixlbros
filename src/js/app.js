@@ -18,35 +18,45 @@ var curPosX = 0;
 //                             Init Loader                                //
 //************************************************************************//
 
-var bar = new ProgressBar.Path('.st0', {
-	easing: 'easeInOut',
-	duration: 800
-});
-bar.set(0);
+var showLoader = false;
 
-var percent = 0.1;
-var int = setInterval(function () {
-	percent += 0.1;
-	if (percent >= 1.0) {
-		clearInterval(int);
-	} else {
-		bar.animate(percent, function () {
-			TweenMax.to($('#loader'), 0.3, { autoAlpha: 0, display: 'none' });
+if (showLoader) {
+	var bar;
+
+	(function () {
+		bar = new ProgressBar.Path('.st0', {
+			easing: 'easeInOut',
+			duration: 800
 		});
-		var fixed = (percent * 100).toFixed(0);
-		$('text').html(fixed + '%');
-	}
-}, 500);
 
-// THREE.DefaultLoadingManager.onProgress = function ( item, loaded, total ) {
-// 	let percent = loaded/total
-// 	bar.animate(percent, function() {
-// 		TweenMax.to($('#loader') , 0.3, {autoAlpha: 0, display: 'none'});
-// 	});
-// 	let fixed = (percent*100).toFixed(0);
-// 	$('text').html(`${fixed}%`);
-// };
+		bar.set(0);
 
+		var percent = 0.1;
+		var int = setInterval(function () {
+			percent += 0.1;
+			if (percent >= 1.0) {
+				clearInterval(int);
+			} else {
+				bar.animate(percent, function () {
+					TweenMax.to($('#loader'), 0.3, { autoAlpha: 0, display: 'none' });
+				});
+				var fixed = (percent * 100).toFixed(0);
+				$('text').html(fixed + '%');
+			}
+		}, 500);
+
+		// THREE.DefaultLoadingManager.onProgress = function ( item, loaded, total ) {
+		// 	let percent = loaded/total
+		// 	bar.animate(percent, function() {
+		// 		TweenMax.to($('#loader') , 0.3, {autoAlpha: 0, display: 'none'});
+		// 	});
+		// 	let fixed = (percent*100).toFixed(0);
+		// 	$('text').html(`${fixed}%`);
+		// };
+	})();
+} else {
+	$('#loader').hide();
+}
 
 //************************************************************************//
 //                             Init Audio                                 //

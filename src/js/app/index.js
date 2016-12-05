@@ -16,34 +16,41 @@ let curPosX = 0;
 //                             Init Loader                                //
 //************************************************************************//
 
-var bar = new ProgressBar.Path('.st0', {
-	easing: 'easeInOut',
-	duration: 800
-});
-bar.set(0)
+let showLoader = false;
 
-let percent = 0.1
-let int = setInterval(function() {
-	percent += 0.1;
-	if(percent >= 1.0) {
-		clearInterval(int);
-	} else {
-		bar.animate(percent, () => {
-			TweenMax.to($('#loader') , 0.3, {autoAlpha: 0, display: 'none'});
-		});
-		let fixed = (percent*100).toFixed(0);
-		$('text').html(`${fixed}%`)
-	}
-}, 500)
+if(showLoader) {
+	var bar = new ProgressBar.Path('.st0', {
+		easing: 'easeInOut',
+		duration: 800
+	});
+	bar.set(0)
 
-// THREE.DefaultLoadingManager.onProgress = function ( item, loaded, total ) {
-// 	let percent = loaded/total
-// 	bar.animate(percent, function() {
-// 		TweenMax.to($('#loader') , 0.3, {autoAlpha: 0, display: 'none'});
-// 	});
-// 	let fixed = (percent*100).toFixed(0);
-// 	$('text').html(`${fixed}%`);
-// };
+	let percent = 0.1
+	let int = setInterval(function() {
+		percent += 0.1;
+		if(percent >= 1.0) {
+			clearInterval(int);
+		} else {
+			bar.animate(percent, () => {
+				TweenMax.to($('#loader') , 0.3, {autoAlpha: 0, display: 'none'});
+			});
+			let fixed = (percent*100).toFixed(0);
+			$('text').html(`${fixed}%`)
+		}
+	}, 500)
+
+	// THREE.DefaultLoadingManager.onProgress = function ( item, loaded, total ) {
+	// 	let percent = loaded/total
+	// 	bar.animate(percent, function() {
+	// 		TweenMax.to($('#loader') , 0.3, {autoAlpha: 0, display: 'none'});
+	// 	});
+	// 	let fixed = (percent*100).toFixed(0);
+	// 	$('text').html(`${fixed}%`);
+	// };
+} else {
+	$('#loader').hide();
+}
+
 
 
 //************************************************************************//
