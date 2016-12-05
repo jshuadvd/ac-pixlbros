@@ -6,7 +6,7 @@ var lon = 30;
 // let theta = 0;
 var fovMin = 75;
 var fovMax = 55;
-var zoomed = void 0;
+var zoomed = false;
 
 var onPointerDownPointerX = void 0;
 var onPointerDownLon = void 0;
@@ -103,6 +103,13 @@ var isUserInteracting = true,
 
 container = document.getElementById('container');
 
+var selectedObjects = [];
+var loader = void 0;
+var renderPass = void 0;
+var outlinePass = void 0;
+var composer = void 0;
+var effectFXAA = void 0;
+
 init();
 animate();
 
@@ -110,16 +117,20 @@ animate();
 //                             Init Scene                                 //
 //************************************************************************//
 
-var loader = void 0;
-
 function init() {
+
+	var width = window.innerWidth || 1;
+	var height = window.innerHeight || 1;
+	var devicePixelRatio = window.devicePixelRatio || 1;
+	renderer = new THREE.WebGLRenderer({ antialias: false });
+	renderer.shadowMap.enabled = true;
+	renderer.setClearColor(0xa0a0a0);
+	renderer.setPixelRatio(1);
+	renderer.setSize(width, height);
 
 	camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 1, 2000);
 	camera.target = new THREE.Vector3(0, 0, 0);
 	scene = new THREE.Scene();
-	// scene.fog = new THREE.FogExp2( 0x000000, 0.0008 );
-	// scene.fog = new THREE.FogExp2(0x000000, 0.005);
-	// scene.fog = new THREE.Fog(0x000000, 0.0008);
 
 	var geometry = new THREE.SphereGeometry(500, 60, 400);
 	geometry.scale(-1, 1, 1);
@@ -143,103 +154,48 @@ function init() {
 	// Build items for raycaster clicks
 	buildHotspots();
 
-	var PI2 = Math.PI * 2;
-	// particleMaterial = new THREE.SpriteCanvasMaterial( {
-
-	// 	color: 0x000000,
-	// 	program: function ( context ) {
-
-	// 		context.beginPath();
-	// 		context.arc( 0, 0, 0.5, 0, PI2, true );
-	// 		context.fill();
-
-	// 	}
-
-	// } );
-
-	// let logoGeo = THREE.PlaneGeometry( 5, 20, 32 );
-	// let logo = new THREE.MeshBasicMaterial({
-	// 	map: new THREE.TextureLoader().load( 'textures/assassins_creed_logo.jpg' ),
-	// })
-
-	// let logoMesh = new THREE.Mesh(logoGeo, logo);
-	// scene.add(logoMesh)
-	// 
-
-
-	// let spotLight = new THREE.SpotLight(0xffffff, 40, 40);
-	// camera.add(spotLight);
-	// spotLight.position.set(0, 0,1);
-	// spotLight.target = mesh;
-	// add light
-	// let light = new THREE.DirectionalLight(0xffffff, 1);
-	// light.position.set(0,0,0);
-	// scene.add(light);
-
-	// let light = new THREE.SpotLight(0xffffff, 2.0, 1000);
-	// light.target = mesh;
-	// scene.add(light)
-	// 
-	// let lightHelper = new THREE.SpotLightHelper(light);
-	// scene.add(lightHelper)
-
-	// spotLight = new THREE.SpotLight( 0xffffff, 2, 100 );
-	// spotLight.position.set(0, 0, 0 );
-	// spotLight.target = mesh
-	// spotLight.position.set(20, 20, 20);
-	// spotLight.castShadow = true;
-	// spotLight.angle = Math.PI / 4;
-	// spotLight.penumbra = 0.05;
-	// spotLight.decay = 2;
-	// spotLight.distance = 200;
-	// spotLight.shadow.mapSize.width = 100;
-	// spotLight.shadow.mapSize.height = 100;
-	// spotLight.shadow.camera.near = 1;
-	// spotLight.shadow.camera.far = 10;
-	// spotLight.position.set(-20, 60, -10);
-	// spotLight.castShadow = true;
-	// scene.add( spotLight );
-	// camera.add(spotLight);
-	// scene.add(camera)
-
-	// spotLightHelper = new THREE.SpotLightHelper( spotLight );
-	// scene.add( spotLightHelper );
-
-	// marker = new THREE.Object3D();
-	// marker.position.set(400, 300, 400);
-	// marker.add(spotLight);
-	// scene.add(marker);
-
 	controls = new THREE.PointerLockControls(camera);
 	scene.add(controls.getObject());
 
 	clock = new THREE.Clock();
+	// renderer = new THREE.WebGLRenderer({
+	// 	antialias: true,
+	// 	alpha: true,
+	// });
+	// renderer.setPixelRatio( window.devicePixelRatio );
+	// renderer.setSize( window.innerWidth, window.innerHeight );
 
-	// logoGeo = new THREE.PlaneGeometry(300,300);
-	// THREE.ImageUtils.crossOrigin = ''; //Need this to pull in crossdomain images from AWS
-	// logoTexture = THREE.ImageUtils.loadTexture('https://s3-us-west-2.amazonaws.com/s.cdpn.io/95637/quickText.png');
-	// logoMaterial = new THREE.MeshLambertMaterial({color: 0x00ffff, opacity: 0.1, map: logoTexture, transparent: true, blending: THREE.AdditiveBlending})
-	// logoMesh = new THREE.Mesh(logoGeo, logoMaterial);
-	// logoMesh.position.z = 800;
-	// scene.add(logoMesh);
+	// postprocessing
+	composer = new THREE.EffectComposer(renderer);
+	renderPass = new THREE.RenderPass(scene, camera);
+	composer.addPass(renderPass);
+	outlinePass = new THREE.OutlinePass(new THREE.Vector2(window.innerWidth, window.innerHeight), scene, camera);
 
-	// logoGeo = new THREE.PlaneGeometry(1024, 1024);
-	// THREE.ImageUtils.crossOrigin = ''; 
-	// logoTexture = THREE.ImageUtils.loadTexture('/textures/AC-Logo.png');
-	// logoMaterial = new THREE.MeshLambertMaterial({
-	// 	// color: 0xffffff, 
-	// 	opacity: 2.1, 
-	// 	map: logoTexture
-	// })
-	// logoMesh = new THREE.Mesh(logoGeo, logoMaterial);
-	// scene.add(logoMesh);
+	outlinePass.edgeStrength = 10.0;
+	outlinePass.edgeGlow = 10.0;
+	outlinePass.edgeThickness = 4.0;
+	outlinePass.pulsePeriod = 5;
+	outlinePass.visibleEdgeColor = { r: 60, g: 60, b: 60 };
 
-	renderer = new THREE.WebGLRenderer({
-		antialias: true,
-		alpha: true
-	});
-	renderer.setPixelRatio(window.devicePixelRatio);
-	renderer.setSize(window.innerWidth, window.innerHeight);
+	composer.addPass(outlinePass);
+	// @todo: prob dont need this texture but SHRUG
+	var onLoad = function onLoad(texture) {
+		outlinePass.patternTexture = texture;
+		texture.wrapS = THREE.RepeatWrapping;
+		texture.wrapT = THREE.RepeatWrapping;
+	};
+	var lod = new THREE.TextureLoader();
+	lod.load(
+	// resource URL
+	'textures/tri_pattern.jpg',
+	// Function when resource is loaded
+	onLoad);
+
+	effectFXAA = new THREE.ShaderPass(THREE.FXAAShader);
+	effectFXAA.uniforms['resolution'].value.set(1 / window.innerWidth, 1 / window.innerHeight);
+	effectFXAA.renderToScreen = true;
+	composer.addPass(effectFXAA);
+
 	container.appendChild(renderer.domElement);
 	container.addEventListener("mousemove", getPosition, false);
 
@@ -248,12 +204,6 @@ function init() {
 	document.addEventListener('mouseup', onDocumentMouseUp, false);
 	document.addEventListener('touchstart', onDocumentTouchStart, false);
 	document.addEventListener('wheel', onDocumentMouseWheel, false);
-	// document.addEventListener( 'mousedown', onDocumentMouseDown, false );
-	// document.addEventListener( 'keydown', onKeyDown, false );
-	// document.addEventListener( 'keyup', onKeyUp, false );
-	// document.addEventListener("DOMContentLoaded", init, false);
-
-	// document.addEventListener('click', click, false);
 
 	document.addEventListener('dragover', function (event) {
 
@@ -500,9 +450,14 @@ function animateRain() {
 }
 
 function onWindowResize() {
-	camera.aspect = window.innerWidth / window.innerHeight;
+	var width = window.innerWidth || 1;
+	var height = window.innerHeight || 1;
+	var devicePixelRatio = window.devicePixelRatio || 1;
+	camera.aspect = width / height;
 	camera.updateProjectionMatrix();
-	renderer.setSize(window.innerWidth, window.innerHeight);
+	renderer.setSize(width, height);
+	composer.setSize(width, height);
+	effectFXAA.uniforms['resolution'].value.set(1 / window.innerWidth, 1 / window.innerHeight);
 }
 
 function onDocumentTouchStart(event) {
@@ -512,15 +467,70 @@ function onDocumentTouchStart(event) {
 	onDocumentMouseDown(event);
 }
 
-function onDocumentMouseDown(event) {
+function addSelectedObject(object) {
+	console.log('addSelectedObject', object.name);
+	selectedObjects = [];
+	selectedObjects.push(object);
+}
+
+function checkRaycasterCollisions() {
 	raycaster.setFromCamera(mouse, camera);
 	var intersects = raycaster.intersectObjects(scene.children, true);
-	intersects.forEach(function (intersect) {
-		var object = intersect.object;
-		if (object.name !== 'scene') {
-			object.parent.children[0].material.color.set(Math.random() * 0xffffff);
+	// @todo: we need to add deselect here
+	intersects.filter(function (intersect) {
+		return intersect.object.name.match(/hitbox/);
+	}).forEach(function (item) {
+		var target = item.object.parent.children[0];
+		if (selectedObjects.indexOf(target) === -1) {
+			addSelectedObject(target);
+			outlinePass.selectedObjects = selectedObjects;
 		}
 	});
+}
+
+function hideModal() {
+	var duration = 550 / 1000;
+	TweenMax.to($('.modal-container'), 0.3, { autoAlpha: 0, display: 'none' });
+	TweenMax.to(camera, duration, { fov: 75, onComplete: function onComplete() {
+			zoomed = false;
+		} });
+}
+
+function spawnModal() {
+	$('.modal-container .close').on('click', hideModal);
+}
+
+function onDocumentMouseDown(event) {
+
+	if (selectedObjects.length) {
+		console.log('DO STUFF', camera.fov);
+		var duration = 550 / 1000;
+		zoomed = true;
+		TweenMax.to($('.modal-container'), 0.3, { autoAlpha: 1, display: 'block' });
+		TweenMax.to(camera, duration, { fov: 50, onComplete: spawnModal });
+		// selectedObjects[0]
+	}
+
+	// checkRaycasterCollisions();
+
+	// raycaster.setFromCamera(mouse, camera);
+	// let intersects = raycaster.intersectObjects(scene.children, true);
+	// intersects.filter( intersect => intersect.object.name.match(/hitbox/) )
+	// .forEach((item) => {
+	// 	let target = item.object.parent.children[0]
+	// 	// target.material.color.set(Math.random() * 0xffffff)
+	// 	addSelectedObject(target)
+	// 	outlinePass.selectedObjects = selectedObjects
+	// })
+	// intersects.forEach((intersect) => {
+	// 	console.log('intersect', intersect.object.name);
+	// 	let object = intersect.object;
+	// 	if(object.name !== 'scene') {
+	// 		object.parent.children[0].material.color.set(Math.random() * 0xffffff)
+	// 		addSelectedObject(object);
+	// 		outlinePass.selectedObjects = object;
+	// 	}
+	// });
 }
 
 function rotateHotspots() {
@@ -531,7 +541,10 @@ function rotateHotspots() {
 
 function onDocumentMouseMove(event) {
 	isUserInteracting = true;
-	lon = event.clientX;
+	console.log('mousemove', zoomed);
+	if (!zoomed) {
+		lon = event.clientX;
+	}
 	// if ( isUserInteracting === true ) {
 	// 	lon = ( onPointerDownPointerX - event.clientX ) * 0.1 + onPointerDownLon;
 	// 	// lat = ( event.clientY - onPointerDownPointerY ) * 0.1 + onPointerDownLat;
@@ -588,9 +601,11 @@ function update() {
 
 	evolveSmoke();
 	evolveHotspot();
-	animateRain();
+	// animateRain();
 	// rotateHotspot();
 	rotateHotspots();
+
+	checkRaycasterCollisions();
 	// rainEngine.update(0.01 * 0.5)
 	theta += 0.1;
 	// let radius = 600;
@@ -598,7 +613,12 @@ function update() {
 	// camera.position.y = radius * Math.sin( THREE.Math.degToRad( theta ) );
 	// camera.position.z = radius * Math.cos( THREE.Math.degToRad( theta ) );
 	// camera.lookAt( scene.position );
-	renderer.render(scene, camera);
+	// renderer.render( scene, camera );
+	camera.updateProjectionMatrix();
+	composer.render();
+	// renderer.autoClear = true;
+	// renderer.setClearColor( 0xfff0f0 );
+	// renderer.setClearAlpha( 0.0 );
 }
 
 function getPosition(event) {
@@ -618,6 +638,8 @@ function getPosition(event) {
 	// alert("x: " + x + "  y: " + y);
 	console.log("x: " + x + "  y: " + y);
 }
+
+TweenLite.ticker.addEventListener("tick", render);
 
 function initStats() {
 	// stats.setMode(0); // 0: fps, 1: ms
