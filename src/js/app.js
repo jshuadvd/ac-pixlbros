@@ -178,6 +178,7 @@ function init() {
 	outlinePass.visibleEdgeColor = { r: 60, g: 60, b: 60 };
 
 	composer.addPass(outlinePass);
+	// @todo: prob dont need this texture but SHRUG
 	var onLoad = function onLoad(texture) {
 		outlinePass.patternTexture = texture;
 		texture.wrapS = THREE.RepeatWrapping;
@@ -472,17 +473,28 @@ function addSelectedObject(object) {
 	selectedObjects.push(object);
 }
 
-function onDocumentMouseDown(event) {
+function checkRaycasterCollisions() {
 	raycaster.setFromCamera(mouse, camera);
 	var intersects = raycaster.intersectObjects(scene.children, true);
 	intersects.filter(function (intersect) {
 		return intersect.object.name.match(/hitbox/);
 	}).forEach(function (item) {
 		var target = item.object.parent.children[0];
-		// target.material.color.set(Math.random() * 0xffffff)
 		addSelectedObject(target);
 		outlinePass.selectedObjects = selectedObjects;
 	});
+}
+
+function onDocumentMouseDown(event) {
+	// raycaster.setFromCamera(mouse, camera);
+	// let intersects = raycaster.intersectObjects(scene.children, true);
+	// intersects.filter( intersect => intersect.object.name.match(/hitbox/) )
+	// .forEach((item) => {
+	// 	let target = item.object.parent.children[0]
+	// 	// target.material.color.set(Math.random() * 0xffffff)
+	// 	addSelectedObject(target)
+	// 	outlinePass.selectedObjects = selectedObjects
+	// })
 	// intersects.forEach((intersect) => {
 	// 	console.log('intersect', intersect.object.name);
 	// 	let object = intersect.object;
@@ -562,6 +574,8 @@ function update() {
 	// animateRain();
 	// rotateHotspot();
 	rotateHotspots();
+
+	checkRaycasterCollisions();
 	// rainEngine.update(0.01 * 0.5)
 	theta += 0.1;
 	// let radius = 600;
