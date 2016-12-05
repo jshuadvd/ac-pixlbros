@@ -4,7 +4,7 @@ let lon = 30;
 // let theta = 0;
 let fovMin = 75;
 let fovMax = 55;
-let zoomed;
+let zoomed = false;
 
 let onPointerDownPointerX;
 let onPointerDownLon;
@@ -215,6 +215,7 @@ function init() {
 	buildHotspot();
 	
 	document.body.appendChild( renderer.domElement );
+
 }
 
 
@@ -461,15 +462,42 @@ function addSelectedObject(object) {
 function checkRaycasterCollisions() {
 	raycaster.setFromCamera(mouse, camera);
 	let intersects = raycaster.intersectObjects(scene.children, true);
+	// @todo: we need to add deselect here
 	intersects.filter( intersect => intersect.object.name.match(/hitbox/) )
 	.forEach((item) => {
 		let target = item.object.parent.children[0]
-		addSelectedObject(target)
-		outlinePass.selectedObjects = selectedObjects
+		if(selectedObjects.indexOf(target) === -1) {
+			addSelectedObject(target)
+			outlinePass.selectedObjects = selectedObjects
+		}
 	})
 }
 
+function hideModal() {
+	let duration = 550/1000
+	TweenMax.to($('.modal-container') , 0.3, {autoAlpha: 0, display: 'none'})
+	TweenMax.to(camera, duration, {fov: 75, onComplete: function() {
+		zoomed = false;
+	}})
+}
+
+function spawnModal() {
+	$('.modal-container .close').on('click', hideModal);
+}
+
 function onDocumentMouseDown( event ) {
+
+	if(selectedObjects.length) {
+		console.log('DO STUFF', camera.fov);
+		let duration = 550/1000
+		zoomed = true;
+		TweenMax.to($('.modal-container') , 0.3, {autoAlpha: 1, display: 'block'})
+		TweenMax.to(camera, duration, {fov: 50, onComplete: spawnModal})
+		// selectedObjects[0]
+	}
+
+	// checkRaycasterCollisions();
+
 	// raycaster.setFromCamera(mouse, camera);
 	// let intersects = raycaster.intersectObjects(scene.children, true);
 	// intersects.filter( intersect => intersect.object.name.match(/hitbox/) )
@@ -496,7 +524,10 @@ function rotateHotspots() {
 
 function onDocumentMouseMove( event ) {
 	isUserInteracting = true;
-	lon = event.clientX 
+	console.log('mousemove', zoomed)
+	if(!zoomed) {
+		lon = event.clientX 
+	}
 	// if ( isUserInteracting === true ) {
 	// 	lon = ( onPointerDownPointerX - event.clientX ) * 0.1 + onPointerDownLon;
 	// 	// lat = ( event.clientY - onPointerDownPointerY ) * 0.1 + onPointerDownLat;
@@ -566,6 +597,7 @@ function update() {
 	// camera.position.z = radius * Math.cos( THREE.Math.degToRad( theta ) );
 	// camera.lookAt( scene.position );
 	// renderer.render( scene, camera );
+	camera.updateProjectionMatrix();
 	composer.render();
 	// renderer.autoClear = true;
 	// renderer.setClearColor( 0xfff0f0 );
@@ -590,6 +622,8 @@ function getPosition(event) {
 	// alert("x: " + x + "  y: " + y);
 	console.log("x: " + x + "  y: " + y);
 }
+
+TweenLite.ticker.addEventListener("tick", render);
 
 function initStats() {
 	// stats.setMode(0); // 0: fps, 1: ms
