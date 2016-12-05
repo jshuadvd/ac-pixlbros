@@ -62,7 +62,7 @@ let hotspotObjects = [
 		position: [450, 0, 150],
 	},
 	{
-		position: [200, 0, 150],
+		position: [370, 0, 280],
 	},
 	{
 		position: [25, 0, 400],
