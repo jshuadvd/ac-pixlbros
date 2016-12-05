@@ -103,15 +103,15 @@ var hotspotObjects = [{
 }, {
 	position: [-115, 0, 400]
 }, {
-	position: [-270, 0, 105]
+	position: [-400, 0, 205]
 }, {
-	position: [-445, 0, -25]
+	position: [-445, 0, 30]
 }, {
-	position: [-235, 0, -435]
+	position: [-265, 0, -380]
 }, {
-	position: [-20, 0, -475]
+	position: [-60, 0, -455]
 }, {
-	position: [145, 0, -475]
+	position: [125, 0, -455]
 }, {
 	position: [400, 0, -205]
 }];
