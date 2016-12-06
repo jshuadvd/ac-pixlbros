@@ -61,7 +61,7 @@ let audio = document.createElement('audio');
 let source = document.createElement('source');
 source.src = '/audio/AC-Trailer.mp3';
 audio.appendChild(source);
-// audio.play();
+audio.play();
 
 //************************************************************************//
 //                              Variables                           	  //
