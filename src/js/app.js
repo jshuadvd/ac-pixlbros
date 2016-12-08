@@ -58,6 +58,12 @@ if (showLoader) {
 	$('#loader').hide();
 }
 
+var closePath = new ProgressBar.Path('#close-path', {
+	easing: 'easeInOut',
+	duration: 500
+});
+closePath.set(0);
+
 //************************************************************************//
 //                             Init Audio                                 //
 //************************************************************************//
@@ -692,6 +698,15 @@ function renderFeatureMesh() {
 function spawnModal(hotspot) {
 	$('.modal-container').css({ top: 0 });
 	$('.modal-container .close').on('click', hideModal);
+
+	$('.modal .close').on('mouseover', function () {
+		// console.log('mouseover');
+		closePath.animate(1);
+	});
+	$('.modal .close').on('mouseout', function () {
+		closePath.set(0);
+	});
+
 	$('.overlay').on('click', hideModal);
 	$(document).on('keydown', function (event) {
 		if (event.charCode === 0) {

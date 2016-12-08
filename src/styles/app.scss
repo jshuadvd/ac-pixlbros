@@ -94,6 +94,12 @@ a {
 	font-size: 20px;
 	text-decoration: none;
 }
+
+@keyframes hideshow {
+  from { stroke-width: 2; }
+  to { stroke-width: 6; }
+}
+
 .modal-container {
 	position: absolute;
 	top: -100%;
@@ -148,15 +154,42 @@ a {
 	// 	float: left;
 	// 	background-color: #000;
 	// }
-	// .close {
-	// 	&:hover {
-	// 		cursor: pointer;
-	// 	}
-	// 	position: absolute;
-	// 	top: 20px;
-	// 	right: 10px;
-	// 	font-size: 40px;
-	// 	line-height: 0;
-	// 	color: $red;
-	// }
+	.content {
+		position: absolute;
+		top: 35px;
+		left: 0;
+		text-align: center;
+		width: 100%;
+		padding-top: 20px;
+		img {
+			width: 40.222575516693%;
+			height: auto;
+		}
+	}
+	.close {
+		&:hover {
+			cursor: pointer;
+			line {
+				// animation: hideshow 350ms;
+				stroke-width: 3;
+			}
+		}
+		position: absolute;
+		top: 17px;
+		right: 39px;
+		font-size: 40px;
+		line-height: 0;
+		color: #720001;
+		width: 80px;
+		height: 80px;
+		z-index: 1;
+		path {
+			stroke: #bad3ee;
+			fill: none;
+		}
+		line {
+			stroke: #bad3ee;
+			transition: all 350ms ease;
+		}
+	}
 }
