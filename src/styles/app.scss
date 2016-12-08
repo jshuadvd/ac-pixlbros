@@ -1,5 +1,11 @@
 @import 'normalize';
-
+$red: #720001;
+html {
+  box-sizing: border-box;
+}
+*, *:before, *:after {
+  box-sizing: inherit;
+}
 body {
 	// lame hack to hide cursor, we should use pointerLock instead: https://threejs.org/examples/misc_controls_pointerlock.html
 	// cursor: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAAZdEVYdFNvZnR3YXJlAFBhaW50Lk5FVCB2My41LjbQg61aAAAADUlEQVQYV2P4//8/IwAI/QL/+TZZdwAAAABJRU5ErkJggg=='),
@@ -16,6 +22,63 @@ html, body {
 	padding: 0px;
 	overflow: hidden;
 }
+#loader {
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	text-align: center;
+	background-color: #000;
+	z-index: 2;
+	svg {
+		position: relative;
+		top: 50%;
+		transform: translate(0, -50%);
+		width: 40%;
+		height: auto;
+		fill: #fff;
+		path {
+			stroke: $red;
+		}
+		text {
+			fill: $red;
+		}
+	}
+}
+#blocker {
+	position: absolute;
+	width: 100%;
+	height: 100%;
+	background-color: rgba(0,0,0,0.5);
+	// display: none;
+	svg {
+		transform: scale(0.7);
+		margin-top: 25px;
+	}
+	svg path {
+		fill: #fff;
+	}
+}
+#instructions {
+	width: 100%;
+	height: 100%;
+	display: -webkit-box;
+	display: -moz-box;
+	display: box;
+	-webkit-box-orient: horizontal;
+	-moz-box-orient: horizontal;
+	box-orient: horizontal;
+	-webkit-box-pack: center;
+	-moz-box-pack: center;
+	box-pack: center;
+	-webkit-box-align: center;
+	-moz-box-align: center;
+	box-align: center;
+	color: #ffffff;
+	text-align: center;
+	cursor: pointer;
+}
 #info {
 	position: absolute;
 	top: 0px; width: 100%;
@@ -30,4 +93,58 @@ a {
 	color: #ffffff;
 	font-size: 20px;
 	text-decoration: none;
+}
+.modal-container {
+	position: absolute;
+	top: -100%;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	// display: none;
+	.overlay {
+		&:hover {
+			cursor: pointer;
+		}
+		position: absolute;
+		top: 0;
+		left: 0;
+		width: 100%;
+		height: 100%;
+		background: rgba(0,0,0,0.8)
+	}
+	.modal {
+		position: absolute;
+		width: 80%;
+		overflow: auto;
+		color: #fff;
+		font-size: 20px;
+		z-index: 1;
+		left: 50%;
+		top: 50%;
+		transform: translate(-50%, -50%);
+	}
+	.feature {
+		width: 40%;
+		min-height: 200px;
+		float: left;
+	}
+	.content {
+		width: 60%;
+		min-height: 200px;
+		border: 4px solid $red;
+		padding: 20px;
+		float: left;
+		background-color: #000;
+	}
+	.close {
+		&:hover {
+			cursor: pointer;
+		}
+		position: absolute;
+		top: 20px;
+		right: 10px;
+		font-size: 40px;
+		line-height: 0;
+		color: $red;
+	}
 }
