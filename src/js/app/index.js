@@ -581,7 +581,9 @@ function update() {
 	// camera.position.y = radius * Math.sin( THREE.Math.degToRad( theta ) );
 	// camera.position.z = radius * Math.cos( THREE.Math.degToRad( theta ) );
 	// camera.lookAt( scene.position );
-	deviceControls.update();
+	if (window.innerWidth < 800) {
+		deviceControls.update();
+	}
 	// deviceControls.connect();
 	renderer.render( scene, camera );
 }
