@@ -258,7 +258,7 @@ function init() {
 
 	stats = initStats();
 
-	deviceControls = new THREE.DeviceOrientationControls(camera);
+	deviceControls = new THREE.DeviceOrientationControls(camera, container);
 
 	raycaster = new THREE.Raycaster();
 	mouse = new THREE.Vector2();
@@ -804,6 +804,11 @@ function update() {
 	// camera.position.y = radius * Math.sin( THREE.Math.degToRad( theta ) );
 	// camera.position.z = radius * Math.cos( THREE.Math.degToRad( theta ) );
 	// camera.lookAt( scene.position );
+	if (window.innerWidth < 800) {
+		deviceControls.update();
+	}
+	// deviceControls.connect();
+	renderer.render(scene, camera);
 	// renderer.render( scene, camera );
 	camera.updateProjectionMatrix();
 	composer.render();
