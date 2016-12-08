@@ -136,15 +136,43 @@ a {
 		float: left;
 		background-color: #000;
 	}
-	.close {
-		&:hover {
-			cursor: pointer;
+	// .close {
+	// 	&:hover {
+	// 		cursor: pointer;
+	// 	}
+	// 	position: absolute;
+	// 	top: 20px;
+	// 	right: 10px;
+	// 	font-size: 40px;
+	// 	line-height: 0;
+	// 	color: $red;
+	// }
+}
+
+.modal {
+	polygon {
+		fill: none;
+	}
+	.modal-bg {
+		.bg {
+			fill: rgba(186,211,238, 0.3);
 		}
-		position: absolute;
-		top: 20px;
-		right: 10px;
-		font-size: 40px;
-		line-height: 0;
-		color: $red;
+		polygon {
+			stroke: #bad3ee;
+		}
+	}
+	.blur {
+		stroke: #bad3ee;
+		filter: url(#blur-filter);
+	}
+	.close {
+		.hit-box {
+			stroke: none;
+			fill: rgba(0,0,0,0);
+			&:hover {
+				cursor: pointer;
+			}
+		}
+		stroke: #bad3ee;
 	}
 }
