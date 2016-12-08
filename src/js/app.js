@@ -58,11 +58,17 @@ if (showLoader) {
 	$('#loader').hide();
 }
 
-var closePath = new ProgressBar.Path('#close-path', {
-	easing: 'easeInOut',
-	duration: 500
+$(document).ready(function () {
+	$('.outer-path').each(function (index, outerPath) {
+		var $path = $(outerPath);
+		var progressBar = new ProgressBar.Path(outerPath, {
+			easing: 'easeInOut',
+			duration: 500
+		});
+		progressBar.set(0);
+		$path.data('progress', progressBar);
+	});
 });
-closePath.set(0);
 
 //************************************************************************//
 //                             Init Audio                                 //
@@ -667,12 +673,11 @@ function spawnModal(hotspot) {
 	$('.modal-container').css({ top: 0 });
 	$('.modal-container .close').on('click', hideModal);
 
-	$('.modal .close').on('mouseover', function () {
-		// console.log('mouseover');
-		closePath.animate(1);
+	$('.button-outer').on('mouseenter', function () {
+		$(this).find('.outer-path').data('progress').animate(1);
 	});
-	$('.modal .close').on('mouseout', function () {
-		closePath.set(0);
+	$('.button-outer').on('mouseleave', function (event) {
+		$(event.target).find('.outer-path').data('progress').set(0);
 	});
 
 	$('.overlay').on('click', hideModal);

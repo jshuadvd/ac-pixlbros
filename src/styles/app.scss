@@ -166,6 +166,30 @@ a {
 			height: auto;
 		}
 	}
+	.share {
+		position: absolute;
+		left: 50%;
+		bottom: 40px;
+		transform: translate(-50%,0);
+		width: 27.37%;
+		.button-outer {
+			width: 33%;
+			float: left;
+			&:hover {
+				cursor: pointer;
+			}
+		}
+		svg {
+			fill: none;
+		}
+		path {
+			stroke: #bad3ee;
+		}
+		.fill {
+			fill: #bad3ee;
+			stroke: none;
+		}
+	}
 	.close {
 		&:hover {
 			cursor: pointer;
