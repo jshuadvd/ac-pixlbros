@@ -761,14 +761,14 @@ function onDocumentMouseUp(event) {
 
 // Zoom in & out | Need to limit this to the starting point and a endind point
 function onDocumentMouseWheel(event) {
-	// if (camera.fov > 75) {
-	// 	camera.fov = 75
-	// } else {
-	// 	camera.fov += event.deltaY * 0.01;
-	// 	camera.updateProjectionMatrix();
-	// }
-	camera.fov += event.deltaY * 0.02;
-	camera.updateProjectionMatrix();
+	if (camera.fov > 75) {
+		camera.fov = 75;
+	} else {
+		camera.fov += event.deltaY * 0.02;
+		camera.updateProjectionMatrix();
+	}
+	// camera.fov += event.deltaY * 0.02;
+	// camera.updateProjectionMatrix();
 }
 
 function animate() {
@@ -868,5 +868,9 @@ function initStats() {
 	stats.domElement.style.zIndex = 100;
 	container.appendChild(stats.domElement);
 	return stats;
+}
+
+function deviceOrientationHandler() {
+	deviceControls.update();
 }
 //# sourceMappingURL=app.js.map
