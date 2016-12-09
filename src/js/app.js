@@ -817,9 +817,16 @@ function update() {
 	// camera.position.y = radius * Math.sin( THREE.Math.degToRad( theta ) );
 	// camera.position.z = radius * Math.cos( THREE.Math.degToRad( theta ) );
 	// camera.lookAt( scene.position );
-	if (window.innerWidth < 800) {
-		deviceControls.update();
+	// if (window.innerWidth < 800) {
+	// 	deviceControls.update();
+	// }
+
+	if (window.DeviceOrientationEvent) {
+		window.addEventListener('deviceorientation', deviceOrientationHandler, false);
+
+		// document.getElementById("doeSupported").innerText = "Supported!";
 	}
+
 	// deviceControls.connect();
 	renderer.render(scene, camera);
 	// renderer.render( scene, camera );
