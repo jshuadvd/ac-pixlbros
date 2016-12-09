@@ -87,6 +87,15 @@ source.src = '/audio/AC-Trailer.mp3';
 audio.appendChild(source);
 audio.play();
 
+$('.sound').click(function() {
+  if (this.paused == false) {
+      audio.pause();
+  } else {
+      audio.play();
+  }
+});
+
+
 // herp derp
 
 $(document).ready(function() {
