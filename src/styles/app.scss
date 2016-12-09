@@ -124,6 +124,9 @@ a {
 		background-size: 100% 100%;
 		position: relative;
 		margin: 0 auto;
+		z-index: 1;
+		top: 50%;
+		transform: translate(0, -50%);
 		&::before {
 			content: "";
 			display: block;
@@ -162,8 +165,16 @@ a {
 		width: 100%;
 		padding-top: 20px;
 		img {
-			width: 40.222575516693%;
 			height: auto;
+			display: block;
+			margin: 0 auto;
+		}
+		.item {
+			width: 40.222575516693%;
+			margin-bottom: 15px;
+		}
+		.words {
+			width: 81.558028616852%;
 		}
 	}
 	.share {
@@ -175,8 +186,15 @@ a {
 		.button-outer {
 			width: 33%;
 			float: left;
+			.logo {
+				transform-origin: 50% 50%;
+				transition: all 350ms ease;
+			}
 			&:hover {
 				cursor: pointer;
+				.logo {
+					transform: scale(1.2);
+				}
 			}
 		}
 		svg {
@@ -188,6 +206,9 @@ a {
 		.fill {
 			fill: #bad3ee;
 			stroke: none;
+		}
+		.blur {
+			filter: url(#blur-filter);
 		}
 	}
 	.close {

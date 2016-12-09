@@ -52,6 +52,14 @@ if(showLoader) {
 	$('#loader').hide();
 }
 
+function setupLogos() {
+	$('.button-outer .logo').each(function() {
+		var $el = $(this);
+		var clone = $el.find('path').clone().attr('class', 'fill blur');
+		$el.append(clone);
+	});
+}
+
 $(document).ready(function() {
 	$('.outer-path').each( (index, outerPath) => {
 		var $path = $(outerPath);
@@ -62,6 +70,7 @@ $(document).ready(function() {
 		progressBar.set(0);
 		$path.data('progress', progressBar);
 	});
+	setupLogos();
 });
 
 //************************************************************************//
