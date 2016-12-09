@@ -52,9 +52,13 @@ html, body {
 	height: 100%;
 	background-color: rgba(0,0,0,0.5);
 	// display: none;
+	span {
+		display: block;
+	}
 	svg {
 		transform: scale(0.7);
 		margin-top: 25px;
+		width: 40%;
 	}
 	svg path {
 		fill: #fff;
@@ -95,6 +99,31 @@ a {
 	text-decoration: none;
 }
 
+.logo {
+	position: absolute;
+	top: 10px;
+	left: 10px;
+	z-index: 3;
+}
+
+.content {
+	font-size: 40px;
+}
+
+.header-share {
+	position: absolute;
+	top: 5px;
+	right: 5px;
+	width: 18%;
+	z-index: 1;
+	.button-outer {
+		width: 33%;
+		float: left;
+		svg {
+			fill: none;
+		}
+	}
+}
 .blur {
 	filter: url(#blur-filter);
 }
@@ -189,16 +218,16 @@ a {
 			width: 28.14%;
 			margin-right: 4.86%;
 			float: left;
-			.logo {
-				transform-origin: 50% 50%;
-				transition: all 350ms ease;
-			}
-			&:hover {
-				cursor: pointer;
-				.logo {
-					transform: scale(1.1);
-				}
-			}
+			// .logo {
+			// 	transform-origin: 50% 50%;
+			// 	transition: all 350ms ease;
+			// }
+			// &:hover {
+			// 	cursor: pointer;
+			// 	.logo {
+			// 		transform: scale(1.1);
+			// 	}
+			// }
 		}
 		.button-outer:last-child {
 			margin: 0;
@@ -208,10 +237,6 @@ a {
 		}
 		path {
 			stroke: #bad3ee;
-		}
-		.fill {
-			fill: #bad3ee;
-			stroke: none;
 		}
 	}
 	.close {
@@ -236,6 +261,42 @@ a {
 		line {
 			stroke: #bad3ee;
 			transition: all 350ms ease;
+		}
+	}
+}
+.fill {
+	fill: #bad3ee;
+	stroke: none;
+}
+.outer-path {
+	stroke: #bad3ee;
+}
+.inner-path {
+	stroke: #bad3ee;
+}
+.logo {
+	transform-origin: 50% 50%;
+	transition: all 350ms ease;
+}
+.button-outer {
+	&:hover {
+		cursor: pointer;
+		.logo {
+			transform: scale(1.1);
+		}
+	}
+}
+.footer-controls {
+	position: fixed;
+	bottom: 10px;
+	left: 10px;
+	width: 18%;
+	.button-outer {
+		float: left;
+		width: 33%;
+		height: auto;
+		svg {
+			fill: none;
 		}
 	}
 }
