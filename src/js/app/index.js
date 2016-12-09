@@ -798,9 +798,15 @@ function update() {
 	// }
 	
 	if (window.DeviceOrientationEvent) {
-		window.addEventListener('deviceorientation', deviceOrientationHandler, false);
-		
-		// document.getElementById("doeSupported").innerText = "Supported!";
+		window.addEventListener('deviceorientation', function(event) {
+			let alpha = event.alpha;
+			let beta = event.beta;
+			let gamma = event.gamma;
+			
+			// console.log("GAMMA" gamma);
+			
+			// Do something
+		}, false);
 	}
 	
 	
@@ -848,7 +854,4 @@ function initStats() {
 	return stats;
 }
 
-function deviceOrientationHandler() {
-	deviceControls.update();
-}
 

@@ -822,9 +822,15 @@ function update() {
 	// }
 
 	if (window.DeviceOrientationEvent) {
-		window.addEventListener('deviceorientation', deviceOrientationHandler, false);
+		window.addEventListener('deviceorientation', function (event) {
+			var alpha = event.alpha;
+			var beta = event.beta;
+			var gamma = event.gamma;
 
-		// document.getElementById("doeSupported").innerText = "Supported!";
+			// console.log("GAMMA" gamma);
+
+			// Do something
+		}, false);
 	}
 
 	// deviceControls.connect();
@@ -868,9 +874,5 @@ function initStats() {
 	stats.domElement.style.zIndex = 100;
 	container.appendChild(stats.domElement);
 	return stats;
-}
-
-function deviceOrientationHandler() {
-	deviceControls.update();
 }
 //# sourceMappingURL=app.js.map
