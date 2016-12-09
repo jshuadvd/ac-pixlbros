@@ -88,7 +88,7 @@ var buttons = {};
 
 var audio = document.createElement('audio');
 var source = document.createElement('source');
-source.src = '/audio/AC-Trailer.mp3';
+source.src = 'audio/AC-Trailer.mp3';
 audio.appendChild(source);
 audio.play();
 
