@@ -372,7 +372,7 @@ function init() {
 
 function buildHotspots() {
 	loader = new THREE.JSONLoader();
-	loader.load('/js/ac-logo.js', function(geometry) {
+	loader.load('js/ac-logo.js', function(geometry) {
 		hotspots = hotspotObjects.map( (hotspotObject, index) => {
 			geometry.center();
 			let scale = 10;
@@ -821,21 +821,21 @@ function update() {
 	// camera.position.y = radius * Math.sin( THREE.Math.degToRad( theta ) );
 	// camera.position.z = radius * Math.cos( THREE.Math.degToRad( theta ) );
 	// camera.lookAt( scene.position );
-	// if (window.innerWidth < 800) {
-	// 	deviceControls.update();
-	// }
-	
-	if (window.DeviceOrientationEvent) {
-		window.addEventListener('deviceorientation', function(event) {
-			let alpha = event.alpha;
-			let beta = event.beta;
-			let gamma = event.gamma;
-			// console.log("We on Mobile")
-			// console.log("GAMMA" gamma);
-			deviceControls.update();
-			// Do something
-		}, false);
+	if (window.innerWidth < 800) {
+		deviceControls.update();
 	}
+	
+	// if (window.DeviceOrientationEvent) {
+	// 	window.addEventListener('deviceorientation', function(event) {
+	// 		let alpha = event.alpha;
+	// 		let beta = event.beta;
+	// 		let gamma = event.gamma;
+	// 		// console.log("We on Mobile")
+	// 		// console.log("GAMMA" gamma);
+	// 		deviceControls.update();
+	// 		// Do something
+	// 	}, false);
+	// }
 	
 	
 	// deviceControls.connect();
