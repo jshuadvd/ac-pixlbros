@@ -641,7 +641,7 @@ function hideModal() {
 	TweenMax.to($('.modal-container') , 0.3, {autoAlpha: 0})
 	TweenMax.to(camera, duration, {fov: fovMin, onComplete: function() {
 		blocked = false;
-	}})
+	}});
 }
 
 function renderFeatureMesh() {
