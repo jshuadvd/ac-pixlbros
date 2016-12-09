@@ -52,10 +52,10 @@ if(showLoader) {
 	$('#loader').hide();
 }
 
-function setupLogos() {
+function setupButtons() {
 	$('.button-outer .logo').each(function() {
 		var $el = $(this);
-		var clone = $el.find('path').clone().attr('class', 'fill blur');
+		var clone = $el.find('.clone').clone().attr('class', 'fill blur');
 		$el.append(clone);
 	});
 	$('.inner-path').each(function() {
@@ -63,9 +63,31 @@ function setupLogos() {
 		var clone = $el.clone().attr('class', 'blur');
 		$el.after(clone);
 	});
+	$('.button-outer').on('mouseenter', function() {
+		var key = $(this).attr('key');
+		console.log('moustenter', key);
+		buttons[key].animate(1);
+	});
+	$('.button-outer').on('mouseleave', (event) => {
+		var key = $(event.currentTarget).attr('key');
+		buttons[key].set(0);
+	});
 }
 
 var buttons = {};
+
+
+//************************************************************************//
+//                             Init Audio                                 //
+//************************************************************************//
+
+let audio = document.createElement('audio');
+let source = document.createElement('source');
+source.src = '/audio/AC-Trailer.mp3';
+audio.appendChild(source);
+audio.play();
+
+// herp derp
 
 $(document).ready(function() {
 	$('.button-outer').each((index, el) => {
@@ -78,18 +100,26 @@ $(document).ready(function() {
 		});
 		buttons[key].set(0);
 	});
-	setupLogos();
+
+	$('.button-outer').on('mouseenter', function() {
+		var key = $(this).attr('key');
+		console.log('moustenter', key);
+		buttons[key].animate(1);
+		// $(this).find('.outer-path').data('progress')
+	});
+
+	$('.button-outer').on('mouseleave', (event) => {
+		var key = $(event.currentTarget).attr('key');
+		buttons[key].set(0);
+		// $(event.currentTarget).find('.outer-path').data('progress').set(0);
+	});
+
+	$('.sound').on('click', () => {
+		audio.stop();
+	});
+
+	setupButtons();
 });
-
-//************************************************************************//
-//                             Init Audio                                 //
-//************************************************************************//
-
-let audio = document.createElement('audio');
-let source = document.createElement('source');
-source.src = '/audio/AC-Trailer.mp3';
-audio.appendChild(source);
-// audio.play();
 
 //************************************************************************//
 //                              Variables                           	  //
@@ -619,7 +649,8 @@ function hideModal() {
 	TweenMax.to($('.modal-container') , 0.3, {autoAlpha: 0})
 	TweenMax.to(camera, duration, {fov: fovMin, onComplete: function() {
 		blocked = false;
-	}})
+	}});
+	$('.button-outer').trigger('mouseleave');
 }
 
 function renderFeatureMesh() {
@@ -670,18 +701,6 @@ function renderFeatureMesh() {
 function spawnModal(hotspot) {
 	$('.modal-container').css({top: 0})
 	$('.modal-container .close').on('click', hideModal);
-
-	$('.button-outer').on('mouseenter', function() {
-		var key = $(this).attr('key');
-		buttons[key].animate(1);
-		// $(this).find('.outer-path').data('progress')
-	});
-
-	$('.button-outer').on('mouseleave', (event) => {
-		var key = $(event.currentTarget).attr('key');
-		buttons[key].set(0);
-		// $(event.currentTarget).find('.outer-path').data('progress').set(0);
-	});
 
 	$('.overlay').on('click', hideModal);
 	$(document).on('keydown', (event) => {
