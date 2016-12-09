@@ -65,15 +65,18 @@ function setupLogos() {
 	});
 }
 
+var buttons = {};
+
 $(document).ready(function() {
-	$('.outer-path').each( (index, outerPath) => {
-		var $path = $(outerPath);
-		let progressBar = new ProgressBar.Path(outerPath, {
+	$('.button-outer').each((index, el) => {
+		var $el = $(el);
+		var key = $el.attr('key');
+		console.log('outer-path', $el.find('.outer-path'));
+		buttons[key] = new ProgressBar.Path($el.find('.outer-path').get(0), {
 			easing: 'easeInOut',
 			duration: 500
 		});
-		progressBar.set(0);
-		$path.data('progress', progressBar);
+		buttons[key].set(0);
 	});
 	setupLogos();
 });
@@ -607,6 +610,9 @@ function checkRaycasterCollisions() {
 }
 
 function hideModal() {
+	for(var i in buttons) {
+		buttons[i].set(0);
+	}
 	let duration = 550/1000
 	showingModal = false;
 	pointerLock();
@@ -666,10 +672,15 @@ function spawnModal(hotspot) {
 	$('.modal-container .close').on('click', hideModal);
 
 	$('.button-outer').on('mouseenter', function() {
-		$(this).find('.outer-path').data('progress').animate(1);
+		var key = $(this).attr('key');
+		buttons[key].animate(1);
+		// $(this).find('.outer-path').data('progress')
 	});
+
 	$('.button-outer').on('mouseleave', (event) => {
-		$(event.currentTarget).find('.outer-path').data('progress').set(0);
+		var key = $(event.currentTarget).attr('key');
+		buttons[key].set(0);
+		// $(event.currentTarget).find('.outer-path').data('progress').set(0);
 	});
 
 	$('.overlay').on('click', hideModal);
