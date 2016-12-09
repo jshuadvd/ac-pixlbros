@@ -82,6 +82,18 @@ function setupButtons() {
 
 var buttons = {};
 
+//************************************************************************//
+//                             Init Audio                                 //
+//************************************************************************//
+
+var audio = document.createElement('audio');
+var source = document.createElement('source');
+source.src = '/audio/AC-Trailer.mp3';
+audio.appendChild(source);
+audio.play();
+
+// herp derp
+
 $(document).ready(function () {
 	$('.button-outer').each(function (index, el) {
 		var $el = $(el);
@@ -106,18 +118,13 @@ $(document).ready(function () {
 		buttons[key].set(0);
 		// $(event.currentTarget).find('.outer-path').data('progress').set(0);
 	});
+
+	$('.sound').on('click', function () {
+		audio.stop();
+	});
+
 	setupButtons();
 });
-
-//************************************************************************//
-//                             Init Audio                                 //
-//************************************************************************//
-
-var audio = document.createElement('audio');
-var source = document.createElement('source');
-source.src = '/audio/AC-Trailer.mp3';
-audio.appendChild(source);
-// audio.play();
 
 //************************************************************************//
 //                              Variables                           	  //
@@ -664,6 +671,7 @@ function hideModal() {
 	TweenMax.to(camera, duration, { fov: fovMin, onComplete: function onComplete() {
 			blocked = false;
 		} });
+	$('.button-outer').trigger('mouseleave');
 }
 
 function renderFeatureMesh() {
