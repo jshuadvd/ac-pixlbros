@@ -58,6 +58,11 @@ function setupLogos() {
 		var clone = $el.find('path').clone().attr('class', 'fill blur');
 		$el.append(clone);
 	});
+	$('.inner-path').each(function() {
+		var $el = $(this);
+		var clone = $el.clone().attr('class', 'blur');
+		$el.after(clone);
+	});
 }
 
 $(document).ready(function() {

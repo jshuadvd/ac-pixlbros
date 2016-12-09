@@ -95,9 +95,8 @@ a {
 	text-decoration: none;
 }
 
-@keyframes hideshow {
-  from { stroke-width: 2; }
-  to { stroke-width: 6; }
+.blur {
+	filter: url(#blur-filter);
 }
 
 .modal-container {
@@ -159,22 +158,25 @@ a {
 	// }
 	.content {
 		position: absolute;
-		top: 35px;
+		// top: 35px;
+		top: 7%;
 		left: 0;
 		text-align: center;
 		width: 100%;
-		padding-top: 20px;
+		padding-top: 3%;
 		img {
 			height: auto;
 			display: block;
 			margin: 0 auto;
 		}
 		.item {
-			width: 40.222575516693%;
-			margin-bottom: 15px;
+			// width: 40.222575516693%;
+			width: 33%;
+			margin-bottom: 3.982300884956%;
 		}
 		.words {
-			width: 81.558028616852%;
+			width: 68.5%;
+			// width: 81.558028616852%;
 		}
 	}
 	.share {
@@ -184,7 +186,8 @@ a {
 		transform: translate(-50%,0);
 		width: 27.37%;
 		.button-outer {
-			width: 33%;
+			width: 28.14%;
+			margin-right: 4.86%;
 			float: left;
 			.logo {
 				transform-origin: 50% 50%;
@@ -197,6 +200,9 @@ a {
 				}
 			}
 		}
+		.button-outer:last-child {
+			margin: 0;
+		}
 		svg {
 			fill: none;
 		}
@@ -207,26 +213,21 @@ a {
 			fill: #bad3ee;
 			stroke: none;
 		}
-		.blur {
-			filter: url(#blur-filter);
-		}
 	}
 	.close {
 		&:hover {
 			cursor: pointer;
 			line {
-				// animation: hideshow 350ms;
 				stroke-width: 3;
 			}
 		}
 		position: absolute;
-		top: 17px;
-		right: 39px;
-		font-size: 40px;
+		top: 5%;
+		right: 5%;
 		line-height: 0;
 		color: #720001;
-		width: 80px;
-		height: 80px;
+		width: 10%;
+		height: auto;
 		z-index: 1;
 		path {
 			stroke: #bad3ee;
