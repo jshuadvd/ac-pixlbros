@@ -282,7 +282,7 @@ function init() {
 	geometry.scale( - 1, 1, 1 );
 
 	let material = new THREE.MeshBasicMaterial( {
-		map: new THREE.TextureLoader().load( 'textures/AnimusPanorama.jpg' ),
+		map: new THREE.TextureLoader().load( 'textures/AnimusPanoramaTreated.jpg' ),
 		fog: true,
 	});
 	
@@ -830,9 +830,9 @@ function update() {
 			let alpha = event.alpha;
 			let beta = event.beta;
 			let gamma = event.gamma;
-			
+			// console.log("We on Mobile")
 			// console.log("GAMMA" gamma);
-			
+			deviceControls.update();
 			// Do something
 		}, false);
 	}
@@ -883,3 +883,40 @@ function initStats() {
 }
 
 
+$(document).ready(function(){
+	$('.slider').slick({
+		dots: false,
+		infinite: false,
+		speed: 300,
+		slidesToShow: 1,
+		slidesToScroll: 4,
+		responsive: [
+			{
+				breakpoint: 1024,
+				settings: {
+					slidesToShow: 1,
+					slidesToScroll: 3,
+					infinite: true,
+					dots: true
+				}
+			},
+			{
+				breakpoint: 600,
+				settings: {
+					slidesToShow: 1,
+					slidesToScroll: 3
+				}
+			},
+			{
+				breakpoint: 480,
+				settings: {
+					slidesToShow: 1,
+					slidesToScroll: 3
+				}
+			}
+			// You can unslick at a given breakpoint now by adding:
+			// settings: "unslick"
+			// instead of a settings object
+		]
+	})
+});
