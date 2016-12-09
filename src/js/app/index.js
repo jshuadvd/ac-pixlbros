@@ -669,7 +669,7 @@ function spawnModal(hotspot) {
 		$(this).find('.outer-path').data('progress').animate(1);
 	});
 	$('.button-outer').on('mouseleave', (event) => {
-		$(event.target).find('.outer-path').data('progress').set(0);
+		$(event.currentTarget).find('.outer-path').data('progress').set(0);
 	});
 
 	$('.overlay').on('click', hideModal);
