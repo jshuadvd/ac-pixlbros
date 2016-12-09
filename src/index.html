@@ -38,6 +38,25 @@
 	</head>
 	<body>
 
+		<script>
+		window.fbAsyncInit = function() {
+			FB.init({
+				appId      : '357819504585817',
+				xfbml      : true,
+				version    : 'v2.8'
+			});
+			FB.AppEvents.logPageView();
+		};
+
+		  (function(d, s, id){
+			 var js, fjs = d.getElementsByTagName(s)[0];
+			 if (d.getElementById(id)) {return;}
+			 js = d.createElement(s); js.id = id;
+			 js.src = "//connect.facebook.net/en_US/sdk.js";
+			 fjs.parentNode.insertBefore(js, fjs);
+		   }(document, 'script', 'facebook-jssdk'));
+		</script>
+
 		<div id="loader">
 			<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
 				 viewBox="0 0 115.4 138.6" style="enable-background:new 0 0 115.4 138.6;" xml:space="preserve">
@@ -110,8 +129,8 @@
 						 <path class="inner-path" d="M38.8,9.9L48 26 38.8 42.1 20.2 42.1 11 26 20.2 9.9 z"></path>
 						 <path class="outer-path" d="M39.9,8.1L50.2 26 39.9 43.9 19.1 43.9 8.8 26 19.1 8.1 z"></path>
 						 <g>
-						 	<line class="st0" x1="33.7" y1="30.2" x2="25.3" y2="21.8"/>
-						 	<line class="st0" x1="25.4" y1="30.2" x2="33.6" y2="21.8"/>
+							<line class="st0" x1="33.7" y1="30.2" x2="25.3" y2="21.8"/>
+							<line class="st0" x1="25.4" y1="30.2" x2="33.6" y2="21.8"/>
 						 </g>
 						 <!--
 						<path class="outer-path" d="M39.1,10.7L48.3 26.8 39.1 42.8 20.5 42.8 11.3 26.8 20.5 10.7 z" />
