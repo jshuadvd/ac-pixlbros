@@ -791,7 +791,7 @@ function onDocumentMouseMove(event) {
 	}
 	// if ( isUserInteracting === true ) {
 	// 	lon = ( onPointerDownPointerX - event.clientX ) * 0.1 + onPointerDownLon;
-	// 	// lat = ( event.clientY - onPointerDownPointerY ) * 0.1 + onPointerDownLat;
+	// lat = ( event.clientY - onPointerDownPointerY ) * 0.1 + onPointerDownLat;
 	// }
 }
 
