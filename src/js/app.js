@@ -90,15 +90,16 @@ var audio = document.createElement('audio');
 var source = document.createElement('source');
 source.src = 'audio/AC-Trailer.mp3';
 audio.appendChild(source);
-audio.play();
+// audio.play();
+// 
+// $('.sound').click(function() {
+//   if (this.paused == false) {
+//       audio.pause();
+//   } else {
+//       audio.play();
+//   }
+// });
 
-$('.sound').click(function () {
-	if (this.paused == false) {
-		audio.pause();
-	} else {
-		audio.play();
-	}
-});
 
 // herp derp
 
@@ -744,6 +745,14 @@ function spawnModal(hotspot) {
 
 function onDocumentMouseDown(event) {
 
+	// event.preventDefault();
+	// isUserInteracting = true;
+	// onPointerDownPointerX = event.clientX;
+	// // onPointerDownPointerY = event.clientY;
+	// 
+	// onPointerDownLon = lon;
+	// // onPointerDownLat = lat;
+
 	if (!controlsEnabled) return;
 
 	if (selectedObjects.length) {
@@ -767,6 +776,11 @@ function rotateHotspots() {
 
 function onDocumentMouseMove(event) {
 	isUserInteracting = true;
+
+	// if ( isUserInteracting === true ) {
+	// 	lon = ( onPointerDownPointerX - event.clientX ) * 0.1 + onPointerDownLon;
+	// 	// lat = ( event.clientY - onPointerDownPointerY ) * 0.1 + onPointerDownLat;
+	// }
 
 	var movementX = event.movementX || event.mozMovementX || event.webkitMovementX || 0;
 	var movementY = event.movementY || event.mozMovementY || event.webkitMovementY || 0;
