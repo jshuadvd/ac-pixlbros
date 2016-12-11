@@ -83,7 +83,7 @@ var buttons = {};
 
 let audio = document.createElement('audio');
 let source = document.createElement('source');
-source.src = 'audio/AC-Trailer.mp3';
+// source.src = 'audio/AC-Trailer.mp3';
 audio.appendChild(source);
 // audio.play();
 // 
@@ -134,8 +134,10 @@ $(document).ready(function() {
 //                              Variables                           	  //
 //************************************************************************//
 
-let camera, container, color, controls, clock, delta, deviceControls, h, hotspot, hsParticles = [], info, layer = false, logoGeo, logoMaterial, logoMesh, logoTexture, marker, mesh, materials = [], mouse, mousePos, objects = [], parameters, particles, particleMaterial, rainDensity = 20000, rainGeometry, raycaster, renderer, rotateSpeed = 0.1, scene, size, smokeParticles = [], spotLight, spotLightHelper, sprite, stats; 
-
+let camera, container, color, controls, clock, delta, deviceControls, h, hotspot, info, logoGeo, logoMaterial, logoMesh, logoTexture, marker, mesh, materials = [], mouse, mousePos, objects = [], parameters, particles, particleMaterial, rainDensity = 20000, rainGeometry, raycaster, renderer, scene, size, smokeParticles = [], spotLight, spotLightHelper, sprite, stats; 
+let layer = false;
+let hsParticles = [];
+let rotateSpeed = 0.03
 let hotspots = [];
 let hotspotObjects = [
 	{
@@ -372,15 +374,22 @@ function init() {
 
 function buildHotspots() {
 	loader = new THREE.JSONLoader();
-	loader.load('js/ac-logo.js', function(geometry) {
+	loader.load('js/ac-badge-big.js', function(geometry) {
+	// loader.load('js/ac-badge.js', function(geometry) {
+	// loader.load('js/ac-logo.js', function(geometry) {
 		hotspots = hotspotObjects.map( (hotspotObject, index) => {
 			geometry.center();
-			let scale = 10;
-			let hotspot = new THREE.Mesh(geometry, new THREE.MeshBasicMaterial( { color: '#870000', opacity: 1 } ));
+
+			// previous ac-logo.js scale
+			// let scale = 10;
+
+			let scale = 45;
+
+			let hotspot = new THREE.Mesh(geometry, new THREE.MeshBasicMaterial( { color: '#cccccc', opacity: 1 } ));
 			hotspot.name = `hotspot-${index}`;
 			var box = new THREE.Box3().setFromObject(hotspot);
 			hotspot.scale.x = hotspot.scale.y = hotspot.scale.z = scale
-			hotspot.rotation.x = Math.PI
+			hotspot.rotation.x = .5*Math.PI
 			console.log('hotspotObject', hotspotObject);
 			hotspot.hotspot = hotspotObject;
 
@@ -625,7 +634,6 @@ function onDocumentTouchStart( event ) {
 }
 
 function addSelectedObject(object) {
-	console.log('addSelectedObject', object.name)
 	selectedObjects = [];
 	selectedObjects.push(object);
 }

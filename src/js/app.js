@@ -88,7 +88,7 @@ var buttons = {};
 
 var audio = document.createElement('audio');
 var source = document.createElement('source');
-source.src = 'audio/AC-Trailer.mp3';
+// source.src = 'audio/AC-Trailer.mp3';
 audio.appendChild(source);
 // audio.play();
 // 
@@ -148,9 +148,7 @@ var camera = void 0,
     deviceControls = void 0,
     h = void 0,
     hotspot = void 0,
-    hsParticles = [],
     info = void 0,
-    layer = false,
     logoGeo = void 0,
     logoMaterial = void 0,
     logoMesh = void 0,
@@ -168,7 +166,6 @@ var camera = void 0,
     rainGeometry = void 0,
     raycaster = void 0,
     renderer = void 0,
-    rotateSpeed = 0.1,
     scene = void 0,
     size = void 0,
     smokeParticles = [],
@@ -176,7 +173,9 @@ var camera = void 0,
     spotLightHelper = void 0,
     sprite = void 0,
     stats = void 0;
-
+var layer = false;
+var hsParticles = [];
+var rotateSpeed = 0.03;
 var hotspots = [];
 var hotspotObjects = [{
 	content: {
@@ -403,15 +402,22 @@ function init() {
 
 function buildHotspots() {
 	loader = new THREE.JSONLoader();
-	loader.load('js/ac-logo.js', function (geometry) {
+	loader.load('js/ac-badge-big.js', function (geometry) {
+		// loader.load('js/ac-badge.js', function(geometry) {
+		// loader.load('js/ac-logo.js', function(geometry) {
 		hotspots = hotspotObjects.map(function (hotspotObject, index) {
 			geometry.center();
-			var scale = 10;
-			var hotspot = new THREE.Mesh(geometry, new THREE.MeshBasicMaterial({ color: '#870000', opacity: 1 }));
+
+			// previous ac-logo.js scale
+			// let scale = 10;
+
+			var scale = 45;
+
+			var hotspot = new THREE.Mesh(geometry, new THREE.MeshBasicMaterial({ color: '#cccccc', opacity: 1 }));
 			hotspot.name = 'hotspot-' + index;
 			var box = new THREE.Box3().setFromObject(hotspot);
 			hotspot.scale.x = hotspot.scale.y = hotspot.scale.z = scale;
-			hotspot.rotation.x = Math.PI;
+			hotspot.rotation.x = .5 * Math.PI;
 			console.log('hotspotObject', hotspotObject);
 			hotspot.hotspot = hotspotObject;
 
@@ -644,7 +650,6 @@ function onDocumentTouchStart(event) {
 }
 
 function addSelectedObject(object) {
-	console.log('addSelectedObject', object.name);
 	selectedObjects = [];
 	selectedObjects.push(object);
 }
