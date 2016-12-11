@@ -318,14 +318,20 @@ function init() {
 	
 	
 	// Device Orientation Stuff	
-	if (window.DeviceOrientationEvent) {
-		// Our browser supports DeviceOrientation
-		console.log("Wonderful, Our browser supports DeviceOrientation");
-		window.addEventListener("deviceorientation", deviceOrientationListener);
-		deviceControls = new THREE.DeviceOrientationControls( camera, container );
-	} else {
-		console.log("Sorry, your browser doesn't support Device Orientation");
-	}
+	deviceControls = new DeviceOrientationController( camera, renderer.domElement );
+	deviceControls.connect()
+	
+	setupControllerEventHandlers( deviceControls )
+	
+	
+	
+	// if (window.DeviceOrientationEvent) {
+	// 	console.log("Wonderful, Our browser supports DeviceOrientation");
+	// 	window.addEventListener("deviceorientation", deviceOrientationListener, false);
+	// 	deviceControls = new THREE.DeviceOrientationControls( camera, renderer.domElement );
+	// } else {
+	// 	console.log("Sorry, your browser doesn't support Device Orientation");
+	// }
 
 	// temp sphere
 	// var sphereMaterial = new THREE.MeshNormalMaterial();
@@ -859,14 +865,17 @@ function update() {
 	// 	deviceControls.update();
 	// }
 	
-	if ("deviceorientation") {
-		console.log("DEVICE CONTROLS", deviceControls);
+	// if (window.innerWidth < 768) {
+		// deviceControls.update()
+		// camera.lookAt(deviceControls.gamma)
+		// console.log(deviceControls);
+		
+		// sconsole.log("DEVICE CONTROLS", deviceControls);
 		// deviceControls.alpha = 0
 		// deviceControls.beta = 180
 		// deviceControls.gamma = 90
-		deviceControls.updateAlphaOffsetAngle(0);
-		// deviceControls.update()
-	}
+		// deviceControls.updateAlphaOffsetAngle(0);
+	// }
 	
 	// if (window.DeviceOrientationEvent) {
 	// 	window.addEventListener('deviceorientation', function(event) {
@@ -880,6 +889,7 @@ function update() {
 	// 	}, false);
 	// }
 	
+	deviceControls.update()
 	
 	// deviceControls.connect();
 	renderer.render( scene, camera );
@@ -926,45 +936,18 @@ function initStats() {
 }
 
 
-$(document).ready(function(){
-	$('.slider').slick({
-		dots: false,
-		infinite: false,
-		speed: 300,
-		slidesToShow: 1,
-		slidesToScroll: 4,
-		responsive: [
-			{
-				breakpoint: 1024,
-				settings: {
-					slidesToShow: 1,
-					slidesToScroll: 3,
-					infinite: true,
-					dots: true
-				}
-			},
-			{
-				breakpoint: 600,
-				settings: {
-					slidesToShow: 1,
-					slidesToScroll: 3
-				}
-			},
-			{
-				breakpoint: 480,
-				settings: {
-					slidesToShow: 1,
-					slidesToScroll: 3
-				}
-			}
-			// You can unslick at a given breakpoint now by adding:
-			// settings: "unslick"
-			// instead of a settings object
-		]
-	})
-});
-
 function deviceOrientationListener(event) {
+	let deg2rad = Math.PI / 180;
+	camera.rotation.set(
+        !event.beta * deg2rad,
+        !event.gamma ? 0 : event.gamma * deg2rad,
+        !event.alpha ? 0 : event.alpha * deg2rad
+    );
+	
+	console.log(event.beta * deg2rad)
+	console.log(event.gamma * deg2rad)
+	console.log(event.alpha * deg2rad)
+	
         // console.log("Do Stuff With Device", event);
         // ctx.clearRect(0, 0, c.width, c.height);
         // ctx.fillStyle = "#FF7777";
@@ -985,4 +968,55 @@ function deviceOrientationListener(event) {
         // ctx.fillText("Gamma: " + Math.round(event.gamma), 10, 270);
         // ctx.beginPath();
         // ctx.fillRect(90, 340, 180, event.gamma);
-      }
+}
+
+//DeviceOrientationController event handling
+function setupControllerEventHandlers( controls ) {
+	
+	var controllerEl = document.querySelector( '#controllername' );
+	var controllerDefaultText = controllerEl.textContent;
+	var controllerSelectorEl = document.querySelector( '#controllertype' );
+	var compassCalibrationPopupEl = document.querySelector( '#calibrate-compass-popup' );
+	
+	// Listen for manual interaction (zoom OR rotate)	
+	controls.addEventListener( 'userinteractionstart', function () {
+		renderer.domElement.style.cursor = 'move';
+		controllerSelectorEl.style.display = 'none';
+	});
+	
+	controls.addEventListener( 'userinteractionend', function () {
+		renderer.domElement.style.cursor = 'default';
+		controllerSelectorEl.style.display = 'inline-block';
+	});
+	
+	// Listen for manual rotate interaction	
+	controls.addEventListener( 'rotatestart', function () {
+		controllerEl.innerText = 'Manual Rotate';
+	});
+	
+	controls.addEventListener( 'rotateend', function () {
+		controllerEl.innerText = controllerDefaultText;
+	});
+	
+	// Listen for manual zoom interaction
+	controls.addEventListener( 'zoomstart', function () {
+		controllerEl.innerText = 'Manual Zoom';
+	});
+	
+	controls.addEventListener( 'zoomend', function () {
+		controllerEl.innerText = controllerDefaultText;
+	});
+	
+	// Allow advanced switching between 'Quaternions' and 'Rotation Matrix' calculations
+	controllerSelectorEl.addEventListener( 'click', function ( event ) {
+		event.preventDefault();
+		
+		if ( controls.useQuaternions === true ) {
+			controllerSelectorEl.textContent = 'Rotation Matrix';
+			controls.useQuaternions = false;
+		} else {
+			controllerSelectorEl.textContent = 'Quaternions';
+			controls.useQuaternions = true;
+		}
+	}, false);
+}

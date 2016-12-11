@@ -21,9 +21,11 @@
 		<script src="js/lib/dat.gui.min.js"></script>
 		<script src="js/lib/Detector.js"></script>
 		<script src="js/lib/Stats.js"></script>
+		<script src="js/lib/DeviceOrientationController.js"></script>
 		<script src="js/lib/DeviceOrientationControls.js"></script>
 		<script src="js/lib/CanvasRenderer.js"></script>
 		<script src="js/lib/Projector.js"></script>
+		<script src="js/lib/CSS3DRenderer.js"></script>
 		<script src="https://dl.dropboxusercontent.com/u/3587259/Code/Threejs/CSS3DRenderer.js"></script>
 
 		<!-- glow shaders -->
@@ -58,7 +60,9 @@
 			 fjs.parentNode.insertBefore(js, fjs);
 		   }(document, 'script', 'facebook-jssdk'));
 		</script>
-
+		
+		
+		
 		<div class="logo">
 			<img src="textures/ac-logo-top.png" alt="Assasin's Creed" />
 		</div>
@@ -139,6 +143,7 @@
 		</div>
 
 		<div id="container">
+			
 			<!-- <div id="footer">
 				<div class="footer-inner">
 					<div class="footer-left">
@@ -162,6 +167,11 @@
 					</div>	
 				</div>
 			</div> -->
+			
+			<div id="extra">
+				<span id="controllername"></span>
+				<a id="controllertype" href="#" name="controllertype"></a>
+			</div>
 		
 		</div>
 		<div class="modal-container">
