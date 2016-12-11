@@ -292,13 +292,22 @@ function init() {
 	
 	stats = initStats()
 	
-	deviceControls = new THREE.DeviceOrientationControls( camera, container );
-	
 	raycaster = new THREE.Raycaster();
 	mouse = new THREE.Vector2();
 	
 	// Build items for raycaster clicks
 	buildHotspots();
+	
+	
+	// Device Orientation Stuff	
+	if (window.DeviceOrientationEvent) {
+		// Our browser supports DeviceOrientation
+		console.log("Wonderful, Our browser supports DeviceOrientation");
+		window.addEventListener("deviceorientation", deviceOrientationListener);
+		deviceControls = new THREE.DeviceOrientationControls( camera, container );
+	} else {
+		console.log("Sorry, your browser doesn't support Device Orientation");
+	}
 
 	// temp sphere
 	// var sphereMaterial = new THREE.MeshNormalMaterial();
@@ -834,8 +843,17 @@ function update() {
 	// camera.position.y = radius * Math.sin( THREE.Math.degToRad( theta ) );
 	// camera.position.z = radius * Math.cos( THREE.Math.degToRad( theta ) );
 	// camera.lookAt( scene.position );
-	if (window.innerWidth < 800) {
-		deviceControls.update();
+	// if (window.innerWidth < 800) {
+	// 	deviceControls.update();
+	// }
+	
+	if ("deviceorientation") {
+		console.log("DEVICE CONTROLS", deviceControls);
+		// deviceControls.alpha = 0
+		// deviceControls.beta = 180
+		// deviceControls.gamma = 90
+		deviceControls.updateAlphaOffsetAngle(0);
+		// deviceControls.update()
 	}
 	
 	// if (window.DeviceOrientationEvent) {
@@ -933,3 +951,26 @@ $(document).ready(function(){
 		]
 	})
 });
+
+function deviceOrientationListener(event) {
+        // console.log("Do Stuff With Device", event);
+        // ctx.clearRect(0, 0, c.width, c.height);
+        // ctx.fillStyle = "#FF7777";
+        // ctx.font = "14px Verdana";
+        // ctx.fillText("Alpha: " + Math.Round(event.alpha), 10, 20);
+        // ctx.beginPath();
+        // ctx.moveTo(180, 75);
+        // ctx.lineTo(210, 75);
+        // ctx.arc(180, 75, 60, 0, event.alpha * Math.PI / 180);
+        // ctx.fill();
+		// 
+        // ctx.fillStyle = "#FF6600";
+        // ctx.fillText("Beta: " + Math.round(event.beta), 10, 140);
+        // ctx.beginPath();
+        // ctx.fillRect(180, 150, event.beta, 90);
+		// 
+        // ctx.fillStyle = "#FF0000";
+        // ctx.fillText("Gamma: " + Math.round(event.gamma), 10, 270);
+        // ctx.beginPath();
+        // ctx.fillRect(90, 340, 180, event.gamma);
+      }
