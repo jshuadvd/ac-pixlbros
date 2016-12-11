@@ -104,10 +104,10 @@ let playAudio = true;
 // herp derp
 
 $(document).ready(function() {
+
 	$('.button-outer').each((index, el) => {
 		var $el = $(el);
 		var key = $el.attr('key');
-		console.log('outer-path', $el.find('.outer-path'));
 		buttons[key] = new ProgressBar.Path($el.find('.outer-path').get(0), {
 			easing: 'easeInOut',
 			duration: 500
@@ -126,6 +126,11 @@ $(document).ready(function() {
 		var key = $(event.currentTarget).attr('key');
 		buttons[key].set(0);
 		// $(event.currentTarget).find('.outer-path').data('progress').set(0);
+	});
+
+	$('.button-outer').on('click', () => {
+		var key = $(event.currentTarget).attr('key');
+		handleButtonClick(key);
 	});
 
 	let offLine = $('.sound line');
@@ -157,6 +162,7 @@ let rotateSpeed = 0.03
 let hotspots = [];
 let hotspotObjects = [
 	{
+		id: 0,
 		content: {
 			header: '',
 			body: ''
@@ -165,33 +171,52 @@ let hotspotObjects = [
 			type: 'mesh',
 			location: ''
 		},
+		lon: 19,
 		position: [450, 0, 150],
 	},
 	{
+		id: 1,
+		lon: -323,
 		position: [370, 0, 280],
 	},
 	{
+		id: 2,
+		lon: -274,
 		position: [25, 0, 400],
 	},
 	{
+		id: 3,
+		lon: -254,
 		position: [-115, 0, 400],
 	},
 	{
+		id: 4,
+		lon: -207,
 		position: [-400, 0, 205],
 	},
 	{
+		id: 5,
+		lon: -184,
 		position: [-445, 0, 30],
 	},
 	{
+		id: 6,
+		lon: -125,
 		position: [-265, 0, -380],
 	},
-	{	
+	{
+		id: 7,
+		lon: -97.5,
 		position: [-60, 0, -455],
 	},
 	{
+		id: 8,
+		lon: -74.5,
 		position: [125, 0, -455],
 	},
 	{
+		id: 9,
+		lon: -27,
 		position: [400, 0, -205]
 	},
 ];
@@ -212,6 +237,7 @@ let composer;
 let effectFXAA;
 let controlsEnabled;
 let showingModal = false;
+let initialOrientation;
 
 var havePointerLock = 'pointerLockElement' in document || 'mozPointerLockElement' in document || 'webkitPointerLockElement' in document;
 
@@ -359,10 +385,14 @@ function init() {
 	composer.addPass( renderPass );
 	outlinePass = new THREE.OutlinePass( new THREE.Vector2(window.innerWidth, window.innerHeight), scene, camera);
 
-	outlinePass.edgeStrength = 2.0;
-	outlinePass.edgeGlow = 5.0;
-	outlinePass.edgeThickness = 2.0;
-	outlinePass.pulsePeriod = 0.8;
+	outlinePass.edgeStrength = 10.0;
+	outlinePass.edgeGlow = 10.0;
+	outlinePass.edgeThickness = 4.0;
+	outlinePass.pulsePeriod = 5;
+	// outlinePass.edgeStrength = 2.0;
+	// outlinePass.edgeGlow = 5.0;
+	// outlinePass.edgeThickness = 2.0;
+	// outlinePass.pulsePeriod = 0.8;
 	// outlinePass.visibleEdgeColor = '#fffffff'; //{r: 255, g: 255, b: 255}
 	outlinePass.visibleEdgeColor = {r: 255, g: 255, b: 255};
 
@@ -399,9 +429,49 @@ function init() {
 	initRain();
 	// buildSmoke();
 	buildHotspot();
+	orientCamera();
 	
 	document.body.appendChild( renderer.domElement );
 
+}
+
+function getUrlParams() {
+	var urlParams,
+		match,
+	    pl     = /\+/g,  // Regex for replacing addition symbol with a space
+	    search = /([^&=]+)=?([^&]*)/g,
+	    decode = function (s) { return decodeURIComponent(s.replace(pl, " ")); },
+	    query  = window.location.search.substring(1);
+
+	urlParams = {};
+	while (match = search.exec(query))
+	   urlParams[decode(match[1])] = decode(match[2]);
+	return urlParams;
+}
+
+function orientCamera() {
+	var urlParams = getUrlParams();
+	if(urlParams.id) {
+		let id = parseInt(urlParams.id)
+		let hotspot = hotspotObjects.filter( hotspot => id === hotspot.id );
+		if(hotspot) {
+			hotspot = hotspot[0]
+			initialOrientation = hotspot.lon;
+			popModal(hotspot);
+		}
+	}
+}
+
+let buttonClicks = {
+	'ig-header'() {
+		console.log('igHeader');
+	},
+	fb() {
+		console.log('fbshare');
+	}
+}
+function handleButtonClick(key) {
+	if(key in buttonClicks) buttonClicks[key]();
 }
 
 function buildHotspots() {
@@ -422,7 +492,7 @@ function buildHotspots() {
 			var box = new THREE.Box3().setFromObject(hotspot);
 			hotspot.scale.x = hotspot.scale.y = hotspot.scale.z = scale
 			hotspot.rotation.x = .5*Math.PI
-			console.log('hotspotObject', hotspotObject);
+			// console.log('hotspotObject', hotspotObject);
 			hotspot.hotspot = hotspotObject;
 
 			// auto generate some stuff!
@@ -756,26 +826,41 @@ function spawnModal(hotspot) {
 		if(event.charCode === 0) {
 			hideModal();
 		} 
-	})
-	$('.modal .content h1').text(hotspot.content.header);
-	$('.modal .content p').text(hotspot.content.body);
+	});
+	if(hotspot.content) {
+		if(hotspot.content.header) $('.modal .content h1').text(hotspot.content.header);
+		if(hotspot.content.body) $('.modal .content p').text(hotspot.content.body);
+	}
 	renderFeatureMesh();
 }
 
+function makeUrlParams(id, subid) {
+	let str = '';
+	if(id !== undefined || id !== null) {
+		str += `?id=${id}`;
+	}
+	if(!subid) subid = 0;
+	str += `&subid=${subid}`;
+	console.log('makeUrlParams', id, subid, str);
+	return str;
+}
+
+function popModal(hotspot, subid) {
+	console.log('popModal', hotspot)
+	let urlParams = makeUrlParams(hotspot.id);
+	history.replaceState(null, null, urlParams);
+	let duration = 550/1000;
+	showingModal = true;
+	controlsEnabled = false;
+	document.exitPointerLock();
+	TweenMax.to($('.modal-container') , 0.3, {autoAlpha: 1})
+	TweenMax.to(camera, duration, {fov: fovMax, onComplete: spawnModal(hotspot)})
+}
+
 function onDocumentMouseDown( event ) {
-
 	if(!controlsEnabled) return;
-
 	if(selectedObjects.length) {
-		console.log('DO STUFF', );
-		let hotspot = selectedObjects[0].hotspot;
-		let duration = 550/1000
-		showingModal = true;
-		controlsEnabled = false;
-		document.exitPointerLock();
-		TweenMax.to($('.modal-container') , 0.3, {autoAlpha: 1})
-		TweenMax.to(camera, duration, {fov: fovMax, onComplete: spawnModal(hotspot)})
-		// selectedObjects[0]
+		popModal(selectedObjects[0].hotspot, 0);
 	}
 }
 
@@ -825,6 +910,13 @@ function update() {
 	// if ( isUserInteracting === false ) {
 	// 	// lon += 0.1;
 	// }
+	// console.log('initialOrientation', lon, initialOrientation)
+	// console.log('update', lon)
+	if(initialOrientation) {
+		lon = initialOrientation;
+		initialOrientation = null;
+	}
+
 	lat = Math.max( - 85, Math.min( 85, lat ) );
 	phi = THREE.Math.degToRad( 90 - lat );
 	theta = THREE.Math.degToRad( lon );
