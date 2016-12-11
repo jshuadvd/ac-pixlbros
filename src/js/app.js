@@ -86,12 +86,17 @@ var buttons = {};
 //                             Init Audio                                 //
 //************************************************************************//
 
-var audio = document.createElement('audio');
-var source = document.createElement('source');
-source.src = 'audio/AC-Trailer.mp3';
-audio.appendChild(source);
+// let audio = document.createElement('audio');
+// let source = document.createElement('source');
+// source.src = 'audio/AC-Trailer.mp3';
+// audio.appendChild(source);
 // audio.play();
-// 
+
+var audio = new Audio('audio/AC-Trailer.mp3');
+audio.play();
+
+var playAudio = true;
+
 // $('.sound').click(function() {
 //   if (this.paused == false) {
 //       audio.pause();
@@ -128,8 +133,19 @@ $(document).ready(function () {
 		// $(event.currentTarget).find('.outer-path').data('progress').set(0);
 	});
 
+	var offLine = $('.sound line');
+	var container = offLine.parents('svg');
 	$('.sound').on('click', function () {
-		audio.stop();
+		if (playAudio) {
+			audio.pause();
+			offLine.show();
+			container.attr('class', 'off');
+		} else {
+			audio.play();
+			offLine.hide();
+			container.attr('class', '');
+		}
+		playAudio = !playAudio;
 	});
 
 	setupButtons();
@@ -148,9 +164,7 @@ var camera = void 0,
     deviceControls = void 0,
     h = void 0,
     hotspot = void 0,
-    hsParticles = [],
     info = void 0,
-    layer = false,
     logoGeo = void 0,
     logoMaterial = void 0,
     logoMesh = void 0,
@@ -168,7 +182,6 @@ var camera = void 0,
     rainGeometry = void 0,
     raycaster = void 0,
     renderer = void 0,
-    rotateSpeed = 0.1,
     scene = void 0,
     size = void 0,
     smokeParticles = [],
@@ -176,7 +189,9 @@ var camera = void 0,
     spotLightHelper = void 0,
     sprite = void 0,
     stats = void 0;
-
+var layer = false;
+var hsParticles = [];
+var rotateSpeed = 0.03;
 var hotspots = [];
 var hotspotObjects = [{
 	content: {
@@ -367,11 +382,12 @@ function init() {
 	composer.addPass(renderPass);
 	outlinePass = new THREE.OutlinePass(new THREE.Vector2(window.innerWidth, window.innerHeight), scene, camera);
 
-	outlinePass.edgeStrength = 10.0;
-	outlinePass.edgeGlow = 10.0;
-	outlinePass.edgeThickness = 4.0;
-	outlinePass.pulsePeriod = 5;
-	outlinePass.visibleEdgeColor = { r: 60, g: 60, b: 60 };
+	outlinePass.edgeStrength = 2.0;
+	outlinePass.edgeGlow = 5.0;
+	outlinePass.edgeThickness = 2.0;
+	outlinePass.pulsePeriod = 0.8;
+	// outlinePass.visibleEdgeColor = '#fffffff'; //{r: 255, g: 255, b: 255}
+	outlinePass.visibleEdgeColor = { r: 255, g: 255, b: 255 };
 
 	composer.addPass(outlinePass);
 	// @todo: prob dont need this texture but SHRUG
@@ -411,15 +427,22 @@ function init() {
 
 function buildHotspots() {
 	loader = new THREE.JSONLoader();
-	loader.load('js/ac-logo.js', function (geometry) {
+	loader.load('js/ac-badge-big.js', function (geometry) {
+		// loader.load('js/ac-badge.js', function(geometry) {
+		// loader.load('js/ac-logo.js', function(geometry) {
 		hotspots = hotspotObjects.map(function (hotspotObject, index) {
 			geometry.center();
-			var scale = 10;
-			var hotspot = new THREE.Mesh(geometry, new THREE.MeshBasicMaterial({ color: '#870000', opacity: 1 }));
+
+			// previous ac-logo.js scale
+			// let scale = 10;
+
+			var scale = 45;
+
+			var hotspot = new THREE.Mesh(geometry, new THREE.MeshBasicMaterial({ color: '#cccccc', opacity: 1 }));
 			hotspot.name = 'hotspot-' + index;
 			var box = new THREE.Box3().setFromObject(hotspot);
 			hotspot.scale.x = hotspot.scale.y = hotspot.scale.z = scale;
-			hotspot.rotation.x = Math.PI;
+			hotspot.rotation.x = .5 * Math.PI;
 			console.log('hotspotObject', hotspotObject);
 			hotspot.hotspot = hotspotObject;
 
@@ -652,7 +675,6 @@ function onDocumentTouchStart(event) {
 }
 
 function addSelectedObject(object) {
-	console.log('addSelectedObject', object.name);
 	selectedObjects = [];
 	selectedObjects.push(object);
 }
@@ -753,14 +775,6 @@ function spawnModal(hotspot) {
 
 function onDocumentMouseDown(event) {
 
-	// event.preventDefault();
-	// isUserInteracting = true;
-	// onPointerDownPointerX = event.clientX;
-	// // onPointerDownPointerY = event.clientY;
-	// 
-	// onPointerDownLon = lon;
-	// // onPointerDownLat = lat;
-
 	if (!controlsEnabled) return;
 
 	if (selectedObjects.length) {
@@ -785,11 +799,6 @@ function rotateHotspots() {
 function onDocumentMouseMove(event) {
 	isUserInteracting = true;
 
-	// if ( isUserInteracting === true ) {
-	// 	lon = ( onPointerDownPointerX - event.clientX ) * 0.1 + onPointerDownLon;
-	// 	// lat = ( event.clientY - onPointerDownPointerY ) * 0.1 + onPointerDownLat;
-	// }
-
 	var movementX = event.movementX || event.mozMovementX || event.webkitMovementX || 0;
 	var movementY = event.movementY || event.mozMovementY || event.webkitMovementY || 0;
 
@@ -799,7 +808,7 @@ function onDocumentMouseMove(event) {
 	}
 	// if ( isUserInteracting === true ) {
 	// 	lon = ( onPointerDownPointerX - event.clientX ) * 0.1 + onPointerDownLon;
-	// lat = ( event.clientY - onPointerDownPointerY ) * 0.1 + onPointerDownLat;
+	// 	// lat = ( event.clientY - onPointerDownPointerY ) * 0.1 + onPointerDownLat;
 	// }
 }
 
