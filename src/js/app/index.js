@@ -8,7 +8,9 @@ let fovMax = 50;
 // let zoomed = false;
 
 let onPointerDownPointerX;
+let onPointerDownPointerY;
 let onPointerDownLon;
+let onPointerDownLat;
 // let onPointerDownLat;
 let blocked = false;
 let curPosX = 0;
@@ -210,69 +212,69 @@ let renderPass;
 let outlinePass;
 let composer;
 let effectFXAA;
-let controlsEnabled;
+let controlsEnabled = false;
 let showingModal = false;
 
-var havePointerLock = 'pointerLockElement' in document || 'mozPointerLockElement' in document || 'webkitPointerLockElement' in document;
+// var havePointerLock = 'pointerLockElement' in document || 'mozPointerLockElement' in document || 'webkitPointerLockElement' in document;
 
-if (havePointerLock) {
-	var element = document.body;
-	var pointerlockchange = function(event) {
-		if(showingModal) return;
-		if (document.pointerLockElement === element || document.mozPointerLockElement === element || document.webkitPointerLockElement === element) {
-			controlsEnabled = true;
-			// controls.enabled = true;
-			blocker.style.display = 'none';
-		} else {
-			// controls.enabled = false;
-			controlsEnabled = false;
-			blocker.style.display = '-webkit-box';
-			blocker.style.display = '-moz-box';
-			blocker.style.display = 'box';
-			instructions.style.display = '';
-		}
-	};
+// if (havePointerLock) {
+// 	var element = document.body;
+// 	var pointerlockchange = function(event) {
+// 		if(showingModal) return;
+// 		if (document.pointerLockElement === element || document.mozPointerLockElement === element || document.webkitPointerLockElement === element) {
+// 			controlsEnabled = true;
+// 			// controls.enabled = true;
+// 			blocker.style.display = 'none';
+// 		} else {
+// 			// controls.enabled = false;
+// 			controlsEnabled = false;
+// 			blocker.style.display = '-webkit-box';
+// 			blocker.style.display = '-moz-box';
+// 			blocker.style.display = 'box';
+// 			instructions.style.display = '';
+// 		}
+// 	};
 
-	var pointerlockerror = function(event) {
-		instructions.style.display = '';
-	};
+// 	var pointerlockerror = function(event) {
+// 		instructions.style.display = '';
+// 	};
 
-	// Hook pointer lock state change events
-	document.addEventListener('pointerlockchange', pointerlockchange, false);
-	document.addEventListener('mozpointerlockchange', pointerlockchange, false);
-	document.addEventListener('webkitpointerlockchange', pointerlockchange, false);
+// 	// Hook pointer lock state change events
+// 	document.addEventListener('pointerlockchange', pointerlockchange, false);
+// 	document.addEventListener('mozpointerlockchange', pointerlockchange, false);
+// 	document.addEventListener('webkitpointerlockchange', pointerlockchange, false);
 
-	document.addEventListener('pointerlockerror', pointerlockerror, false);
-	document.addEventListener('mozpointerlockerror', pointerlockerror, false);
-	document.addEventListener('webkitpointerlockerror', pointerlockerror, false);
+// 	document.addEventListener('pointerlockerror', pointerlockerror, false);
+// 	document.addEventListener('mozpointerlockerror', pointerlockerror, false);
+// 	document.addEventListener('webkitpointerlockerror', pointerlockerror, false);
 
-	instructions.addEventListener('click', function(event) {
-		instructions.style.display = 'none';
-		// Ask the browser to lock the pointer
-		pointerLock();
-	}, false);
-} else {
-	instructions.innerHTML = 'Your browser doesn\'t seem to support Pointer Lock API';
-}
+// 	instructions.addEventListener('click', function(event) {
+// 		instructions.style.display = 'none';
+// 		// Ask the browser to lock the pointer
+// 		pointerLock();
+// 	}, false);
+// } else {
+// 	instructions.innerHTML = 'Your browser doesn\'t seem to support Pointer Lock API';
+// }
 
-function pointerLock() {
-	element.requestPointerLock = element.requestPointerLock || element.mozRequestPointerLock || element.webkitRequestPointerLock;
-	if (/Firefox/i.test(navigator.userAgent)) {
-		var fullscreenchange = function(event) {
-			if (document.fullscreenElement === element || document.mozFullscreenElement === element || document.mozFullScreenElement === element) {
-				document.removeEventListener('fullscreenchange', fullscreenchange);
-				document.removeEventListener('mozfullscreenchange', fullscreenchange);
-				element.requestPointerLock();
-			}
-		};
-		document.addEventListener('fullscreenchange', fullscreenchange, false);
-		document.addEventListener('mozfullscreenchange', fullscreenchange, false);
-		element.requestFullscreen = element.requestFullscreen || element.mozRequestFullscreen || element.mozRequestFullScreen || element.webkitRequestFullscreen;
-		element.requestFullscreen();
-	} else {
-		element.requestPointerLock();
-	}
-}
+// function pointerLock() {
+// 	element.requestPointerLock = element.requestPointerLock || element.mozRequestPointerLock || element.webkitRequestPointerLock;
+// 	if (/Firefox/i.test(navigator.userAgent)) {
+// 		var fullscreenchange = function(event) {
+// 			if (document.fullscreenElement === element || document.mozFullscreenElement === element || document.mozFullScreenElement === element) {
+// 				document.removeEventListener('fullscreenchange', fullscreenchange);
+// 				document.removeEventListener('mozfullscreenchange', fullscreenchange);
+// 				element.requestPointerLock();
+// 			}
+// 		};
+// 		document.addEventListener('fullscreenchange', fullscreenchange, false);
+// 		document.addEventListener('mozfullscreenchange', fullscreenchange, false);
+// 		element.requestFullscreen = element.requestFullscreen || element.mozRequestFullscreen || element.mozRequestFullScreen || element.webkitRequestFullscreen;
+// 		element.requestFullscreen();
+// 	} else {
+// 		element.requestPointerLock();
+// 	}
+// }
 
 init();
 animate();
@@ -374,13 +376,18 @@ function init() {
 	container.appendChild( renderer.domElement );
 	container.addEventListener("mousemove", getPosition, false);
 	
-	document.addEventListener( 'mousedown', onDocumentMouseDown, false );
-	document.addEventListener( 'mousemove', onDocumentMouseMove, false );
-	document.addEventListener( 'mouseup', onDocumentMouseUp, false );
+	// document.addEventListener( 'mousedown', onDocumentMouseDown, false );
+	// document.addEventListener( 'mousemove', onDocumentMouseMove, false );
+	// document.addEventListener( 'mouseup', onDocumentMouseUp, false );
 	document.addEventListener( 'touchstart', onDocumentTouchStart, false );
 	document.addEventListener( 'wheel', onDocumentMouseWheel, false );
 	window.addEventListener( 'resize', onWindowResize, false );
-	
+
+	document.addEventListener( 'mousedown', onDocumentMouseDownNew, false );
+	document.addEventListener( 'mousemove', onDocumentMouseMoveNew, false );
+	document.addEventListener( 'mouseup', onDocumentMouseUpNew, false );
+
+
 	initRain();
 	// buildSmoke();
 	buildHotspot();
@@ -388,6 +395,34 @@ function init() {
 	document.body.appendChild( renderer.domElement );
 
 }
+
+function onDocumentMouseDownNew(event) {
+	event.preventDefault();
+
+	console.log('onDocumentMouseDownNew');
+	controlsEnabled = true;
+
+	onPointerDownPointerX = event.clientX;
+	onPointerDownPointerY = event.clientY;
+
+	onPointerDownLon = lon;
+	onPointerDownLat = lat;
+}
+
+function onDocumentMouseMoveNew(event) {
+	console.log('onDocumentMouseMoveNew');
+	onDocumentMouseMove(event);
+	// if ( isUserInteracting === true ) {
+	// 	lon = ( onPointerDownPointerX - event.clientX ) * 0.1 + onPointerDownLon;
+	// 	lat = ( event.clientY - onPointerDownPointerY ) * 0.1 + onPointerDownLat;
+	// }
+}
+
+function onDocumentMouseUpNew() {
+	console.log('onDocumentMouseUpNew');
+	controlsEnabled = false;
+}
+
 
 function buildHotspots() {
 	loader = new THREE.JSONLoader();
@@ -679,7 +714,7 @@ function hideModal() {
 	}
 	let duration = 550/1000
 	showingModal = false;
-	pointerLock();
+	// pointerLock();
 	TweenMax.to($('.modal-container') , 0.3, {autoAlpha: 0})
 	TweenMax.to(camera, duration, {fov: fovMin, onComplete: function() {
 		blocked = false;
@@ -757,7 +792,7 @@ function onDocumentMouseDown( event ) {
 		let duration = 550/1000
 		showingModal = true;
 		controlsEnabled = false;
-		document.exitPointerLock();
+		// document.exitPointerLock();
 		TweenMax.to($('.modal-container') , 0.3, {autoAlpha: 1})
 		TweenMax.to(camera, duration, {fov: fovMax, onComplete: spawnModal(hotspot)})
 		// selectedObjects[0]
@@ -769,12 +804,13 @@ function rotateHotspots() {
 }
 
 function onDocumentMouseMove( event ) {
-	isUserInteracting = true;
+	// isUserInteracting = true;
 	
 	var movementX = event.movementX || event.mozMovementX || event.webkitMovementX || 0;
 	var movementY = event.movementY || event.mozMovementY || event.webkitMovementY || 0;
 
 	if(controlsEnabled) {
+		// console.log('onDocumentMouseMove', controlsEnabled);
 		curPosX += movementX;
 		lon = curPosX
 	}
@@ -785,7 +821,8 @@ function onDocumentMouseMove( event ) {
 }
 
 function onDocumentMouseUp( event ) {
-	isUserInteracting = false;
+	// isUserInteracting = false;
+	controlsEnabled = true;
 }
 
 // Zoom in & out | Need to limit this to the starting point and a endind point
