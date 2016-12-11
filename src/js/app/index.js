@@ -1,4 +1,7 @@
 
+let position = {
+	lon: 30
+}
 let lon = 30;
 // let lat = 0;
 // let phi = 0;
@@ -220,14 +223,15 @@ let hotspotObjects = [
 		position: [400, 0, -205]
 	},
 ];
-
-let isUserInteracting = true,
-onMouseDownMouseX = 0, onMouseDownMouseY = 0,
+let onMouseDownMouseX = 0, onMouseDownMouseY = 0,
 onMouseDownLon = 0,
 lat = 0, onMouseDownLat = 0,
 phi = 0, theta = 0;
 
 container = document.getElementById( 'container' );
+
+let containerWidth = container.clientWidth;
+let containerHeight = container.clientHeight;
 
 let selectedObjects = [];
 let loader;
@@ -235,70 +239,74 @@ let renderPass;
 let outlinePass;
 let composer;
 let effectFXAA;
-let controlsEnabled;
+// let controlsEnabled = true;
 let showingModal = false;
 let initialOrientation;
+let isUserInteracting = false;
 
-var havePointerLock = 'pointerLockElement' in document || 'mozPointerLockElement' in document || 'webkitPointerLockElement' in document;
+let projector = new THREE.Projector();
+let mouseVector = new THREE.Vector3();
 
-if (havePointerLock) {
-	var element = document.body;
-	var pointerlockchange = function(event) {
-		if(showingModal) return;
-		if (document.pointerLockElement === element || document.mozPointerLockElement === element || document.webkitPointerLockElement === element) {
-			controlsEnabled = true;
-			// controls.enabled = true;
-			blocker.style.display = 'none';
-		} else {
-			// controls.enabled = false;
-			controlsEnabled = false;
-			blocker.style.display = '-webkit-box';
-			blocker.style.display = '-moz-box';
-			blocker.style.display = 'box';
-			instructions.style.display = '';
-		}
-	};
+// var havePointerLock = 'pointerLockElement' in document || 'mozPointerLockElement' in document || 'webkitPointerLockElement' in document;
 
-	var pointerlockerror = function(event) {
-		instructions.style.display = '';
-	};
+// if (havePointerLock) {
+// 	var element = document.body;
+// 	var pointerlockchange = function(event) {
+// 		if(showingModal) return;
+// 		if (document.pointerLockElement === element || document.mozPointerLockElement === element || document.webkitPointerLockElement === element) {
+// 			controlsEnabled = true;
+// 			// controls.enabled = true;
+// 			blocker.style.display = 'none';
+// 		} else {
+// 			// controls.enabled = false;
+// 			controlsEnabled = false;
+// 			blocker.style.display = '-webkit-box';
+// 			blocker.style.display = '-moz-box';
+// 			blocker.style.display = 'box';
+// 			instructions.style.display = '';
+// 		}
+// 	};
 
-	// Hook pointer lock state change events
-	document.addEventListener('pointerlockchange', pointerlockchange, false);
-	document.addEventListener('mozpointerlockchange', pointerlockchange, false);
-	document.addEventListener('webkitpointerlockchange', pointerlockchange, false);
+// 	var pointerlockerror = function(event) {
+// 		instructions.style.display = '';
+// 	};
 
-	document.addEventListener('pointerlockerror', pointerlockerror, false);
-	document.addEventListener('mozpointerlockerror', pointerlockerror, false);
-	document.addEventListener('webkitpointerlockerror', pointerlockerror, false);
+// 	// Hook pointer lock state change events
+// 	document.addEventListener('pointerlockchange', pointerlockchange, false);
+// 	document.addEventListener('mozpointerlockchange', pointerlockchange, false);
+// 	document.addEventListener('webkitpointerlockchange', pointerlockchange, false);
 
-	instructions.addEventListener('click', function(event) {
-		instructions.style.display = 'none';
-		// Ask the browser to lock the pointer
-		pointerLock();
-	}, false);
-} else {
-	instructions.innerHTML = 'Your browser doesn\'t seem to support Pointer Lock API';
-}
+// 	document.addEventListener('pointerlockerror', pointerlockerror, false);
+// 	document.addEventListener('mozpointerlockerror', pointerlockerror, false);
+// 	document.addEventListener('webkitpointerlockerror', pointerlockerror, false);
 
-function pointerLock() {
-	element.requestPointerLock = element.requestPointerLock || element.mozRequestPointerLock || element.webkitRequestPointerLock;
-	if (/Firefox/i.test(navigator.userAgent)) {
-		var fullscreenchange = function(event) {
-			if (document.fullscreenElement === element || document.mozFullscreenElement === element || document.mozFullScreenElement === element) {
-				document.removeEventListener('fullscreenchange', fullscreenchange);
-				document.removeEventListener('mozfullscreenchange', fullscreenchange);
-				element.requestPointerLock();
-			}
-		};
-		document.addEventListener('fullscreenchange', fullscreenchange, false);
-		document.addEventListener('mozfullscreenchange', fullscreenchange, false);
-		element.requestFullscreen = element.requestFullscreen || element.mozRequestFullscreen || element.mozRequestFullScreen || element.webkitRequestFullscreen;
-		element.requestFullscreen();
-	} else {
-		element.requestPointerLock();
-	}
-}
+// 	instructions.addEventListener('click', function(event) {
+// 		instructions.style.display = 'none';
+// 		// Ask the browser to lock the pointer
+// 		pointerLock();
+// 	}, false);
+// } else {
+// 	instructions.innerHTML = 'Your browser doesn\'t seem to support Pointer Lock API';
+// }
+
+// function pointerLock() {
+// 	element.requestPointerLock = element.requestPointerLock || element.mozRequestPointerLock || element.webkitRequestPointerLock;
+// 	if (/Firefox/i.test(navigator.userAgent)) {
+// 		var fullscreenchange = function(event) {
+// 			if (document.fullscreenElement === element || document.mozFullscreenElement === element || document.mozFullScreenElement === element) {
+// 				document.removeEventListener('fullscreenchange', fullscreenchange);
+// 				document.removeEventListener('mozfullscreenchange', fullscreenchange);
+// 				element.requestPointerLock();
+// 			}
+// 		};
+// 		document.addEventListener('fullscreenchange', fullscreenchange, false);
+// 		document.addEventListener('mozfullscreenchange', fullscreenchange, false);
+// 		element.requestFullscreen = element.requestFullscreen || element.mozRequestFullscreen || element.mozRequestFullScreen || element.webkitRequestFullscreen;
+// 		element.requestFullscreen();
+// 	} else {
+// 		element.requestPointerLock();
+// 	}
+// }
 
 init();
 animate();
@@ -344,10 +352,10 @@ function init() {
 	
 	
 	// Device Orientation Stuff	
-	deviceControls = new DeviceOrientationController( camera, renderer.domElement );
-	deviceControls.connect()
+	// deviceControls = new DeviceOrientationController( camera, renderer.domElement );
+	// deviceControls.connect()
 	
-	setupControllerEventHandlers( deviceControls )
+	// setupControllerEventHandlers( deviceControls )
 	
 	
 	
@@ -368,8 +376,8 @@ function init() {
 	// // sphere.position.set(-60, 55, 0);
 	// scene.add( sphere );
 
-	controls = new THREE.PointerLockControls(camera);
-	scene.add(controls.getObject());
+	// controls = new THREE.PointerLockControls(camera);
+	// scene.add(controls.getObject());
 	
 	clock = new THREE.Clock();
 	// renderer = new THREE.WebGLRenderer({
@@ -417,7 +425,7 @@ function init() {
 	composer.addPass( effectFXAA );
 
 	container.appendChild( renderer.domElement );
-	container.addEventListener("mousemove", getPosition, false);
+	// container.addEventListener("mousemove", getPosition, false);
 	
 	document.addEventListener( 'mousedown', onDocumentMouseDown, false );
 	document.addEventListener( 'mousemove', onDocumentMouseMove, false );
@@ -741,21 +749,43 @@ function addSelectedObject(object) {
 }
 
 function checkRaycasterCollisions() {
-	raycaster.setFromCamera(mouse, camera);
+
+	var mouse3D = new THREE.Vector3( ( event.clientX / window.innerWidth ) * 2 - 1,
+									-( event.clientY / window.innerHeight ) * 2 + 1,
+									0.5 );
+	raycaster.setFromCamera( mouse3D, camera );
 	let intersects = raycaster.intersectObjects(scene.children, true);
-	// @todo: we need to add deselect here
-	let items = intersects.filter( intersect => intersect.object.name.match(/hitbox/) )
+	let items = intersects.filter( intersect => intersect.object.name.match(/hitbox/) );
 	if(items.length) {
 		items.forEach((item) => {
 			let target = item.object.parent.children[0]
 			if(selectedObjects.indexOf(target) === -1) {
+				$('body').addClass('hot');
 				addSelectedObject(target);
 			}
 		});
 	} else {
+		$('body').removeClass('hot');
 		selectedObjects = [];
 	}
 	outlinePass.selectedObjects = selectedObjects;
+
+	// this was center point collisions
+	// raycaster.setFromCamera(mouse, camera);
+	// let intersects = raycaster.intersectObjects(scene.children, true);
+	// // @todo: we need to add deselect here
+	// let items = intersects.filter( intersect => intersect.object.name.match(/hitbox/) )
+	// if(items.length) {
+	// 	items.forEach((item) => {
+	// 		let target = item.object.parent.children[0]
+	// 		if(selectedObjects.indexOf(target) === -1) {
+	// 			addSelectedObject(target);
+	// 		}
+	// 	});
+	// } else {
+	// 	selectedObjects = [];
+	// }
+	// outlinePass.selectedObjects = selectedObjects;
 }
 
 function hideModal() {
@@ -764,12 +794,12 @@ function hideModal() {
 	}
 	let duration = 550/1000
 	showingModal = false;
-	pointerLock();
+	// pointerLock();
 	TweenMax.to($('.modal-container') , 0.3, {autoAlpha: 0})
 	TweenMax.to(camera, duration, {fov: fovMin, onComplete: function() {
 		blocked = false;
 	}});
-	$('.button-outer').trigger('mouseleave');
+	// $('.button-outer').trigger('mouseleave');
 }
 
 function renderFeatureMesh() {
@@ -851,37 +881,38 @@ function popModal(hotspot, subid) {
 	history.replaceState(null, null, urlParams);
 	let duration = 550/1000;
 	showingModal = true;
-	controlsEnabled = false;
-	document.exitPointerLock();
+	// document.exitPointerLock();
 	TweenMax.to($('.modal-container') , 0.3, {autoAlpha: 1})
 	TweenMax.to(camera, duration, {fov: fovMax, onComplete: spawnModal(hotspot)})
 }
 
 function onDocumentMouseDown( event ) {
-	if(!controlsEnabled) return;
+	isUserInteracting = true;
+	// raycaster.setFromCamera( mouse, camera );
+	// calculate objects intersecting the picking ray
+	// var intersects = raycaster.intersectObjects( scene.children );
+	// console.log('intersects', intersects);
 	if(selectedObjects.length) {
-		popModal(selectedObjects[0].hotspot, 0);
+		TweenMax.to(position, 550/1000, {lon: selectedObjects[0].hotspot.lon, onComplete: function() {
+			popModal(selectedObjects[0].hotspot, 0);
+		}});
+		// TweenMax.to(position, 550/1000, {lon: selectedObjects[0].hotspot.lon})
+		// popModal(selectedObjects[0].hotspot, 0);
 	}
 }
 
 function rotateHotspots() {
-	hotspots.forEach( hotspot => hotspot.rotation.y += rotateSpeed * 0.5 );
+	hotspots.forEach( hotspot => hotspot.children[0].rotation.z += rotateSpeed * 0.5 );
 }
 
 function onDocumentMouseMove( event ) {
-	isUserInteracting = true;
-	
-	var movementX = event.movementX || event.mozMovementX || event.webkitMovementX || 0;
-	var movementY = event.movementY || event.mozMovementY || event.webkitMovementY || 0;
-
-	if(controlsEnabled) {
+	checkRaycasterCollisions();
+	if(isUserInteracting) {
+		let movementX = event.movementX || event.mozMovementX || event.webkitMovementX || 0;
+		let movementY = event.movementY || event.mozMovementY || event.webkitMovementY || 0;
 		curPosX += movementX;
-		lon = curPosX
+		position.lon = curPosX;
 	}
-	// if ( isUserInteracting === true ) {
-	// 	lon = ( onPointerDownPointerX - event.clientX ) * 0.1 + onPointerDownLon;
-	// 	// lat = ( event.clientY - onPointerDownPointerY ) * 0.1 + onPointerDownLat;
-	// }
 }
 
 function onDocumentMouseUp( event ) {
@@ -913,13 +944,13 @@ function update() {
 	// console.log('initialOrientation', lon, initialOrientation)
 	// console.log('update', lon)
 	if(initialOrientation) {
-		lon = initialOrientation;
+		position.lon = initialOrientation;
 		initialOrientation = null;
 	}
 
 	lat = Math.max( - 85, Math.min( 85, lat ) );
 	phi = THREE.Math.degToRad( 90 - lat );
-	theta = THREE.Math.degToRad( lon );
+	theta = THREE.Math.degToRad( position.lon );
 
 	camera.target.x = 500 * Math.sin( phi ) * Math.cos( theta );
 	// camera.target.y = 500 * Math.cos( phi );
@@ -945,7 +976,8 @@ function update() {
 	// rotateHotspot();
 	rotateHotspots();
 
-	checkRaycasterCollisions();
+	// checkRaycasterCollisions();
+
 	// rainEngine.update(0.01 * 0.5)
 	theta += 0.1;
 	// let radius = 600;
@@ -981,7 +1013,7 @@ function update() {
 	// 	}, false);
 	// }
 	
-	deviceControls.update()
+	// deviceControls.update()
 	
 	// deviceControls.connect();
 	renderer.render( scene, camera );
@@ -993,24 +1025,24 @@ function update() {
 	// renderer.setClearAlpha( 0.0 );
 }
 
-function getPosition(event) {
-	let x = new Number();
-	let y = new Number();
+// function getPosition(event) {
+// 	let x = new Number();
+// 	let y = new Number();
 	
-	if (event.x != undefined && event.y != undefined) {
-		x = event.x;
-		y = event.y;
-	} else { // Firefox method to get the position
-		x = event.clientX + document.body.scrollLeft +
-		document.documentElement.scrollLeft;
-		y = event.clientY + document.body.scrollTop +
-		document.documentElement.scrollTop;
-	}
-	x -= container.offsetLeft;
-	y -= container.offsetTop;	
-	// alert("x: " + x + "  y: " + y);
-	console.log("x: " + x + "  y: " + y);
-}
+// 	if (event.x != undefined && event.y != undefined) {
+// 		x = event.x;
+// 		y = event.y;
+// 	} else { // Firefox method to get the position
+// 		x = event.clientX + document.body.scrollLeft +
+// 		document.documentElement.scrollLeft;
+// 		y = event.clientY + document.body.scrollTop +
+// 		document.documentElement.scrollTop;
+// 	}
+// 	x -= container.offsetLeft;
+// 	y -= container.offsetTop;	
+// 	// alert("x: " + x + "  y: " + y);
+// 	console.log("x: " + x + "  y: " + y);
+// }
 
 TweenLite.ticker.addEventListener("tick", render);
 
