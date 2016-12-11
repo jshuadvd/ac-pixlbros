@@ -893,8 +893,10 @@ function onDocumentMouseDown( event ) {
 	// var intersects = raycaster.intersectObjects( scene.children );
 	// console.log('intersects', intersects);
 	if(selectedObjects.length) {
+		console.log('SO',selectedObjects[0]);
+		let so = selectedObjects[0].hotspot;
 		TweenMax.to(position, 550/1000, {lon: selectedObjects[0].hotspot.lon, onComplete: function() {
-			popModal(selectedObjects[0].hotspot, 0);
+			popModal(so, 0);
 		}});
 		// TweenMax.to(position, 550/1000, {lon: selectedObjects[0].hotspot.lon})
 		// popModal(selectedObjects[0].hotspot, 0);

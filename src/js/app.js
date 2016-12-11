@@ -914,11 +914,15 @@ function onDocumentMouseDown(event) {
 	// var intersects = raycaster.intersectObjects( scene.children );
 	// console.log('intersects', intersects);
 	if (selectedObjects.length) {
-		TweenMax.to(position, 550 / 1000, { lon: selectedObjects[0].hotspot.lon, onComplete: function onComplete() {
-				popModal(selectedObjects[0].hotspot, 0);
-			} });
-		// TweenMax.to(position, 550/1000, {lon: selectedObjects[0].hotspot.lon})
-		// popModal(selectedObjects[0].hotspot, 0);
+		(function () {
+			console.log('SO', selectedObjects[0]);
+			var so = selectedObjects[0].hotspot;
+			TweenMax.to(position, 550 / 1000, { lon: selectedObjects[0].hotspot.lon, onComplete: function onComplete() {
+					popModal(so, 0);
+				} });
+			// TweenMax.to(position, 550/1000, {lon: selectedObjects[0].hotspot.lon})
+			// popModal(selectedObjects[0].hotspot, 0);
+		})();
 	}
 }
 
