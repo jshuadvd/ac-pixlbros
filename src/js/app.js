@@ -15,6 +15,7 @@ var onPointerDownLat = void 0;
 // let onPointerDownLat;
 var blocked = false;
 var curPosX = 0;
+var overrideLon = void 0;
 
 //************************************************************************//
 //                             Init Loader                                //
@@ -371,8 +372,10 @@ function init() {
 	// // sphere.position.set(-60, 55, 0);
 	// scene.add( sphere );
 
-	controls = new THREE.PointerLockControls(camera);
-	scene.add(controls.getObject());
+	controls = new THREE.OrbitControls(camera);
+	scene.add(controls);
+	// controls = new THREE.PointerLockControls(camera);
+	// scene.add(controls.getObject());
 
 	clock = new THREE.Clock();
 	// renderer = new THREE.WebGLRenderer({
@@ -877,13 +880,18 @@ function update() {
 	// if ( isUserInteracting === false ) {
 	// 	// lon += 0.1;
 	// }
-	lat = Math.max(-85, Math.min(85, lat));
-	phi = THREE.Math.degToRad(90 - lat);
-	theta = THREE.Math.degToRad(lon);
-
-	camera.target.x = 500 * Math.sin(phi) * Math.cos(theta);
-	// camera.target.y = 500 * Math.cos( phi );
-	camera.target.z = 500 * Math.sin(phi) * Math.sin(theta);
+	if (overrideLon) {
+		camera.target.x = overrideLon.x;
+		camera.target.z = overrideLon.z;
+	} else {
+		lat = Math.max(-85, Math.min(85, lat));
+		phi = THREE.Math.degToRad(90 - lat);
+		theta = THREE.Math.degToRad(lon);
+		camera.target.x = 500 * Math.sin(phi) * Math.cos(theta);
+		// camera.target.y = 500 * Math.cos( phi );
+		camera.target.z = 500 * Math.sin(phi) * Math.sin(theta);
+		console.log('x', 500 * Math.sin(phi) * Math.cos(theta), 'z', 500 * Math.sin(phi) * Math.sin(theta));
+	}
 	camera.lookAt(camera.target);
 
 	/*
