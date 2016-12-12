@@ -167,6 +167,23 @@ a {
 		z-index: 1;
 		top: 50%;
 		transform: translate(0, -50%);
+		.controls {
+			&:hover {
+				cursor: pointer;
+			}
+			position: absolute;
+			top: 50%;
+			transform: translate(0%,50%);
+			color: $red;
+			display: none;
+			z-index: 1;
+			&.next {
+				right: 5px;
+			}
+			&.prev {
+				left: 5px;
+			}
+		}
 		&::before {
 			content: "";
 			display: block;

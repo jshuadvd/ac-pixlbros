@@ -180,6 +180,14 @@ let hotspotObjects = [
 	{
 		id: 1,
 		lon: 39,
+		slides: [
+			{
+				image: 'textures/cowl.png'
+			},
+			{
+				image: 'textures/glaive.png'
+			}
+		],
 		position: [370, 0, 280],
 	},
 	{
@@ -307,6 +315,8 @@ let mouseVector = new THREE.Vector3();
 // 		element.requestPointerLock();
 // 	}
 // }
+
+let currentHotspot;
 
 init();
 animate();
@@ -465,6 +475,7 @@ function orientCamera() {
 		if(hotspot) {
 			hotspot = hotspot[0]
 			initialOrientation = hotspot.lon;
+			currentHotspot = hotspot
 			popModal(hotspot);
 		}
 	}
@@ -857,10 +868,11 @@ function spawnModal(hotspot) {
 			hideModal();
 		} 
 	});
-	if(hotspot.content) {
-		if(hotspot.content.header) $('.modal .content h1').text(hotspot.content.header);
-		if(hotspot.content.body) $('.modal .content p').text(hotspot.content.body);
-	}
+
+	// if(hotspot.content) {
+	// 	if(hotspot.content.header) $('.modal .content h1').text(hotspot.content.header);
+	// 	if(hotspot.content.body) $('.modal .content p').text(hotspot.content.body);
+	// }
 	renderFeatureMesh();
 }
 
@@ -875,11 +887,21 @@ function makeUrlParams(id, subid) {
 	return str;
 }
 
+function showSliderControls() {
+	$('.modal .controls').fadeIn();
+}
+
 function popModal(hotspot, subid) {
 	let urlParams = makeUrlParams(hotspot.id);
 	history.replaceState(null, null, urlParams);
 	let duration = 550/1000;
 	showingModal = true;
+
+	if(hotspot.slides && hotspot.slides.length > 0) {
+		showSliderControls();
+	}
+
+
 	// document.exitPointerLock();
 	TweenMax.to($('.modal-container') , 0.3, {autoAlpha: 1})
 	TweenMax.to(camera, duration, {fov: fovMax, onComplete: spawnModal(hotspot)})
@@ -907,6 +929,7 @@ function onDocumentMouseDown( event ) {
 		TweenMax.to(position, 550/1000, {lon: `${data.relativity}${data.value}`, onComplete: function() {
 			position.lon = position.lon%360;
 			curPosX = position.lon;
+			currentHotspot = so
 			popModal(so, 0);
 		}});
 	}
