@@ -84,8 +84,59 @@ var buttons = {};
 // audio.appendChild(source);
 // audio.play();
 
+function Modal(hotspot) {
+	this.modal = $('.modal');
+	this.item = this.modal.find('.item');
+	this.content = this.modal.find('.content');
+}
+
+Modal.prototype = {
+	prev() {
+		console.log('prev!');
+		let content = this.content;
+		let duration = this.duration;
+		TweenMax.to(content, duration, {autoAlpha: 0, onComplete: () => {
+			this.offset = this.offset === 0 ? this.hotspot.slides.length-1 : this.offset-1;
+			this.item.attr('src', this.hotspot.slides[this.offset].image);
+			TweenMax.to(content, duration, {autoAlpha: 1});
+		}});
+	},
+	next() {
+		console.log('next!');
+		let content = this.content;
+		let duration = this.duration;
+		TweenMax.to(content, duration, {autoAlpha: 0, onComplete: () => {
+			this.offset = this.offset+1 === this.hotspot.slides.length ? 0 : this.offset+1;
+			this.item.attr('src', this.hotspot.slides[this.offset].image);
+			TweenMax.to(content, duration, {autoAlpha: 1});
+		}})
+	},
+	duration: 0.35,
+	offset: 0,
+	showSliderControls() {
+		$('.modal .controls').fadeIn();
+	},
+	render(hotspot, subid) {
+		this.hotspot = hotspot;
+		this.subid = subid;
+		this.offset = 0;
+		// let urlParams = makeUrlParams(hotspot.id);
+		// history.replaceState(null, null, urlParams);
+		let duration = 550/1000;
+		showingModal = true;
+		if(hotspot.slides && hotspot.slides.length > 0) {
+			this.showSliderControls();
+			let firstSlide = hotspot.slides[this.offset];
+			$('.modal .item').attr('src', firstSlide.image);
+		}
+		TweenMax.to($('.modal-container') , 0.3, {autoAlpha: 1})
+		TweenMax.to(camera, duration, {fov: fovMax, onComplete: spawnModal(hotspot)})
+	}
+}
+let modal = new Modal();
+
 let audio = new Audio('audio/AC-Trailer.mp3');
-audio.play();
+// audio.play();
 
 let playAudio = true;
 
@@ -114,6 +165,16 @@ $(document).ready(function() {
 		var key = $(event.currentTarget).attr('key');
 		buttons[key].set(0);
 		// $(event.currentTarget).find('.outer-path').data('progress').set(0);
+	});
+
+	$('.controls.next').on('click', (event) => {
+		modal.next();
+		event.stopPropagation();
+	});
+
+	$('.controls.prev').on('click', (event) => {
+		modal.prev();
+		event.stopPropagation();
 	});
 
 	$('.button-outer').on('click', (event) => {
@@ -151,14 +212,20 @@ let hotspots = [];
 let hotspotObjects = [
 	{
 		id: 0,
-		content: {
-			header: '',
-			body: ''
-		},
-		feature: {
-			type: 'mesh',
-			location: ''
-		},
+		slides: [
+			{
+				image: 'textures/cowl.png'
+			},
+			{
+				image: 'textures/glaive.png'
+			},
+			{
+				image: 'textures/halberd.png'
+			},
+			{
+				image: 'textures/vambrace.png'
+			}
+		],
 		lon: 19,
 		position: [450, 0, 150],
 	},
@@ -171,6 +238,12 @@ let hotspotObjects = [
 			},
 			{
 				image: 'textures/glaive.png'
+			},
+			{
+				image: 'textures/halberd.png'
+			},
+			{
+				image: 'textures/vambrace.png'
 			}
 		],
 		position: [370, 0, 280],
@@ -178,41 +251,153 @@ let hotspotObjects = [
 	{
 		id: 2,
 		lon: 87.5,
+		slides: [
+			{
+				image: 'textures/cowl.png'
+			},
+			{
+				image: 'textures/glaive.png'
+			},
+			{
+				image: 'textures/halberd.png'
+			},
+			{
+				image: 'textures/vambrace.png'
+			}
+		],
 		position: [25, 0, 400],
 	},
 	{
 		id: 3,
 		lon: 106,
+		slides: [
+			{
+				image: 'textures/cowl.png'
+			},
+			{
+				image: 'textures/glaive.png'
+			},
+			{
+				image: 'textures/halberd.png'
+			},
+			{
+				image: 'textures/vambrace.png'
+			}
+		],
 		position: [-115, 0, 400],
 	},
 	{
 		id: 4,
 		lon: 153,
+		slides: [
+			{
+				image: 'textures/cowl.png'
+			},
+			{
+				image: 'textures/glaive.png'
+			},
+			{
+				image: 'textures/halberd.png'
+			},
+			{
+				image: 'textures/vambrace.png'
+			}
+		],
 		position: [-400, 0, 205],
 	},
 	{
 		id: 5,
 		lon: 175,
+		slides: [
+			{
+				image: 'textures/cowl.png'
+			},
+			{
+				image: 'textures/glaive.png'
+			},
+			{
+				image: 'textures/halberd.png'
+			},
+			{
+				image: 'textures/vambrace.png'
+			}
+		],
 		position: [-445, 0, 30],
 	},
 	{
 		id: 6,
 		lon: 236,
+		slides: [
+			{
+				image: 'textures/cowl.png'
+			},
+			{
+				image: 'textures/glaive.png'
+			},
+			{
+				image: 'textures/halberd.png'
+			},
+			{
+				image: 'textures/vambrace.png'
+			}
+		],
 		position: [-265, 0, -380],
 	},
 	{
 		id: 7,
 		lon: 262.5,
+		slides: [
+			{
+				image: 'textures/cowl.png'
+			},
+			{
+				image: 'textures/glaive.png'
+			},
+			{
+				image: 'textures/halberd.png'
+			},
+			{
+				image: 'textures/vambrace.png'
+			}
+		],
 		position: [-60, 0, -455],
 	},
 	{
 		id: 8,
 		lon: 286.5,
+		slides: [
+			{
+				image: 'textures/cowl.png'
+			},
+			{
+				image: 'textures/glaive.png'
+			},
+			{
+				image: 'textures/halberd.png'
+			},
+			{
+				image: 'textures/vambrace.png'
+			}
+		],
 		position: [125, 0, -455],
 	},
 	{
 		id: 9,
 		lon: 332,
+		slides: [
+			{
+				image: 'textures/cowl.png'
+			},
+			{
+				image: 'textures/glaive.png'
+			},
+			{
+				image: 'textures/halberd.png'
+			},
+			{
+				image: 'textures/vambrace.png'
+			}
+		],
 		position: [400, 0, -205]
 	},
 ];
@@ -670,6 +855,7 @@ function renderFeatureMesh() {
 }
 
 function spawnModal(hotspot) {
+
 	$('.modal-container').css({top: 0})
 	$('.modal-container .close').on('click', hideModal);
 
@@ -684,7 +870,7 @@ function spawnModal(hotspot) {
 	// 	if(hotspot.content.header) $('.modal .content h1').text(hotspot.content.header);
 	// 	if(hotspot.content.body) $('.modal .content p').text(hotspot.content.body);
 	// }
-	renderFeatureMesh();
+	// renderFeatureMesh();
 }
 
 function makeUrlParams(id, subid) {
@@ -698,20 +884,20 @@ function makeUrlParams(id, subid) {
 	return str;
 }
 
-function showSliderControls() {
-	$('.modal .controls').fadeIn();
-}
-
 function popModal(hotspot, subid) {
 	let urlParams = makeUrlParams(hotspot.id);
 	// history.replaceState(null, null, urlParams);
 	let duration = 550/1000;
 	showingModal = true;
 
-	if(hotspot.slides && hotspot.slides.length > 0) {
-		showSliderControls();
-	}
+	console.log('---- popModal ----', hotspot, subid);
 
+	if(hotspot.slides && hotspot.slides.length > 0) {
+		// showSliderControls();
+		let offset = 0;
+		let firstSlide = hotspot.slides[offset];
+		$('.modal .item').attr('src', firstSlide.image);
+	}
 
 	// document.exitPointerLock();
 	TweenMax.to($('.modal-container') , 0.3, {autoAlpha: 1})
@@ -731,7 +917,6 @@ function tweenArc(start, end) {
 }
 
 function onDocumentMouseDown( event ) {
-	console.log('onDocumentMouseDown');
 	isUserInteracting = true;
 	if(selectedObjects.length && !showingModal) {
 		let so = selectedObjects[0].hotspot;
@@ -742,7 +927,8 @@ function onDocumentMouseDown( event ) {
 			position.lon = position.lon%360;
 			curPosX = position.lon;
 			currentHotspot = so
-			popModal(so, 0);
+			modal.render(so, 0);
+			// popModal(so, 0);
 		}});
 	}
 }

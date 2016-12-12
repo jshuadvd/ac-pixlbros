@@ -88,8 +88,64 @@ var buttons = {};
 // audio.appendChild(source);
 // audio.play();
 
+function Modal(hotspot) {
+	this.modal = $('.modal');
+	this.item = this.modal.find('.item');
+	this.content = this.modal.find('.content');
+}
+
+Modal.prototype = {
+	prev: function prev() {
+		var _this = this;
+
+		console.log('prev!');
+		var content = this.content;
+		var duration = this.duration;
+		TweenMax.to(content, duration, { autoAlpha: 0, onComplete: function onComplete() {
+				_this.offset = _this.offset === 0 ? _this.hotspot.slides.length - 1 : _this.offset - 1;
+				_this.item.attr('src', _this.hotspot.slides[_this.offset].image);
+				TweenMax.to(content, duration, { autoAlpha: 1 });
+			} });
+	},
+	next: function next() {
+		var _this2 = this;
+
+		console.log('next!');
+		var content = this.content;
+		var duration = this.duration;
+		TweenMax.to(content, duration, { autoAlpha: 0, onComplete: function onComplete() {
+				_this2.offset = _this2.offset + 1 === _this2.hotspot.slides.length ? 0 : _this2.offset + 1;
+				_this2.item.attr('src', _this2.hotspot.slides[_this2.offset].image);
+				TweenMax.to(content, duration, { autoAlpha: 1 });
+			} });
+	},
+
+	duration: 0.35,
+	offset: 0,
+	showSliderControls: function showSliderControls() {
+		$('.modal .controls').fadeIn();
+	},
+	render: function render(hotspot, subid) {
+		this.hotspot = hotspot;
+		this.subid = subid;
+		this.offset = 0;
+		// let urlParams = makeUrlParams(hotspot.id);
+		// history.replaceState(null, null, urlParams);
+		var duration = 550 / 1000;
+		showingModal = true;
+		if (hotspot.slides && hotspot.slides.length > 0) {
+			this.showSliderControls();
+			var firstSlide = hotspot.slides[this.offset];
+			$('.modal .item').attr('src', firstSlide.image);
+		}
+		TweenMax.to($('.modal-container'), 0.3, { autoAlpha: 1 });
+		TweenMax.to(camera, duration, { fov: fovMax, onComplete: spawnModal(hotspot) });
+	}
+};
+var modal = new Modal();
+
 var audio = new Audio('audio/AC-Trailer.mp3');
-audio.play();
+// audio.play();
 
 var playAudio = true;
 
@@ -118,6 +174,16 @@ $(document).ready(function () {
 		var key = $(event.currentTarget).attr('key');
 		buttons[key].set(0);
 		// $(event.currentTarget).find('.outer-path').data('progress').set(0);
+	});
+
+	$('.controls.next').on('click', function (event) {
+		modal.next();
+		event.stopPropagation();
+	});
+
+	$('.controls.prev').on('click', function (event) {
+		modal.prev();
+		event.stopPropagation();
 	});
 
 	$('.button-outer').on('click', function (event) {
@@ -187,14 +253,15 @@ var rotateSpeed = 0.03;
 var hotspots = [];
 var hotspotObjects = [{
 	id: 0,
-	content: {
-		header: '',
-		body: ''
-	},
-	feature: {
-		type: 'mesh',
-		location: ''
-	},
+	slides: [{
+		image: 'textures/cowl.png'
+	}, {
+		image: 'textures/glaive.png'
+	}, {
+		image: 'textures/halberd.png'
+	}, {
+		image: 'textures/vambrace.png'
+	}],
 	lon: 19,
 	position: [450, 0, 150]
 }, {
@@ -204,39 +271,115 @@ var hotspotObjects = [{
 		image: 'textures/cowl.png'
 	}, {
 		image: 'textures/glaive.png'
+	}, {
+		image: 'textures/halberd.png'
+	}, {
+		image: 'textures/vambrace.png'
 	}],
 	position: [370, 0, 280]
 }, {
 	id: 2,
 	lon: 87.5,
+	slides: [{
+		image: 'textures/cowl.png'
+	}, {
+		image: 'textures/glaive.png'
+	}, {
+		image: 'textures/halberd.png'
+	}, {
+		image: 'textures/vambrace.png'
+	}],
 	position: [25, 0, 400]
 }, {
 	id: 3,
 	lon: 106,
+	slides: [{
+		image: 'textures/cowl.png'
+	}, {
+		image: 'textures/glaive.png'
+	}, {
+		image: 'textures/halberd.png'
+	}, {
+		image: 'textures/vambrace.png'
+	}],
 	position: [-115, 0, 400]
 }, {
 	id: 4,
 	lon: 153,
+	slides: [{
+		image: 'textures/cowl.png'
+	}, {
+		image: 'textures/glaive.png'
+	}, {
+		image: 'textures/halberd.png'
+	}, {
+		image: 'textures/vambrace.png'
+	}],
 	position: [-400, 0, 205]
 }, {
 	id: 5,
 	lon: 175,
+	slides: [{
+		image: 'textures/cowl.png'
+	}, {
+		image: 'textures/glaive.png'
+	}, {
+		image: 'textures/halberd.png'
+	}, {
+		image: 'textures/vambrace.png'
+	}],
 	position: [-445, 0, 30]
 }, {
 	id: 6,
 	lon: 236,
+	slides: [{
+		image: 'textures/cowl.png'
+	}, {
+		image: 'textures/glaive.png'
+	}, {
+		image: 'textures/halberd.png'
+	}, {
+		image: 'textures/vambrace.png'
+	}],
 	position: [-265, 0, -380]
 }, {
 	id: 7,
 	lon: 262.5,
+	slides: [{
+		image: 'textures/cowl.png'
+	}, {
+		image: 'textures/glaive.png'
+	}, {
+		image: 'textures/halberd.png'
+	}, {
+		image: 'textures/vambrace.png'
+	}],
 	position: [-60, 0, -455]
 }, {
 	id: 8,
 	lon: 286.5,
+	slides: [{
+		image: 'textures/cowl.png'
+	}, {
+		image: 'textures/glaive.png'
+	}, {
+		image: 'textures/halberd.png'
+	}, {
+		image: 'textures/vambrace.png'
+	}],
 	position: [125, 0, -455]
 }, {
 	id: 9,
 	lon: 332,
+	slides: [{
+		image: 'textures/cowl.png'
+	}, {
+		image: 'textures/glaive.png'
+	}, {
+		image: 'textures/halberd.png'
+	}, {
+		image: 'textures/vambrace.png'
+	}],
 	position: [400, 0, -205]
 }];
 var onMouseDownMouseX = 0,
@@ -689,6 +832,7 @@ function renderFeatureMesh() {
 }
 
 function spawnModal(hotspot) {
+
 	$('.modal-container').css({ top: 0 });
 	$('.modal-container .close').on('click', hideModal);
 
@@ -703,7 +847,7 @@ function spawnModal(hotspot) {
 	// 	if(hotspot.content.header) $('.modal .content h1').text(hotspot.content.header);
 	// 	if(hotspot.content.body) $('.modal .content p').text(hotspot.content.body);
 	// }
-	renderFeatureMesh();
+	// renderFeatureMesh();
 }
 
 function makeUrlParams(id, subid) {
@@ -717,18 +861,19 @@ function makeUrlParams(id, subid) {
 	return str;
 }
 
-function showSliderControls() {
-	$('.modal .controls').fadeIn();
-}
-
 function popModal(hotspot, subid) {
 	var urlParams = makeUrlParams(hotspot.id);
 	// history.replaceState(null, null, urlParams);
 	var duration = 550 / 1000;
 	showingModal = true;
 
+	console.log('---- popModal ----', hotspot, subid);
+
 	if (hotspot.slides && hotspot.slides.length > 0) {
-		showSliderControls();
+		// showSliderControls();
+		var offset = 0;
+		var firstSlide = hotspot.slides[offset];
+		$('.modal .item').attr('src', firstSlide.image);
 	}
 
 	// document.exitPointerLock();
@@ -749,7 +894,6 @@ function tweenArc(start, end) {
 }
 
 function onDocumentMouseDown(event) {
-	console.log('onDocumentMouseDown');
 	isUserInteracting = true;
 	if (selectedObjects.length && !showingModal) {
 		(function () {
@@ -761,7 +905,8 @@ function onDocumentMouseDown(event) {
 					position.lon = position.lon % 360;
 					curPosX = position.lon;
 					currentHotspot = so;
-					popModal(so, 0);
+					modal.render(so, 0);
+					// popModal(so, 0);
 				} });
 		})();
 	}
