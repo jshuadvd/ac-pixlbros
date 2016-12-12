@@ -4,16 +4,10 @@ var position = {
 	lon: 30
 };
 var curPosX = 30;
-// let lat = 0;
-// let phi = 0;
-// let theta = 0;
 var fovMin = 75;
 var fovMax = 50;
-// let zoomed = false;
-
 var onPointerDownPointerX = void 0;
 var onPointerDownLon = void 0;
-// let onPointerDownLat;
 var blocked = false;
 
 //************************************************************************//
@@ -99,15 +93,6 @@ audio.play();
 
 var playAudio = true;
 
-// $('.sound').click(function() {
-//   if (this.paused == false) {
-//       audio.pause();
-//   } else {
-//       audio.play();
-//   }
-// });
-
-
 // herp derp
 
 $(document).ready(function () {
@@ -135,7 +120,7 @@ $(document).ready(function () {
 		// $(event.currentTarget).find('.outer-path').data('progress').set(0);
 	});
 
-	$('.button-outer').on('click', function () {
+	$('.button-outer').on('click', function (event) {
 		var key = $(event.currentTarget).attr('key');
 		handleButtonClick(key);
 	});
@@ -281,67 +266,6 @@ var isUserInteracting = false;
 var projector = new THREE.Projector();
 var mouseVector = new THREE.Vector3();
 
-// var havePointerLock = 'pointerLockElement' in document || 'mozPointerLockElement' in document || 'webkitPointerLockElement' in document;
-
-// if (havePointerLock) {
-// 	var element = document.body;
-// 	var pointerlockchange = function(event) {
-// 		if(showingModal) return;
-// 		if (document.pointerLockElement === element || document.mozPointerLockElement === element || document.webkitPointerLockElement === element) {
-// 			controlsEnabled = true;
-// 			// controls.enabled = true;
-// 			blocker.style.display = 'none';
-// 		} else {
-// 			// controls.enabled = false;
-// 			controlsEnabled = false;
-// 			blocker.style.display = '-webkit-box';
-// 			blocker.style.display = '-moz-box';
-// 			blocker.style.display = 'box';
-// 			instructions.style.display = '';
-// 		}
-// 	};
-
-// 	var pointerlockerror = function(event) {
-// 		instructions.style.display = '';
-// 	};
-
-// 	// Hook pointer lock state change events
-// 	document.addEventListener('pointerlockchange', pointerlockchange, false);
-// 	document.addEventListener('mozpointerlockchange', pointerlockchange, false);
-// 	document.addEventListener('webkitpointerlockchange', pointerlockchange, false);
-
-// 	document.addEventListener('pointerlockerror', pointerlockerror, false);
-// 	document.addEventListener('mozpointerlockerror', pointerlockerror, false);
-// 	document.addEventListener('webkitpointerlockerror', pointerlockerror, false);
-
-// 	instructions.addEventListener('click', function(event) {
-// 		instructions.style.display = 'none';
-// 		// Ask the browser to lock the pointer
-// 		pointerLock();
-// 	}, false);
-// } else {
-// 	instructions.innerHTML = 'Your browser doesn\'t seem to support Pointer Lock API';
-// }
-
-// function pointerLock() {
-// 	element.requestPointerLock = element.requestPointerLock || element.mozRequestPointerLock || element.webkitRequestPointerLock;
-// 	if (/Firefox/i.test(navigator.userAgent)) {
-// 		var fullscreenchange = function(event) {
-// 			if (document.fullscreenElement === element || document.mozFullscreenElement === element || document.mozFullScreenElement === element) {
-// 				document.removeEventListener('fullscreenchange', fullscreenchange);
-// 				document.removeEventListener('mozfullscreenchange', fullscreenchange);
-// 				element.requestPointerLock();
-// 			}
-// 		};
-// 		document.addEventListener('fullscreenchange', fullscreenchange, false);
-// 		document.addEventListener('mozfullscreenchange', fullscreenchange, false);
-// 		element.requestFullscreen = element.requestFullscreen || element.mozRequestFullscreen || element.mozRequestFullScreen || element.webkitRequestFullscreen;
-// 		element.requestFullscreen();
-// 	} else {
-// 		element.requestPointerLock();
-// 	}
-// }
-
 var currentHotspot = void 0;
 
 init();
@@ -387,10 +311,9 @@ function init() {
 	buildHotspots();
 
 	// Device Orientation Stuff	
-	deviceControls = new DeviceOrientationController(camera, renderer.domElement);
-	deviceControls.connect();
-
-	setupControllerEventHandlers(deviceControls);
+	// deviceControls = new DeviceOrientationController( camera, renderer.domElement );
+	// deviceControls.connect()
+	// setupControllerEventHandlers( deviceControls )
 
 	// if (window.DeviceOrientationEvent) {
 	// 	console.log("Wonderful, Our browser supports DeviceOrientation");
@@ -400,25 +323,8 @@ function init() {
 	// 	console.log("Sorry, your browser doesn't support Device Orientation");
 	// }
 
-	// temp sphere
-	// var sphereMaterial = new THREE.MeshNormalMaterial();
-	// var sphereGeometry = new THREE.SphereGeometry(200, 200, 200);
-	// var sphere = new THREE.Mesh( sphereGeometry, sphereMaterial );
-	// // sphere.position.set(0, 0, 0);
-	// sphere.position.set(0, 0, 200);
-	// // sphere.position.set(-60, 55, 0);
-	// scene.add( sphere );
-
-	// controls = new THREE.PointerLockControls(camera);
-	// scene.add(controls.getObject());
 
 	clock = new THREE.Clock();
-	// renderer = new THREE.WebGLRenderer({
-	// 	antialias: true,
-	// 	alpha: true,
-	// });
-	// renderer.setPixelRatio( window.devicePixelRatio );
-	// renderer.setSize( window.innerWidth, window.innerHeight );
 
 	// postprocessing
 	composer = new THREE.EffectComposer(renderer);
@@ -430,17 +336,6 @@ function init() {
 	outlinePass.edgeGlow = 5.0;
 	outlinePass.edgeThickness = 1.0;
 	outlinePass.pulsePeriod = 0.5;
-
-	// outlinePass.edgeStrength = 10.0;
-	// outlinePass.edgeGlow = 10.0;
-	// outlinePass.edgeThickness = 4.0;
-	// outlinePass.pulsePeriod = 5;
-
-	// outlinePass.edgeStrength = 2.0;
-	// outlinePass.edgeGlow = 5.0;
-	// outlinePass.edgeThickness = 2.0;
-	// outlinePass.pulsePeriod = 0.8;
-	// outlinePass.visibleEdgeColor = '#fffffff'; //{r: 255, g: 255, b: 255}
 	outlinePass.visibleEdgeColor = { r: 255, g: 255, b: 255 };
 
 	composer.addPass(outlinePass);
@@ -474,7 +369,6 @@ function init() {
 
 	initRain();
 	// buildSmoke();
-	buildHotspot();
 	orientCamera();
 
 	document.body.appendChild(renderer.domElement);
@@ -553,29 +447,7 @@ function buildHotspots() {
 			var box = new THREE.Box3().setFromObject(hotspot);
 			hotspot.scale.x = hotspot.scale.y = hotspot.scale.z = scale;
 			hotspot.rotation.x = .5 * Math.PI;
-			// console.log('hotspotObject', hotspotObject);
 			hotspot.hotspot = hotspotObject;
-
-			// auto generate some stuff!
-			// {
-			// 	content: {
-			// 		header: '',
-			// 		body: ''
-			// 	},
-			// 	feature: {
-			// 		type: 'mesh',
-			// 		location: ''
-			// 	},
-			// 	position: [-20, 0, -475],
-			// },
-			hotspot.hotspot.content = {};
-			hotspot.hotspot.content.header = hotspot.name;
-			hotspot.hotspot.content.body = Math.random().toString(36).substring(7);
-
-			// hotspot.scale.x = 8
-			// hotspot.scale.y = 10
-			// hotspot.scale.z = 8
-			// hotspot.rotation.y = 3
 
 			var hitboxGeo = new THREE.BoxBufferGeometry(box.getSize().x * scale * 1.2, box.getSize().x * scale * 1.2, box.getSize().x * scale * 1.2);
 			var hitboxMat = new THREE.MeshBasicMaterial({ visible: false });
@@ -629,62 +501,6 @@ function evolveSmoke() {
 	var sp = smokeParticles.length;
 	while (sp--) {
 		smokeParticles[sp].rotation.z += delta * 0.2;
-	}
-}
-
-function buildHotspot() {
-	THREE.ImageUtils.crossOrigin = '';
-
-	// for ( let i = 0; i < 10; i ++ ) {
-
-	// let logoTexture = THREE.ImageUtils.loadTexture('/textures/animus_red_logo.png');
-	// logoTexture.crossOrigin = 'anonymous';
-
-	// let logoMaterial = new THREE.MeshLambertMaterial({
-	// 	color: 0xffffff, 
-	// 	map: logoTexture, 
-	// 	transparent: true
-	// });
-
-	// let logoGeo = new THREE.PlaneGeometry(40, 60);
-	// // let hotspots = [];
-
-	// hotspot = new THREE.Mesh(logoGeo, logoMaterial);
-
-	// // hotspot.position.x = Math.random() * 800 - 400;
-	// // hotspot.position.y = 0;
-	// // hotspot.position.z = -400;
-	// // 
-	// // hotspot.scale.x = Math.random() * 2 + 1;
-	// // hotspot.scale.y = Math.random() * 2 + 1;
-	// // hotspot.scale.z = Math.random() * 2 + 1;
-	// // 
-	// // hotspot.rotation.x = Math.random() * 2 * Math.PI;
-	// // hotspot.rotation.y = Math.random() * 2 * Math.PI;
-	// // hotspot.rotation.z = Math.random() * 2 * Math.PI;
-	// hotspot.position.set(-45, 0, -400);
-	// // hotspot.rotation.x = 0.1;
-	// scene.add(hotspot);
-
-	// hotspots.push(hotspot)		
-	// }	
-
-	var light = new THREE.DirectionalLight(0xffffff, 1.5);
-	light.position.set(-1, 0, 1);
-	scene.add(light);
-	// for (let p = 0; p < 50; p++) {
-	//     let particle = new THREE.Mesh(logoGeo, logoMaterial);
-	//     particle.position.set(Math.random()*500-250,Math.random()*500-250,Math.random()*1000-100);
-	//     particle.rotation.z = Math.random() * 360;
-	//     scene.add(particle);
-	//     hsParticles.push(particle);
-	// }	
-}
-
-function evolveHotspot() {
-	var hs = hsParticles.length;
-	while (hs--) {
-		hsParticles[hs].rotation.z += delta * 0.2;
 	}
 }
 
@@ -790,7 +606,7 @@ function addSelectedObject(object) {
 	selectedObjects.push(object);
 }
 
-function checkRaycasterCollisions() {
+function checkRaycasterCollisions(event) {
 
 	var mouse3D = new THREE.Vector3(event.clientX / window.innerWidth * 2 - 1, -(event.clientY / window.innerHeight) * 2 + 1, 0.5);
 	raycaster.setFromCamera(mouse3D, camera);
@@ -811,23 +627,6 @@ function checkRaycasterCollisions() {
 		selectedObjects = [];
 	}
 	outlinePass.selectedObjects = selectedObjects;
-
-	// this was center point collisions
-	// raycaster.setFromCamera(mouse, camera);
-	// let intersects = raycaster.intersectObjects(scene.children, true);
-	// // @todo: we need to add deselect here
-	// let items = intersects.filter( intersect => intersect.object.name.match(/hitbox/) )
-	// if(items.length) {
-	// 	items.forEach((item) => {
-	// 		let target = item.object.parent.children[0]
-	// 		if(selectedObjects.indexOf(target) === -1) {
-	// 			addSelectedObject(target);
-	// 		}
-	// 	});
-	// } else {
-	// 	selectedObjects = [];
-	// }
-	// outlinePass.selectedObjects = selectedObjects;
 }
 
 function hideModal() {
@@ -896,7 +695,7 @@ function spawnModal(hotspot) {
 	$('.overlay').on('click', hideModal);
 	$(document).on('keydown', function (event) {
 		if (event.charCode === 0) {
-			hideModal();
+			// hideModal();
 		}
 	});
 
@@ -950,6 +749,7 @@ function tweenArc(start, end) {
 }
 
 function onDocumentMouseDown(event) {
+	console.log('onDocumentMouseDown');
 	isUserInteracting = true;
 	if (selectedObjects.length && !showingModal) {
 		(function () {
@@ -974,7 +774,7 @@ function rotateHotspots() {
 }
 
 function onDocumentMouseMove(event) {
-	checkRaycasterCollisions();
+	checkRaycasterCollisions(event);
 	console.log('lon', position.lon, curPosX);
 	if (isUserInteracting && !showingModal) {
 		var movementX = event.movementX || event.mozMovementX || event.webkitMovementX || 0;
@@ -1047,7 +847,6 @@ function update() {
 	delta = clock.getDelta();
 
 	evolveSmoke();
-	evolveHotspot();
 	// animateRain();
 	// rotateHotspot();
 	rotateHotspots();
@@ -1089,7 +888,7 @@ function update() {
 	// 	}, false);
 	// }
 
-	deviceControls.update();
+	// deviceControls.update()
 
 	// deviceControls.connect();
 	renderer.render(scene, camera);
@@ -1100,25 +899,6 @@ function update() {
 	// renderer.setClearColor( 0xfff0f0 );
 	// renderer.setClearAlpha( 0.0 );
 }
-
-// function getPosition(event) {
-// 	let x = new Number();
-// 	let y = new Number();
-
-// 	if (event.x != undefined && event.y != undefined) {
-// 		x = event.x;
-// 		y = event.y;
-// 	} else { // Firefox method to get the position
-// 		x = event.clientX + document.body.scrollLeft +
-// 		document.documentElement.scrollLeft;
-// 		y = event.clientY + document.body.scrollTop +
-// 		document.documentElement.scrollTop;
-// 	}
-// 	x -= container.offsetLeft;
-// 	y -= container.offsetTop;	
-// 	// alert("x: " + x + "  y: " + y);
-// 	console.log("x: " + x + "  y: " + y);
-// }
 
 TweenLite.ticker.addEventListener("tick", render);
 
