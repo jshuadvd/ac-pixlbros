@@ -507,7 +507,7 @@ function init() {
 	document.addEventListener('mousemove', onDocumentMouseMove, false);
 	document.addEventListener('mouseup', onDocumentMouseUp, false);
 	document.addEventListener('touchstart', onDocumentTouchStart, false);
-	document.addEventListener('wheel', onDocumentMouseWheel, false);
+	// document.addEventListener( 'wheel', onDocumentMouseWheel, false );
 	window.addEventListener('resize', onWindowResize, false);
 
 	initRain();

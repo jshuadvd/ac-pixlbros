@@ -177,11 +177,15 @@ a {
 			color: $red;
 			display: none;
 			z-index: 1;
+			width: 28px;
+			height: 37px;
 			&.next {
-				right: 5px;
+				right: 25px;
+				background-image: url(../textures/next.png);
 			}
 			&.prev {
-				left: 5px;
+				left: 10px;
+				background-image: url(../textures/prev.png);
 			}
 		}
 		&::before {
