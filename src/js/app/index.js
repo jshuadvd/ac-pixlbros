@@ -902,7 +902,7 @@ function onDocumentMouseDown( event ) {
 	if(selectedObjects.length && !showingModal) {
 		let so = selectedObjects[0].hotspot;
 		let currentLon = position.lon
-		let hotspotLon = so.hotspot.lon
+		let hotspotLon = selectedObjects[0].hotspot.lon
 		let data = tweenArc(currentLon, hotspotLon);
 		TweenMax.to(position, 550/1000, {lon: `${data.relativity}${data.value}`, onComplete: function() {
 			position.lon = position.lon%360;

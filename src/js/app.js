@@ -924,7 +924,7 @@ function onDocumentMouseDown(event) {
 		(function () {
 			var so = selectedObjects[0].hotspot;
 			var currentLon = position.lon;
-			var hotspotLon = so.hotspot.lon;
+			var hotspotLon = selectedObjects[0].hotspot.lon;
 			var data = tweenArc(currentLon, hotspotLon);
 			TweenMax.to(position, 550 / 1000, { lon: '' + data.relativity + data.value, onComplete: function onComplete() {
 					position.lon = position.lon % 360;
