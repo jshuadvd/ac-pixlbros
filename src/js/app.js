@@ -125,7 +125,19 @@ Modal.prototype = {
 	showSliderControls: function showSliderControls() {
 		$('.modal .controls').fadeIn();
 	},
-	render: function render(hotspot, subid) {
+	hide: function hide() {
+		for (var i in buttons) {
+			buttons[i].set(0);
+		}
+		var duration = 550 / 1000;
+		showingModal = false;
+		// pointerLock();
+		TweenMax.to($('.modal-container'), 0.3, { autoAlpha: 0 });
+		TweenMax.to(camera, duration, { fov: fovMin, onComplete: function onComplete() {
+				blocked = false;
+			} });
+	},
+	show: function show(hotspot, subid) {
 		this.hotspot = hotspot;
 		this.subid = subid;
 		this.offset = 0;
@@ -411,6 +423,11 @@ var mouseVector = new THREE.Vector3();
 
 var currentHotspot = void 0;
 
+var touchDevice = void 0;
+if ('ontouchstart' in window || window.DocumentTouch && document instanceof DocumentTouch) {
+	touchDevice = true;
+}
+
 init();
 animate();
 
@@ -503,9 +520,16 @@ function init() {
 	container.appendChild(renderer.domElement);
 	// container.addEventListener("mousemove", getPosition, false);
 
+
+	// @todo: event aliasing
+	// document.addEventListener(touchDevice ? 'touchstart' : 'mousedown', onDocumentMouseDown, false );
+	// document.addEventListener(touchDevice ? 'touchmove' : 'mousemove', onDocumentMouseMove, false );
+	// document.addEventListener(touchDevice ? 'touchend' : 'mouseup', onDocumentMouseUp, false );
+
 	document.addEventListener('mousedown', onDocumentMouseDown, false);
 	document.addEventListener('mousemove', onDocumentMouseMove, false);
 	document.addEventListener('mouseup', onDocumentMouseUp, false);
+
 	document.addEventListener('touchstart', onDocumentTouchStart, false);
 	// document.addEventListener( 'wheel', onDocumentMouseWheel, false );
 	window.addEventListener('resize', onWindowResize, false);
@@ -546,7 +570,7 @@ function orientCamera() {
 				hotspot = hotspot[0];
 				initialOrientation = hotspot.lon;
 				currentHotspot = hotspot;
-				popModal(hotspot);
+				modal.show(hotspot);
 			}
 		})();
 	}
@@ -772,20 +796,6 @@ function checkRaycasterCollisions(event) {
 	outlinePass.selectedObjects = selectedObjects;
 }
 
-function hideModal() {
-	for (var i in buttons) {
-		buttons[i].set(0);
-	}
-	var duration = 550 / 1000;
-	showingModal = false;
-	// pointerLock();
-	TweenMax.to($('.modal-container'), 0.3, { autoAlpha: 0 });
-	TweenMax.to(camera, duration, { fov: fovMin, onComplete: function onComplete() {
-			blocked = false;
-		} });
-	// $('.button-outer').trigger('mouseleave');
-}
-
 function renderFeatureMesh() {
 	var feature = $('.feature');
 
@@ -834,9 +844,9 @@ function renderFeatureMesh() {
 function spawnModal(hotspot) {
 
 	$('.modal-container').css({ top: 0 });
-	$('.modal-container .close').on('click', hideModal);
+	$('.modal-container .close').on('click', modal.hide);
 
-	$('.overlay').on('click', hideModal);
+	$('.overlay').on('click', modal.hide);
 	$(document).on('keydown', function (event) {
 		if (event.charCode === 0) {
 			// hideModal();
@@ -859,26 +869,6 @@ function makeUrlParams(id, subid) {
 	str += '&subid=' + subid;
 	console.log('makeUrlParams', id, subid, str);
 	return str;
-}
-
-function popModal(hotspot, subid) {
-	var urlParams = makeUrlParams(hotspot.id);
-	// history.replaceState(null, null, urlParams);
-	var duration = 550 / 1000;
-	showingModal = true;
-
-	console.log('---- popModal ----', hotspot, subid);
-
-	if (hotspot.slides && hotspot.slides.length > 0) {
-		// showSliderControls();
-		var offset = 0;
-		var firstSlide = hotspot.slides[offset];
-		$('.modal .item').attr('src', firstSlide.image);
-	}
-
-	// document.exitPointerLock();
-	TweenMax.to($('.modal-container'), 0.3, { autoAlpha: 1 });
-	TweenMax.to(camera, duration, { fov: fovMax, onComplete: spawnModal(hotspot) });
 }
 
 function tweenArc(start, end) {
@@ -905,8 +895,7 @@ function onDocumentMouseDown(event) {
 					position.lon = position.lon % 360;
 					curPosX = position.lon;
 					currentHotspot = so;
-					modal.render(so, 0);
-					// popModal(so, 0);
+					modal.show(so, 0);
 				} });
 		})();
 	}
@@ -920,11 +909,9 @@ function rotateHotspots() {
 
 function onDocumentMouseMove(event) {
 	checkRaycasterCollisions(event);
-	console.log('lon', position.lon, curPosX);
 	if (isUserInteracting && !showingModal) {
 		var movementX = event.movementX || event.mozMovementX || event.webkitMovementX || 0;
 		var movementY = event.movementY || event.mozMovementY || event.webkitMovementY || 0;
-		console.log('movementX', movementX);
 		curPosX += movementX;
 		if (curPosX < 0) {
 			curPosX = 360 + curPosX;
