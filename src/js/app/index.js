@@ -179,47 +179,47 @@ let hotspotObjects = [
 	},
 	{
 		id: 1,
-		lon: -323,
+		lon: 39,
 		position: [370, 0, 280],
 	},
 	{
 		id: 2,
-		lon: -274,
+		lon: 87.5,
 		position: [25, 0, 400],
 	},
 	{
 		id: 3,
-		lon: -254,
+		lon: 106,
 		position: [-115, 0, 400],
 	},
 	{
 		id: 4,
-		lon: -207,
+		lon: 153,
 		position: [-400, 0, 205],
 	},
 	{
 		id: 5,
-		lon: -184,
+		lon: 175,
 		position: [-445, 0, 30],
 	},
 	{
 		id: 6,
-		lon: -125,
+		lon: 236,
 		position: [-265, 0, -380],
 	},
 	{
 		id: 7,
-		lon: -97.5,
+		lon: 262.5,
 		position: [-60, 0, -455],
 	},
 	{
 		id: 8,
-		lon: -74.5,
+		lon: 286.5,
 		position: [125, 0, -455],
 	},
 	{
 		id: 9,
-		lon: -27,
+		lon: 332,
 		position: [400, 0, -205]
 	},
 ];
@@ -876,7 +876,6 @@ function makeUrlParams(id, subid) {
 }
 
 function popModal(hotspot, subid) {
-	console.log('popModal', hotspot)
 	let urlParams = makeUrlParams(hotspot.id);
 	history.replaceState(null, null, urlParams);
 	let duration = 550/1000;
@@ -886,20 +885,30 @@ function popModal(hotspot, subid) {
 	TweenMax.to(camera, duration, {fov: fovMax, onComplete: spawnModal(hotspot)})
 }
 
+function tweenArc(start, end) {
+	let relativity;
+	let delta = start-end;
+	let absDelta = Math.abs(delta);
+	if(start < end) {
+		relativity = absDelta < 180 ? '+=' : '-=';
+	} else {
+		relativity = absDelta < 180 ? '-=' : '+=';
+	}
+	return {value: 360-absDelta < absDelta ? 360-absDelta : absDelta, relativity: relativity};
+}
+
 function onDocumentMouseDown( event ) {
 	isUserInteracting = true;
-	// raycaster.setFromCamera( mouse, camera );
-	// calculate objects intersecting the picking ray
-	// var intersects = raycaster.intersectObjects( scene.children );
-	// console.log('intersects', intersects);
-	if(selectedObjects.length) {
-		console.log('SO',selectedObjects[0]);
+	if(selectedObjects.length && !showingModal) {
 		let so = selectedObjects[0].hotspot;
-		TweenMax.to(position, 550/1000, {lon: selectedObjects[0].hotspot.lon, onComplete: function() {
+		let currentLon = position.lon
+		let hotspotLon = so.hotspot.lon
+		let data = tweenArc(currentLon, hotspotLon);
+		TweenMax.to(position, 550/1000, {lon: `${data.relativity}${data.value}`, onComplete: function() {
+			position.lon = position.lon%360;
+			curPosX = position.lon;
 			popModal(so, 0);
 		}});
-		// TweenMax.to(position, 550/1000, {lon: selectedObjects[0].hotspot.lon})
-		// popModal(selectedObjects[0].hotspot, 0);
 	}
 }
 
@@ -909,10 +918,18 @@ function rotateHotspots() {
 
 function onDocumentMouseMove( event ) {
 	checkRaycasterCollisions();
-	if(isUserInteracting) {
+	console.log('lon', position.lon, curPosX);
+	if(isUserInteracting && !showingModal) {
 		let movementX = event.movementX || event.mozMovementX || event.webkitMovementX || 0;
 		let movementY = event.movementY || event.mozMovementY || event.webkitMovementY || 0;
+		console.log('movementX', movementX);
 		curPosX += movementX;
+		if(curPosX < 0) {
+			curPosX = 360 + curPosX;
+		}
+		if(curPosX > 360) {
+			curPosX = 0;
+		}
 		position.lon = curPosX;
 	}
 }
@@ -954,9 +971,9 @@ function update() {
 	phi = THREE.Math.degToRad( 90 - lat );
 	theta = THREE.Math.degToRad( position.lon );
 
-	camera.target.x = 500 * Math.sin( phi ) * Math.cos( theta );
-	// camera.target.y = 500 * Math.cos( phi );
-	camera.target.z = 500 * Math.sin( phi ) * Math.sin( theta );
+	camera.target.x = 1 * Math.sin( phi ) * Math.cos( theta );
+	// camera.target.y = 1 * Math.cos( phi );
+	camera.target.z = 1 * Math.sin( phi ) * Math.sin( theta );
 	camera.lookAt( camera.target );
 
 	/*
