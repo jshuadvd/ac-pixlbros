@@ -3,7 +3,7 @@
 var position = {
 	lon: 30
 };
-var lon = 30;
+var curPosX = 30;
 // let lat = 0;
 // let phi = 0;
 // let theta = 0;
@@ -15,7 +15,6 @@ var onPointerDownPointerX = void 0;
 var onPointerDownLon = void 0;
 // let onPointerDownLat;
 var blocked = false;
-var curPosX = 0;
 
 //************************************************************************//
 //                             Init Loader                                //
@@ -925,7 +924,7 @@ function showSliderControls() {
 
 function popModal(hotspot, subid) {
 	var urlParams = makeUrlParams(hotspot.id);
-	history.replaceState(null, null, urlParams);
+	// history.replaceState(null, null, urlParams);
 	var duration = 550 / 1000;
 	showingModal = true;
 
