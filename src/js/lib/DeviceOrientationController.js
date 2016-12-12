@@ -125,7 +125,7 @@ var DeviceOrientationController = function ( object, domElement ) {
 
 	this.onDocumentMouseMove = function ( event ) {
 		currentX = event.pageX;
-		currentY = event.pageY;
+		// currentY = event.pageY;
 	}.bind( this );
 
 	this.onDocumentMouseUp = function ( event ) {

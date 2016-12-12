@@ -362,10 +362,10 @@ function init() {
 	
 	
 	// Device Orientation Stuff	
-	// deviceControls = new DeviceOrientationController( camera, renderer.domElement );
-	// deviceControls.connect()
+	deviceControls = new DeviceOrientationController( camera, renderer.domElement );
+	deviceControls.connect()
 	
-	// setupControllerEventHandlers( deviceControls )
+	setupControllerEventHandlers( deviceControls )
 	
 	
 	
@@ -1070,7 +1070,7 @@ function update() {
 	// 	}, false);
 	// }
 	
-	// deviceControls.update()
+	deviceControls.update()
 	
 	// deviceControls.connect();
 	renderer.render( scene, camera );

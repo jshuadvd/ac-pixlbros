@@ -388,11 +388,10 @@ function init() {
 	buildHotspots();
 
 	// Device Orientation Stuff	
-	// deviceControls = new DeviceOrientationController( camera, renderer.domElement );
-	// deviceControls.connect()
+	deviceControls = new DeviceOrientationController(camera, renderer.domElement);
+	deviceControls.connect();
 
-	// setupControllerEventHandlers( deviceControls )
-
+	setupControllerEventHandlers(deviceControls);
 
 	// if (window.DeviceOrientationEvent) {
 	// 	console.log("Wonderful, Our browser supports DeviceOrientation");
@@ -1091,7 +1090,7 @@ function update() {
 	// 	}, false);
 	// }
 
-	// deviceControls.update()
+	deviceControls.update();
 
 	// deviceControls.connect();
 	renderer.render(scene, camera);
