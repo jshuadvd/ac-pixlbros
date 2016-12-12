@@ -88,6 +88,8 @@ function Modal(hotspot) {
 	this.modal = $('.modal');
 	this.item = this.modal.find('.item');
 	this.content = this.modal.find('.content');
+	$('.modal-container .close').on('click', this.hide);
+	$('.overlay').on('click', this.hide);
 }
 
 Modal.prototype = {
@@ -127,6 +129,7 @@ Modal.prototype = {
 		TweenMax.to(camera, duration, {fov: fovMin, onComplete: function() {
 			blocked = false;
 		}});
+		$(document).off('keydown');
 	},
 	show(hotspot, subid) {
 		this.hotspot = hotspot;
@@ -142,7 +145,14 @@ Modal.prototype = {
 			$('.modal .item').attr('src', firstSlide.image);
 		}
 		TweenMax.to($('.modal-container') , 0.3, {autoAlpha: 1})
-		TweenMax.to(camera, duration, {fov: fovMax, onComplete: spawnModal(hotspot)})
+		TweenMax.to(camera, duration, {fov: fovMax, onComplete: () => {
+			$('.modal-container').css({top: 0})
+			$(document).on('keydown', (event) => {
+				if(event.keyCode === 27) {
+					modal.hide();
+				} 
+			});
+		}})
 	}
 }
 let modal = new Modal();
@@ -864,24 +874,6 @@ function checkRaycasterCollisions(event) {
 // 	render();
 // }
 
-function spawnModal(hotspot) {
-
-	$('.modal-container').css({top: 0})
-	$('.modal-container .close').on('click', modal.hide);
-
-	$('.overlay').on('click', modal.hide);
-	$(document).on('keydown', (event) => {
-		if(event.keyCode === 27) {
-			modal.hide();
-		} 
-	});
-
-	// if(hotspot.content) {
-	// 	if(hotspot.content.header) $('.modal .content h1').text(hotspot.content.header);
-	// 	if(hotspot.content.body) $('.modal .content p').text(hotspot.content.body);
-	// }
-	// renderFeatureMesh();
-}
 
 function makeUrlParams(id, subid) {
 	let str = '';
