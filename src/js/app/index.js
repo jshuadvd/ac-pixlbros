@@ -131,7 +131,7 @@ $(document).ready(function() {
 		// $(event.currentTarget).find('.outer-path').data('progress').set(0);
 	});
 
-	$('.button-outer').on('click', () => {
+	$('.button-outer').on('click', (event) => {
 		var key = $(event.currentTarget).attr('key');
 		handleButtonClick(key);
 	});
@@ -774,7 +774,7 @@ function addSelectedObject(object) {
 	selectedObjects.push(object);
 }
 
-function checkRaycasterCollisions() {
+function checkRaycasterCollisions(event) {
 
 	var mouse3D = new THREE.Vector3( ( event.clientX / window.innerWidth ) * 2 - 1,
 									-( event.clientY / window.innerHeight ) * 2 + 1,
@@ -935,6 +935,7 @@ function tweenArc(start, end) {
 }
 
 function onDocumentMouseDown( event ) {
+	console.log('onDocumentMouseDown');
 	isUserInteracting = true;
 	if(selectedObjects.length && !showingModal) {
 		let so = selectedObjects[0].hotspot;
@@ -955,7 +956,7 @@ function rotateHotspots() {
 }
 
 function onDocumentMouseMove( event ) {
-	checkRaycasterCollisions();
+	checkRaycasterCollisions(event);
 	console.log('lon', position.lon, curPosX);
 	if(isUserInteracting && !showingModal) {
 		let movementX = event.movementX || event.mozMovementX || event.webkitMovementX || 0;
