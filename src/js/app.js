@@ -428,10 +428,16 @@ function init() {
 	composer.addPass(renderPass);
 	outlinePass = new THREE.OutlinePass(new THREE.Vector2(window.innerWidth, window.innerHeight), scene, camera);
 
-	outlinePass.edgeStrength = 10.0;
-	outlinePass.edgeGlow = 10.0;
-	outlinePass.edgeThickness = 4.0;
-	outlinePass.pulsePeriod = 5;
+	outlinePass.edgeStrength = 0.5;
+	outlinePass.edgeGlow = 5.0;
+	outlinePass.edgeThickness = 1.0;
+	outlinePass.pulsePeriod = 0.5;
+
+	// outlinePass.edgeStrength = 10.0;
+	// outlinePass.edgeGlow = 10.0;
+	// outlinePass.edgeThickness = 4.0;
+	// outlinePass.pulsePeriod = 5;
+
 	// outlinePass.edgeStrength = 2.0;
 	// outlinePass.edgeGlow = 5.0;
 	// outlinePass.edgeThickness = 2.0;
@@ -536,7 +542,15 @@ function buildHotspots() {
 
 			var scale = 45;
 
-			var hotspot = new THREE.Mesh(geometry, new THREE.MeshBasicMaterial({ color: '#cccccc', opacity: 1 }));
+			// let newMat = new THREE.MeshPhongMaterial( { 
+			// 	color: 0x996633, 
+			// 	specular: 0x050505,
+			// 	shininess: 100
+			// } ) 
+
+			var oldMat = new THREE.MeshBasicMaterial({ color: '#cccccc', opacity: 1 });
+
+			var hotspot = new THREE.Mesh(geometry, oldMat);
 			hotspot.name = 'hotspot-' + index;
 			var box = new THREE.Box3().setFromObject(hotspot);
 			hotspot.scale.x = hotspot.scale.y = hotspot.scale.z = scale;
@@ -565,8 +579,9 @@ function buildHotspots() {
 			// hotspot.scale.z = 8
 			// hotspot.rotation.y = 3
 
-			var hitboxGeo = new THREE.BoxBufferGeometry(box.getSize().x * scale * 1.2, 200, box.getSize().x * scale * 1.2);
-			var hitboxMat = new THREE.MeshBasicMaterial({ wireframe: true });
+			var hitboxGeo = new THREE.BoxBufferGeometry(box.getSize().x * scale * 1.2, box.getSize().x * scale * 1.2, box.getSize().x * scale * 1.2);
+			var hitboxMat = new THREE.MeshBasicMaterial({ visible: false });
+			// {wireframe: true}
 			// // hitboxMat.visible = false
 			var hitboxMesh = new THREE.Mesh(hitboxGeo, hitboxMat);
 			hitboxMesh.name = 'hitbox-' + index;
