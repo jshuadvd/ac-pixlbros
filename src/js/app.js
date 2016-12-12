@@ -796,50 +796,50 @@ function checkRaycasterCollisions(event) {
 	outlinePass.selectedObjects = selectedObjects;
 }
 
-function renderFeatureMesh() {
-	var feature = $('.feature');
+// function renderFeatureMesh() {
+// 	var feature = $('.feature');
 
-	if (feature.find('canvas').length) return;
-	var scene = new THREE.Scene();
-	var camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+// 	if(feature.find('canvas').length) return;
+// 	var scene = new THREE.Scene();
+// 	var camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
 
-	var renderer = new THREE.WebGLRenderer();
-	renderer.setSize(feature.width(), feature.height());
-	feature.append(renderer.domElement);
+// 	var renderer = new THREE.WebGLRenderer();
+// 	renderer.setSize(feature.width(), feature.height());
+// 	feature.append(renderer.domElement);
 
-	var geometry = new THREE.CubeGeometry(5, 5, 5);
-	var material = new THREE.MeshLambertMaterial({
-		color: 0x00fff0
-	});
-	var cube = new THREE.Mesh(geometry, material);
-	scene.add(cube);
+// 	var geometry = new THREE.CubeGeometry(5, 5, 5);
+// 	var material = new THREE.MeshLambertMaterial({
+// 		color: 0x00fff0
+// 	});
+// 	var cube = new THREE.Mesh(geometry, material);
+// 	scene.add(cube);
 
-	camera.position.z = 12;
+// 	camera.position.z = 12;
 
-	var pointLight = new THREE.PointLight(0xFFFFFF);
+// 	var pointLight = new THREE.PointLight(0xFFFFFF);
 
-	pointLight.position.x = 10;
-	pointLight.position.y = 50;
-	pointLight.position.z = 130;
+// 	pointLight.position.x = 10;
+// 	pointLight.position.y = 50;
+// 	pointLight.position.z = 130;
 
-	scene.add(pointLight);
+// 	scene.add(pointLight);
 
-	var reqAnimFrame = window.requestAnimationFrame || window.webkitRequestAnimationFrame || window.mozRequestAnimationFrame || window.msRequestAnimationFrame;
+// 	var reqAnimFrame = window.requestAnimationFrame || window.webkitRequestAnimationFrame || window.mozRequestAnimationFrame || window.msRequestAnimationFrame;
 
-	var render = function render() {
-		reqAnimFrame(render);
+// 	var render = function() {
+// 		reqAnimFrame(render);
 
-		var delta = Math.random() * (0.06 - 0.02) + 0.02;
+// 		var delta = Math.random() * (0.06 - 0.02) + 0.02;
 
-		cube.rotation.x += delta;
-		cube.rotation.y += delta;
-		cube.rotation.z -= delta;
+// 		cube.rotation.x += delta;
+// 		cube.rotation.y += delta;
+// 		cube.rotation.z -= delta;
 
-		renderer.render(scene, camera);
-	};
+// 		renderer.render(scene, camera);
+// 	};
 
-	render();
-}
+// 	render();
+// }
 
 function spawnModal(hotspot) {
 
@@ -848,8 +848,8 @@ function spawnModal(hotspot) {
 
 	$('.overlay').on('click', modal.hide);
 	$(document).on('keydown', function (event) {
-		if (event.charCode === 0) {
-			// hideModal();
+		if (event.keyCode === 27) {
+			modal.hide();
 		}
 	});
 
