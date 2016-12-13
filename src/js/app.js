@@ -734,7 +734,8 @@ function handleButtonClick(key) {
 
 function buildHotspots() {
 	loader = new THREE.JSONLoader();
-	loader.load('js/ac-badge-big.js', function (geometry) {
+	loader.load('js/ac-logo-simple.js', function (geometry) {
+		// loader.load('js/ac-badge-big.js', function(geometry) {
 		// loader.load('js/ac-badge.js', function(geometry) {
 		// loader.load('js/ac-logo.js', function(geometry) {
 		hotspots = hotspotObjects.map(function (hotspotObject, index) {
@@ -743,7 +744,10 @@ function buildHotspots() {
 			// previous ac-logo.js scale
 			// let scale = 10;
 
-			var scale = 45;
+			// js/ac-badge-big.js
+			// let scale = 45;
+
+			var scale = 27;
 
 			// let newMat = new THREE.MeshPhongMaterial( { 
 			// 	color: 0x996633, 
