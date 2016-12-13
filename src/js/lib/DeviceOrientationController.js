@@ -70,7 +70,8 @@ var DeviceOrientationController = function ( object, domElement ) {
 			eventData.type = name;
 			eventData.target = this;
 			
-			// console.log("TARGET", eventData.type);
+			console.log("TYPE", eventData.type);
+			console.log("TARGET", eventData.target);
 
 			this.dispatchEvent( eventData );
 		}.bind( this );
