@@ -145,7 +145,17 @@ var DeviceOrientationController = function ( object, domElement ) {
 		fireEvent( CONTROLLER_EVENT.ROTATE_CONTROL + 'end' );
 	}.bind( this );
 
+	this.startX = 0;
+
 	this.onDocumentTouchStart = function ( event ) {
+
+		if(event.touches && event.touches.length > 0) {
+			this.startX = event.touches[0].pageX;
+			console.log('startX', this.startX);
+		}
+
+		console.log('touchStart');
+
 		event.preventDefault();
 		event.stopPropagation();
 
@@ -201,17 +211,23 @@ var DeviceOrientationController = function ( object, domElement ) {
 	}.bind( this );
 
 	this.onDocumentTouchMove = function ( event ) {
-		switch( event.touches.length ) {
-			case 1:
-				currentX = event.touches[ 0 ].pageX;
-				currentY = event.touches[ 0 ].pageY;
-				break;
-
-			case 2:
-				zoomP1.set( event.touches[ 0 ].pageX, event.touches[ 0 ].pageY );
-				zoomP2.set( event.touches[ 1 ].pageX, event.touches[ 1 ].pageY );
-				break;
+		console.log('onDocumentTouchMove', position, event)
+		if(event.touches && event.touches.length) {
+			var delta = this.startX - event.touches[0].pageX;
+			this.startX = event.touches[0].pageX;
+			position.lon += delta;
 		}
+		// switch( event.touches.length ) {
+		// 	case 1:
+		// 		currentX = event.touches[ 0 ].pageX;
+		// 		currentY = event.touches[ 0 ].pageY;
+		// 		break;
+
+		// 	case 2:
+		// 		zoomP1.set( event.touches[ 0 ].pageX, event.touches[ 0 ].pageY );
+		// 		zoomP2.set( event.touches[ 1 ].pageX, event.touches[ 1 ].pageY );
+		// 		break;
+		// }
 	}.bind( this );
 
 	this.onDocumentTouchEnd = function ( event ) {
@@ -438,7 +454,7 @@ var DeviceOrientationController = function ( object, domElement ) {
 		this.updateDeviceMove();
 
 		if ( appState !== CONTROLLER_STATE.AUTO ) {
-			this.updateManualMove();
+			// this.updateManualMove();
 		}
 	};
 
@@ -450,8 +466,8 @@ var DeviceOrientationController = function ( object, domElement ) {
 
 		window.addEventListener( 'compassneedscalibration', this.onCompassNeedsCalibration, false );
 
-		this.element.addEventListener( 'mousedown', this.onDocumentMouseDown, false );
-		this.element.addEventListener( 'touchstart', this.onDocumentTouchStart, false );
+		// this.element.addEventListener( 'mousedown', this.onDocumentMouseDown, false );
+		// this.element.addEventListener( 'touchstart', this.onDocumentTouchStart, false );
 
 		this.freeze = false;
 	};

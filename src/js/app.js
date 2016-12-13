@@ -17,6 +17,7 @@ var fovMax = 50;
 var onPointerDownPointerX = void 0;
 var onPointerDownLon = void 0;
 var blocked = false;
+var touchStartX = void 0;
 
 //************************************************************************//
 //                             Init Loader                                //
@@ -614,10 +615,10 @@ function init() {
 	// Build items for raycaster clicks
 	buildHotspots();
 
-	// Device Orientation Stuff	
-	// deviceControls = new DeviceOrientationController( camera, renderer.domElement );
-	// deviceControls.connect()
-	// setupControllerEventHandlers( deviceControls )
+	// Device Orientation Stuff
+	deviceControls = new DeviceOrientationController(camera, renderer.domElement);
+	deviceControls.connect();
+	setupControllerEventHandlers(deviceControls);
 
 	// if (window.DeviceOrientationEvent) {
 	// 	console.log("Wonderful, Our browser supports DeviceOrientation");
@@ -675,6 +676,9 @@ function init() {
 	document.addEventListener('mouseup', onDocumentMouseUp, false);
 
 	document.addEventListener('touchstart', onDocumentTouchStart, false);
+	document.addEventListener('touchmove', onDocumentTouchMove, false);
+	// document.addEventListener( 'touchend', onDocumentTouchEnd, false );
+
 	// document.addEventListener( 'wheel', onDocumentMouseWheel, false );
 	window.addEventListener('resize', onWindowResize, false);
 
@@ -921,10 +925,23 @@ function onWindowResize() {
 }
 
 function onDocumentTouchStart(event) {
-	event.preventDefault();
-	event.clientX = event.touches[0].clientX;
-	event.clientY = event.touches[0].clientY;
-	onDocumentMouseDown(event);
+
+	if (event.touches && event.touches.length > 0) {
+		touchStartX = event.touches[0].pageX;
+	}
+	// console.log('--- INDEX TOUCH START ---');
+	// event.preventDefault();
+	// event.clientX = event.touches[0].clientX;
+	// event.clientY = event.touches[0].clientY;
+	// onDocumentMouseDown( event );
+}
+
+function onDocumentTouchMove(event) {
+	if (event.touches && event.touches.length) {
+		var delta = touchStartX - event.touches[0].pageX;
+		touchStartX = event.touches[0].pageX;
+		position.lon += delta;
+	}
 }
 
 function addSelectedObject(object) {
@@ -1025,6 +1042,7 @@ function tweenArc(start, end) {
 }
 
 function onDocumentMouseDown(event) {
+	console.log('--- INDEX MOUSE DOWN ---');
 	isUserInteracting = true;
 	if (selectedObjects.length && !showingModal) {
 		(function () {
@@ -1161,7 +1179,7 @@ function update() {
 	// 	}, false);
 	// }
 
-	// deviceControls.update()
+	deviceControls.update();
 
 	// deviceControls.connect();
 	renderer.render(scene, camera);
