@@ -450,7 +450,7 @@ var DeviceOrientationController = function ( object, domElement ) {
 
 		window.addEventListener( 'compassneedscalibration', this.onCompassNeedsCalibration, false );
 
-		this.element.addEventListener( 'mousedown', this.onDocumentMouseDown, false );
+		// this.element.addEventListener( 'mousedown', this.onDocumentMouseDown, false );
 		// this.element.addEventListener( 'touchstart', this.onDocumentTouchStart, false );
 
 		this.freeze = false;
