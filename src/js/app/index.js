@@ -480,7 +480,7 @@ function init() {
 	geometry.scale( - 1, 1, 1 );
 
 	let material = new THREE.MeshBasicMaterial( {
-		map: new THREE.TextureLoader().load( 'textures/AnimusPanoramaTreated.jpg' ),
+		map: new THREE.TextureLoader().load( 'textures/AnimusPanorama_V2.jpg' ),
 		fog: true,
 	});
 	
