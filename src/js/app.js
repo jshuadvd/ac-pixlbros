@@ -92,6 +92,8 @@ function Modal(hotspot) {
 	this.modal = $('.modal');
 	this.item = this.modal.find('.item');
 	this.content = this.modal.find('.content');
+	this.description = this.modal.find('.description');
+	this.title = this.modal.find('.title');
 	$('.modal-container .close').on('click', this.hide);
 	$('.overlay').on('click', this.hide);
 }
@@ -105,7 +107,7 @@ Modal.prototype = {
 		var duration = this.duration;
 		TweenMax.to(content, duration, { autoAlpha: 0, onComplete: function onComplete() {
 				_this.offset = _this.offset === 0 ? _this.hotspot.slides.length - 1 : _this.offset - 1;
-				_this.item.attr('src', _this.hotspot.slides[_this.offset].image);
+				_this.setModalValues(_this.hotspot.slides[_this.offset]);
 				TweenMax.to(content, duration, { autoAlpha: 1 });
 			} });
 	},
@@ -117,13 +119,18 @@ Modal.prototype = {
 		var duration = this.duration;
 		TweenMax.to(content, duration, { autoAlpha: 0, onComplete: function onComplete() {
 				_this2.offset = _this2.offset + 1 === _this2.hotspot.slides.length ? 0 : _this2.offset + 1;
-				_this2.item.attr('src', _this2.hotspot.slides[_this2.offset].image);
+				_this2.setModalValues(_this2.hotspot.slides[_this2.offset]);
 				TweenMax.to(content, duration, { autoAlpha: 1 });
 			} });
 	},
 
 	duration: 0.35,
 	offset: 0,
+	setModalValues: function setModalValues(hotspot) {
+		this.description.text(hotspot.description);
+		this.title.text(hotspot.title);
+		this.item.attr('src', hotspot.image);
+	},
 	showSliderControls: function showSliderControls() {
 		$('.modal .controls').fadeIn();
 	},
@@ -151,7 +158,7 @@ Modal.prototype = {
 		if (hotspot.slides && hotspot.slides.length > 0) {
 			this.showSliderControls();
 			var firstSlide = hotspot.slides[this.offset];
-			$('.modal .item').attr('src', firstSlide.image);
+			this.setModalValues(firstSlide);
 		}
 		TweenMax.to($('.modal-container'), 0.3, { autoAlpha: 1 });
 		TweenMax.to(camera, duration, { fov: fovMax, onComplete: function onComplete() {
@@ -276,13 +283,17 @@ var hotspots = [];
 var hotspotObjects = [{
 	id: 0,
 	slides: [{
-		image: 'textures/cowl.png'
+		title: 'BLADED SPEAR de BILBOA',
+		description: 'This bladed spear is sure to keep enemies at bay. with a heavy ash base and a finely hewn blade forged by bilboan craftsmen, in the hands of an assassin this weapon can defeat an entire batallion of templar enemies.',
+		image: 'textures/bladed-spear.png'
 	}, {
-		image: 'textures/glaive.png'
-	}, {
-		image: 'textures/halberd.png'
-	}, {
+		title: 'LEATHER ASSASSIN VAMBRACE',
+		description: 'the leather vambrace as an essential piece of every assassin’s armor. this blade- concealing armor both proects from attacks and gives the assassin access to a hidden blade with a simple flick of the wrist.',
 		image: 'textures/vambrace.png'
+	}, {
+		title: 'CóRDOBAN HALBERD',
+		description: 'the córdoban halberd combines the intricate artistrty of the monarchy with the unparalleled killing power of the inquisition. featuring tempered steel and ornate gold gilding in the staff, this weapon is both beautiful and deadly.',
+		image: 'textures/halberd.png'
 	}],
 	lon: 19,
 	position: [450, 0, 150]
