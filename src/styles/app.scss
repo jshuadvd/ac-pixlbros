@@ -362,10 +362,52 @@ a {
 	}
 }
 
-.modal-container.new .share {
-	position: absolute;
-	top: 5%;
-	left: 14%;
-	transform: translate(-50%, 0);
-	width: 90px;
+.modal-container.new {
+	.border img {
+		width: 100%;
+	}
+	.modal.bladed-spear .item {
+		width: 90%;
+	}
+	.modal.vambrace .item {
+		width: 29%;
+	}
+	.modal.halberd .item {
+		width: 85%;
+	}
+	.title {
+		font-size: 2.5vw;
+	}
+	.inner {
+		padding: 0 16% 0 17%;
+	}
+	.description {
+		font-size: 1vw;
+	}
+	.modal .controls.next {
+		right: 10%;
+	}
+	.modal .controls.prev {
+		left: 12%;
+	}
+	.share {
+		.twitter {
+			margin-left: -11%;
+		}
+		position: absolute;
+		top: 5%;
+		left: 15.5%;
+		transform: translate(-50%, 0);
+		width: 12%;
+	}
+	.close {
+		position: absolute;
+		top: 3%;
+		right: 10%;
+		line-height: 0;
+		color: #720001;
+		width: 16%;
+		height: auto;
+		z-index: 1;
+	}
 }
