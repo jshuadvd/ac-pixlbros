@@ -17,7 +17,6 @@ let onPointerDownLon;
 let blocked = false;
 let touchStartX;
 
-
 //************************************************************************//
 //                             Init Loader                                //
 //************************************************************************//
@@ -188,6 +187,7 @@ Modal.prototype = {
 		$('.modal .controls').fadeIn();
 	},
 	hide() {
+		freeze = false;
 		this.modal.attr('class', 'modal');
 		for(var i in buttons) {
 			buttons[i].set(0);
@@ -564,6 +564,7 @@ let effectFXAA;
 let showingModal = false;
 let initialOrientation;
 let isUserInteracting = false;
+let freeze;
 
 let projector = new THREE.Projector();
 let mouseVector = new THREE.Vector3();
@@ -922,16 +923,25 @@ function onWindowResize() {
 	effectFXAA.uniforms['resolution'].value.set(1 / window.innerWidth, 1 / window.innerHeight );
 }
 
+// function onDocumentTouchEnd() {
+// 	console.log('---- onDocumentTouchEnd ----');
+// }
+
 function onDocumentTouchStart( event ) {
-	console.log('---- onDocumentTouchStart ----');
+	console.log('---- onDocumentTouchStart ----', event);
 	if(event.touches && event.touches.length > 0) {
-		touchStartX = event.touches[0].pageX;
+		let touch = event.touches[0];
+		touchStartX = touch.pageX;
+		checkRaycasterCollisions(touch.pageX, touch.pageY);
+		if(selectedObjects.length) {
+			onDocumentMouseDown(event, true);
+			freeze = true;
+		}
 	}
 	// console.log('--- INDEX TOUCH START ---');
 	// event.preventDefault();
 	// event.clientX = event.touches[0].clientX;
 	// event.clientY = event.touches[0].clientY;
-	// onDocumentMouseDown( event );
 }
 
 function onDocumentTouchMove(event) {
@@ -948,10 +958,10 @@ function addSelectedObject(object) {
 	selectedObjects.push(object);
 }
 
-function checkRaycasterCollisions(event) {
+function checkRaycasterCollisions(x, y) {
 
-	var mouse3D = new THREE.Vector3( ( event.clientX / window.innerWidth ) * 2 - 1,
-									-( event.clientY / window.innerHeight ) * 2 + 1,
+	var mouse3D = new THREE.Vector3( ( x / window.innerWidth ) * 2 - 1,
+									-( y / window.innerHeight ) * 2 + 1,
 									0.5 );
 	raycaster.setFromCamera( mouse3D, camera );
 	let intersects = raycaster.intersectObjects(scene.children, true);
@@ -1040,8 +1050,12 @@ function tweenArc(start, end) {
 	return {value: 360-absDelta < absDelta ? 360-absDelta : absDelta, relativity: relativity};
 }
 
-function onDocumentMouseDown( event ) {
-	console.log('--- INDEX MOUSE DOWN ---')
+function onDocumentMouseDown(event, isTouch) {
+	console.log('---- onDocumentMouseDown ----', freeze)
+	if(freeze) {
+		console.log('action frozen');
+		return;
+	}
 	isUserInteracting = true;
 	if(selectedObjects.length && !showingModal) {
 		let so = selectedObjects[0].hotspot;
@@ -1054,13 +1068,19 @@ function onDocumentMouseDown( event ) {
 		let maxDura = 550;
 		let duration = ((delta/maxDelta)*maxDura)/1000;
 
-
-		TweenMax.to(position, duration, {lon: `${data.relativity}${data.value}`, onComplete: function() {
+		if(isTouch) {
 			position.lon = position.lon%360;
 			curPosX = position.lon;
 			currentHotspot = so
 			modal.show(so, 0);
-		}});
+		} else {
+			TweenMax.to(position, duration, {lon: `${data.relativity}${data.value}`, onComplete: function() {
+				position.lon = position.lon%360;
+				curPosX = position.lon;
+				currentHotspot = so
+				modal.show(so, 0);
+			}});
+		}
 	}
 }
 
@@ -1068,8 +1088,13 @@ function rotateHotspots() {
 	hotspots.forEach( hotspot => hotspot.children[0].rotation.z += rotateSpeed * 0.5 );
 }
 
-function onDocumentMouseMove( event ) {
-	checkRaycasterCollisions(event);
+function onDocumentMouseMove(event) {
+	console.log('---- onDocumentMouseMove ----', freeze);
+	if(freeze) {
+		console.log('action frozen');
+		return;
+	}
+	checkRaycasterCollisions(event.clientX, event.clientY);
 	if(isUserInteracting && !showingModal) {
 		let movementX = event.movementX || event.mozMovementX || event.webkitMovementX || 0;
 		let movementY = event.movementY || event.mozMovementY || event.webkitMovementY || 0;
