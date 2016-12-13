@@ -15,7 +15,6 @@ let fovMax = 50;
 let onPointerDownPointerX;
 let onPointerDownLon;
 let blocked = false;
-let touchStartX;
 
 
 //************************************************************************//
@@ -679,9 +678,6 @@ function init() {
 	document.addEventListener('mouseup', onDocumentMouseUp, false );
 
 	document.addEventListener( 'touchstart', onDocumentTouchStart, false );
-	document.addEventListener( 'touchmove', onDocumentTouchMove, false );
-	// document.addEventListener( 'touchend', onDocumentTouchEnd, false );
-
 	// document.addEventListener( 'wheel', onDocumentMouseWheel, false );
 	window.addEventListener( 'resize', onWindowResize, false );
 	
@@ -923,23 +919,10 @@ function onWindowResize() {
 }
 
 function onDocumentTouchStart( event ) {
-
-	if(event.touches && event.touches.length > 0) {
-		touchStartX = event.touches[0].pageX;
-	}
-	// console.log('--- INDEX TOUCH START ---');
-	// event.preventDefault();
-	// event.clientX = event.touches[0].clientX;
-	// event.clientY = event.touches[0].clientY;
-	// onDocumentMouseDown( event );
-}
-
-function onDocumentTouchMove(event) {
-	if(event.touches && event.touches.length) {
-		var delta = touchStartX - event.touches[0].pageX;
-		touchStartX = event.touches[0].pageX;
-		position.lon += delta;
-	}
+	event.preventDefault();
+	event.clientX = event.touches[0].clientX;
+	event.clientY = event.touches[0].clientY;
+	onDocumentMouseDown( event );
 }
 
 function addSelectedObject(object) {
@@ -1040,7 +1023,6 @@ function tweenArc(start, end) {
 }
 
 function onDocumentMouseDown( event ) {
-	console.log('--- INDEX MOUSE DOWN ---')
 	isUserInteracting = true;
 	if(selectedObjects.length && !showingModal) {
 		let so = selectedObjects[0].hotspot;
