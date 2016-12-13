@@ -514,9 +514,9 @@ function init() {
 	buildHotspots();
 	
 	// Device Orientation Stuff	
-	// deviceControls = new DeviceOrientationController( camera, renderer.domElement );
-	// deviceControls.connect()
-	// setupControllerEventHandlers( deviceControls )
+	deviceControls = new DeviceOrientationController( camera, renderer.domElement );
+	deviceControls.connect()
+	setupControllerEventHandlers( deviceControls )
 
 	// if (window.DeviceOrientationEvent) {
 	// 	console.log("Wonderful, Our browser supports DeviceOrientation");
@@ -1048,7 +1048,7 @@ function update() {
 	// 	}, false);
 	// }
 	
-	// deviceControls.update()
+	deviceControls.update()
 	
 	// deviceControls.connect();
 	renderer.render( scene, camera );
@@ -1076,39 +1076,39 @@ function initStats() {
 }
 
 
-function deviceOrientationListener(event) {
-	let deg2rad = Math.PI / 180;
-	camera.rotation.set(
-        !event.beta * deg2rad,
-        !event.gamma ? 0 : event.gamma * deg2rad,
-        !event.alpha ? 0 : event.alpha * deg2rad
-    );
-	
-	console.log(event.beta * deg2rad)
-	console.log(event.gamma * deg2rad)
-	console.log(event.alpha * deg2rad)
-	
-        // console.log("Do Stuff With Device", event);
-        // ctx.clearRect(0, 0, c.width, c.height);
-        // ctx.fillStyle = "#FF7777";
-        // ctx.font = "14px Verdana";
-        // ctx.fillText("Alpha: " + Math.Round(event.alpha), 10, 20);
-        // ctx.beginPath();
-        // ctx.moveTo(180, 75);
-        // ctx.lineTo(210, 75);
-        // ctx.arc(180, 75, 60, 0, event.alpha * Math.PI / 180);
-        // ctx.fill();
-		// 
-        // ctx.fillStyle = "#FF6600";
-        // ctx.fillText("Beta: " + Math.round(event.beta), 10, 140);
-        // ctx.beginPath();
-        // ctx.fillRect(180, 150, event.beta, 90);
-		// 
-        // ctx.fillStyle = "#FF0000";
-        // ctx.fillText("Gamma: " + Math.round(event.gamma), 10, 270);
-        // ctx.beginPath();
-        // ctx.fillRect(90, 340, 180, event.gamma);
-}
+// function deviceOrientationListener(event) {
+// 	let deg2rad = Math.PI / 180;
+// 	camera.rotation.set(
+//         !event.beta * deg2rad,
+//         !event.gamma ? 0 : event.gamma * deg2rad,
+//         !event.alpha ? 0 : event.alpha * deg2rad
+//     );
+// 	
+// 	console.log(event.beta * deg2rad)
+// 	console.log(event.gamma * deg2rad)
+// 	console.log(event.alpha * deg2rad)
+// 	
+//         // console.log("Do Stuff With Device", event);
+//         // ctx.clearRect(0, 0, c.width, c.height);
+//         // ctx.fillStyle = "#FF7777";
+//         // ctx.font = "14px Verdana";
+//         // ctx.fillText("Alpha: " + Math.Round(event.alpha), 10, 20);
+//         // ctx.beginPath();
+//         // ctx.moveTo(180, 75);
+//         // ctx.lineTo(210, 75);
+//         // ctx.arc(180, 75, 60, 0, event.alpha * Math.PI / 180);
+//         // ctx.fill();
+// 		// 
+//         // ctx.fillStyle = "#FF6600";
+//         // ctx.fillText("Beta: " + Math.round(event.beta), 10, 140);
+//         // ctx.beginPath();
+//         // ctx.fillRect(180, 150, event.beta, 90);
+// 		// 
+//         // ctx.fillStyle = "#FF0000";
+//         // ctx.fillText("Gamma: " + Math.round(event.gamma), 10, 270);
+//         // ctx.beginPath();
+//         // ctx.fillRect(90, 340, 180, event.gamma);
+// }
 
 //DeviceOrientationController event handling
 function setupControllerEventHandlers( controls ) {
