@@ -437,9 +437,9 @@ var DeviceOrientationController = function ( object, domElement ) {
 	this.update = function () {
 		this.updateDeviceMove();
 
-		if ( appState !== CONTROLLER_STATE.AUTO ) {
-			this.updateManualMove();
-		}
+		// if ( appState !== CONTROLLER_STATE.AUTO ) {
+		// 	this.updateManualMove();
+		// }
 	};
 
 	this.connect = function () {
@@ -451,7 +451,7 @@ var DeviceOrientationController = function ( object, domElement ) {
 		window.addEventListener( 'compassneedscalibration', this.onCompassNeedsCalibration, false );
 
 		this.element.addEventListener( 'mousedown', this.onDocumentMouseDown, false );
-		this.element.addEventListener( 'touchstart', this.onDocumentTouchStart, false );
+		// this.element.addEventListener( 'touchstart', this.onDocumentTouchStart, false );
 
 		this.freeze = false;
 	};
