@@ -927,9 +927,9 @@ function onWindowResize() {
 // 	console.log('---- onDocumentTouchEnd ----');
 // }
 
-function onDocumentTouchStart( event ) {
+function onDocumentTouchStart(event) {
 	console.log('---- onDocumentTouchStart ----', event);
-	if(event.touches && event.touches.length > 0) {
+	if(event.touches && event.touches.length === 1) {
 		let touch = event.touches[0];
 		touchStartX = touch.pageX;
 		checkRaycasterCollisions(touch.pageX, touch.pageY);
@@ -937,6 +937,8 @@ function onDocumentTouchStart( event ) {
 			onDocumentMouseDown(event, true);
 			freeze = true;
 		}
+	} else {
+		event.preventDefault();
 	}
 	// console.log('--- INDEX TOUCH START ---');
 	// event.preventDefault();
