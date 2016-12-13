@@ -363,6 +363,9 @@ a {
 }
 
 .modal-container.new {
+	.border img {
+		width: 100%;
+	}
 	.modal.bladed-spear .item {
 		width: 90%;
 	}
