@@ -578,7 +578,7 @@ function init() {
 	// document.addEventListener( 'wheel', onDocumentMouseWheel, false );
 	window.addEventListener( 'resize', onWindowResize, false );
 	
-	initRain();
+	// initRain();
 	// buildSmoke();
 	orientCamera();
 	
@@ -676,129 +676,129 @@ function buildHotspots() {
 	});
 }
 
-function buildSmoke() {
-	// Smoke Light
-	let light = new THREE.DirectionalLight(0xffffff, 1.5);
-	light.position.set(-1, 0, 1);
-	scene.add(light);
-	
-	let directionalLight = new THREE.DirectionalLight(0xffffff);
-	directionalLight.position.set(1, 1, 1).normalize();
-	scene.add(directionalLight);
-  
-	let smokeTexture = THREE.ImageUtils.loadTexture('https://s3-us-west-2.amazonaws.com/s.cdpn.io/95637/Smoke-Element.png');
-	let smokeMaterial = new THREE.MeshLambertMaterial({
-		color: 0xffffff, 
-		map: smokeTexture, 
-		transparent: true
-	});
-	let smokeGeo = new THREE.PlaneGeometry(500, 500);
-	 
-	for (let p = 0; p < 150; p++) {
-		let particle = new THREE.Mesh(smokeGeo,smokeMaterial);
-		particle.position.set(Math.random()*500-250,Math.random()*500-250,Math.random()*1000-100);
-		particle.rotation.z = Math.random() * 360;
-		scene.add(particle);
-		smokeParticles.push(particle);
-	}
-}
+// function buildSmoke() {
+// 	// Smoke Light
+// 	let light = new THREE.DirectionalLight(0xffffff, 1.5);
+// 	light.position.set(-1, 0, 1);
+// 	scene.add(light);
+// 	
+// 	let directionalLight = new THREE.DirectionalLight(0xffffff);
+// 	directionalLight.position.set(1, 1, 1).normalize();
+// 	scene.add(directionalLight);
+//   
+// 	let smokeTexture = THREE.ImageUtils.loadTexture('https://s3-us-west-2.amazonaws.com/s.cdpn.io/95637/Smoke-Element.png');
+// 	let smokeMaterial = new THREE.MeshLambertMaterial({
+// 		color: 0xffffff, 
+// 		map: smokeTexture, 
+// 		transparent: true
+// 	});
+// 	let smokeGeo = new THREE.PlaneGeometry(500, 500);
+// 	 
+// 	for (let p = 0; p < 150; p++) {
+// 		let particle = new THREE.Mesh(smokeGeo,smokeMaterial);
+// 		particle.position.set(Math.random()*500-250,Math.random()*500-250,Math.random()*1000-100);
+// 		particle.rotation.z = Math.random() * 360;
+// 		scene.add(particle);
+// 		smokeParticles.push(particle);
+// 	}
+// }
 
 
-function evolveSmoke() {
-	let sp = smokeParticles.length;
-	while(sp--) {
-		smokeParticles[sp].rotation.z += (delta * 0.2);
-	}
-}
+// function evolveSmoke() {
+// 	let sp = smokeParticles.length;
+// 	while(sp--) {
+// 		smokeParticles[sp].rotation.z += (delta * 0.2);
+// 	}
+// }
 
-function initRain() {
-	rainGeometry = new THREE.Geometry();
+// function initRain() {
+// 	rainGeometry = new THREE.Geometry();
+// 
+// 	let sprite1 = THREE.ImageUtils.loadTexture( "textures/rain1.png" ),
+// 	sprite2 = THREE.ImageUtils.loadTexture( "textures/rain2.png" ),
+// 	sprite3 = THREE.ImageUtils.loadTexture( "textures/rain3.png" ),
+// 	sprite4 = THREE.ImageUtils.loadTexture( "textures/rain4.png" ),
+// 	sprite5 = THREE.ImageUtils.loadTexture( "textures/rain5.png" );
+// 
+// 	for (let i = 0; i < rainDensity; i++ ) {
+// 		let vertex = new THREE.Vector3();
+// 		vertex.x = Math.random() * 2000 - 1000;
+// 		vertex.y = Math.random() * 4000 + 500;
+// 		vertex.z = Math.random() * 2000 - 1000;
+// 
+// 		rainGeometry.vertices.push( vertex );
+// 	}
+// 
+// 	parameters = [ [ [1.0, 0.2, 0.5], 	sprite2, 20 ],
+// 				   [ [0.95, 0.1, 0.5], 	sprite3, 15 ],
+// 				   [ [0.90, 0.05, 0.5], sprite1, 10 ],
+// 				   [ [0.85, 0, 0.5], 	sprite5, 8 ],
+// 				   [ [0.80, 0, 0.5], 	sprite4, 5 ],
+// 				   ];
+// 
+// 	for (let i = 0; i < parameters.length; i++ ) {
+// 
+// 		color  = parameters[i][0];
+// 		sprite = parameters[i][1];
+// 		size   = parameters[i][2];
+// 
+// 		materials[i] = new THREE.PointCloudMaterial({ 
+// 			size: size, 
+// 			map: sprite, 
+// 			blending: THREE.AdditiveBlending, 
+// 			depthTest: false, 
+// 			transparent : true 
+// 		});
+// 		materials[i].color.setHSL( color[0], color[1], color[2] );
+// 
+// 		particles = new THREE.PointCloud( rainGeometry, materials[i] );
+// 
+// 		particles.rotation.z = Math.random() * 0.20 + 0.10;
+// 
+// 		scene.add( particles );
+// 	}
+// }
 
-	let sprite1 = THREE.ImageUtils.loadTexture( "textures/rain1.png" ),
-	sprite2 = THREE.ImageUtils.loadTexture( "textures/rain2.png" ),
-	sprite3 = THREE.ImageUtils.loadTexture( "textures/rain3.png" ),
-	sprite4 = THREE.ImageUtils.loadTexture( "textures/rain4.png" ),
-	sprite5 = THREE.ImageUtils.loadTexture( "textures/rain5.png" );
-
-	for (let i = 0; i < rainDensity; i++ ) {
-		let vertex = new THREE.Vector3();
-		vertex.x = Math.random() * 2000 - 1000;
-		vertex.y = Math.random() * 4000 + 500;
-		vertex.z = Math.random() * 2000 - 1000;
-
-		rainGeometry.vertices.push( vertex );
-	}
-
-	parameters = [ [ [1.0, 0.2, 0.5], 	sprite2, 20 ],
-				   [ [0.95, 0.1, 0.5], 	sprite3, 15 ],
-				   [ [0.90, 0.05, 0.5], sprite1, 10 ],
-				   [ [0.85, 0, 0.5], 	sprite5, 8 ],
-				   [ [0.80, 0, 0.5], 	sprite4, 5 ],
-				   ];
-
-	for (let i = 0; i < parameters.length; i++ ) {
-
-		color  = parameters[i][0];
-		sprite = parameters[i][1];
-		size   = parameters[i][2];
-
-		materials[i] = new THREE.PointCloudMaterial({ 
-			size: size, 
-			map: sprite, 
-			blending: THREE.AdditiveBlending, 
-			depthTest: false, 
-			transparent : true 
-		});
-		materials[i].color.setHSL( color[0], color[1], color[2] );
-
-		particles = new THREE.PointCloud( rainGeometry, materials[i] );
-
-		particles.rotation.z = Math.random() * 0.20 + 0.10;
-
-		scene.add( particles );
-	}
-}
-
-function animateRain() {
-	// console.log("I'M ANIMATING THINGS");
-	let time = Date.now() * 0.00005;
-
-	for (let i = 0; i < scene.children.length; i++ ) {
-
-		let object = scene.children[i];
-		
-		if ( object instanceof THREE.PointCloud ) {
-			// Not getting into the log here
-			console.log("I'M ANIMATING THINGS");
-			if (i == 0) {
-				object.translateY(-10);
-			}
-
-			if (i > 0) {
-				if (layer)
-					object.translateY(-10);
-				else
-					if(scene.children[i-1].position.y < ((window.innerHeight * -1) / 2 - 1000))
-						object.translateY(-10);
-			}
-
-			if ((object.position.y < window.innerHeight * -1 * 5)) {
-					object.position.y = 500;
-					object.position.x = 0;
-					if (i == 0) layer = true;
-			}
-		}
-	}
-
-	for (let i = 0; i < materials.length; i++ ) {
-
-		color = parameters[i][0];
-
-		h = ( 360 * ( color[0] + time ) % 360 ) / 360;
-		materials[i].color.setHSL( h, color[1], color[2] );
-
-	}
-}
+// function animateRain() {
+// 	// console.log("I'M ANIMATING THINGS");
+// 	let time = Date.now() * 0.00005;
+// 
+// 	for (let i = 0; i < scene.children.length; i++ ) {
+// 
+// 		let object = scene.children[i];
+// 		
+// 		if ( object instanceof THREE.PointCloud ) {
+// 			// Not getting into the log here
+// 			console.log("I'M ANIMATING THINGS");
+// 			if (i == 0) {
+// 				object.translateY(-10);
+// 			}
+// 
+// 			if (i > 0) {
+// 				if (layer)
+// 					object.translateY(-10);
+// 				else
+// 					if(scene.children[i-1].position.y < ((window.innerHeight * -1) / 2 - 1000))
+// 						object.translateY(-10);
+// 			}
+// 
+// 			if ((object.position.y < window.innerHeight * -1 * 5)) {
+// 					object.position.y = 500;
+// 					object.position.x = 0;
+// 					if (i == 0) layer = true;
+// 			}
+// 		}
+// 	}
+// 
+// 	for (let i = 0; i < materials.length; i++ ) {
+// 
+// 		color = parameters[i][0];
+// 
+// 		h = ( 360 * ( color[0] + time ) % 360 ) / 360;
+// 		materials[i].color.setHSL( h, color[1], color[2] );
+// 
+// 	}
+// }
 
 function onWindowResize() {
 	var width = window.innerWidth || 1;
@@ -1006,7 +1006,7 @@ function update() {
 	stats.update()
 	delta = clock.getDelta();
 
-	evolveSmoke();
+	// evolveSmoke();
 	// animateRain();
 	// rotateHotspot();
 	rotateHotspots();

@@ -69,6 +69,8 @@ var DeviceOrientationController = function ( object, domElement ) {
 
 			eventData.type = name;
 			eventData.target = this;
+			
+			// console.log("TARGET", eventData.type);
 
 			this.dispatchEvent( eventData );
 		}.bind( this );
@@ -100,7 +102,9 @@ var DeviceOrientationController = function ( object, domElement ) {
 
 	this.onDocumentMouseDown = function ( event ) {
 		if ( this.enableManualDrag !== true ) return;
-
+		
+		// console.log("EVENT", event);
+		
 		event.preventDefault();
 
 		appState = CONTROLLER_STATE.MANUAL_ROTATE;
@@ -149,6 +153,8 @@ var DeviceOrientationController = function ( object, domElement ) {
 				if ( this.enableManualDrag !== true ) return;
 
 				appState = CONTROLLER_STATE.MANUAL_ROTATE;
+				
+				console.log("APPSTATE", appState);
 
 				this.freeze = true;
 
