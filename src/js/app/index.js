@@ -177,6 +177,7 @@ Modal.prototype = {
 	duration: 0.35,
 	offset: 0,
 	setModalValues(hotspot) {
+		console.log('setModalValues', hotspot);
 		this.description.text(hotspot.description);
 		this.title.text(hotspot.title);
 		this.item.attr('src', hotspot.image);
@@ -323,17 +324,20 @@ let hotspotObjects = [
 			{
 				title: 'BLADED SPEAR de BILBOA',
 				description: 'This bladed spear is sure to keep enemies at bay. with a heavy ash base and a finely hewn blade forged by bilboan craftsmen, in the hands of an assassin this weapon can defeat an entire batallion of templar enemies.',
-				image: 'textures/bladed-spear.png'
+				image: 'textures/bladed-spear.png',
+				key: 'bladed-spear'
 			},
 			{
 				title: 'LEATHER ASSASSIN VAMBRACE',
 				description: 'the leather vambrace as an essential piece of every assassin’s armor. this blade- concealing armor both proects from attacks and gives the assassin access to a hidden blade with a simple flick of the wrist.',
 				image: 'textures/vambrace.png',
+				key: 'vambrace'
 			},
 			{
 				title: 'CóRDOBAN HALBERD',
 				description: 'the córdoban halberd combines the intricate artistrty of the monarchy with the unparalleled killing power of the inquisition. featuring tempered steel and ornate gold gilding in the staff, this weapon is both beautiful and deadly.',
-				image: 'textures/halberd.png'
+				image: 'textures/halberd.png',
+				key: 'halberd'
 			}
 		],
 		position: [370, 0, 280],
@@ -345,17 +349,20 @@ let hotspotObjects = [
 			{
 				title: 'BLADED SPEAR de BILBOA',
 				description: 'This bladed spear is sure to keep enemies at bay. with a heavy ash base and a finely hewn blade forged by bilboan craftsmen, in the hands of an assassin this weapon can defeat an entire batallion of templar enemies.',
-				image: 'textures/bladed-spear.png'
+				image: 'textures/bladed-spear.png',
+				key: 'bladed-spear'
 			},
 			{
 				title: 'LEATHER ASSASSIN VAMBRACE',
 				description: 'the leather vambrace as an essential piece of every assassin’s armor. this blade- concealing armor both proects from attacks and gives the assassin access to a hidden blade with a simple flick of the wrist.',
 				image: 'textures/vambrace.png',
+				key: 'vambrace'
 			},
 			{
 				title: 'CóRDOBAN HALBERD',
 				description: 'the córdoban halberd combines the intricate artistrty of the monarchy with the unparalleled killing power of the inquisition. featuring tempered steel and ornate gold gilding in the staff, this weapon is both beautiful and deadly.',
-				image: 'textures/halberd.png'
+				image: 'textures/halberd.png',
+				key: 'halberd'
 			}
 		],
 		position: [25, 0, 400],
@@ -367,17 +374,20 @@ let hotspotObjects = [
 			{
 				title: 'BLADED SPEAR de BILBOA',
 				description: 'This bladed spear is sure to keep enemies at bay. with a heavy ash base and a finely hewn blade forged by bilboan craftsmen, in the hands of an assassin this weapon can defeat an entire batallion of templar enemies.',
-				image: 'textures/bladed-spear.png'
+				image: 'textures/bladed-spear.png',
+				key: 'bladed-spear'
 			},
 			{
 				title: 'LEATHER ASSASSIN VAMBRACE',
 				description: 'the leather vambrace as an essential piece of every assassin’s armor. this blade- concealing armor both proects from attacks and gives the assassin access to a hidden blade with a simple flick of the wrist.',
 				image: 'textures/vambrace.png',
+				key: 'vambrace'
 			},
 			{
 				title: 'CóRDOBAN HALBERD',
 				description: 'the córdoban halberd combines the intricate artistrty of the monarchy with the unparalleled killing power of the inquisition. featuring tempered steel and ornate gold gilding in the staff, this weapon is both beautiful and deadly.',
-				image: 'textures/halberd.png'
+				image: 'textures/halberd.png',
+				key: 'halberd'
 			}
 		],
 		position: [-115, 0, 400],
@@ -389,17 +399,20 @@ let hotspotObjects = [
 			{
 				title: 'BLADED SPEAR de BILBOA',
 				description: 'This bladed spear is sure to keep enemies at bay. with a heavy ash base and a finely hewn blade forged by bilboan craftsmen, in the hands of an assassin this weapon can defeat an entire batallion of templar enemies.',
-				image: 'textures/bladed-spear.png'
+				image: 'textures/bladed-spear.png',
+				key: 'bladed-spear'
 			},
 			{
 				title: 'LEATHER ASSASSIN VAMBRACE',
 				description: 'the leather vambrace as an essential piece of every assassin’s armor. this blade- concealing armor both proects from attacks and gives the assassin access to a hidden blade with a simple flick of the wrist.',
 				image: 'textures/vambrace.png',
+				key: 'vambrace'
 			},
 			{
 				title: 'CóRDOBAN HALBERD',
 				description: 'the córdoban halberd combines the intricate artistrty of the monarchy with the unparalleled killing power of the inquisition. featuring tempered steel and ornate gold gilding in the staff, this weapon is both beautiful and deadly.',
-				image: 'textures/halberd.png'
+				image: 'textures/halberd.png',
+				key: 'halberd'
 			}
 		],
 		position: [-400, 0, 205],
@@ -411,17 +424,20 @@ let hotspotObjects = [
 			{
 				title: 'BLADED SPEAR de BILBOA',
 				description: 'This bladed spear is sure to keep enemies at bay. with a heavy ash base and a finely hewn blade forged by bilboan craftsmen, in the hands of an assassin this weapon can defeat an entire batallion of templar enemies.',
-				image: 'textures/bladed-spear.png'
+				image: 'textures/bladed-spear.png',
+				key: 'bladed-spear'
 			},
 			{
 				title: 'LEATHER ASSASSIN VAMBRACE',
 				description: 'the leather vambrace as an essential piece of every assassin’s armor. this blade- concealing armor both proects from attacks and gives the assassin access to a hidden blade with a simple flick of the wrist.',
 				image: 'textures/vambrace.png',
+				key: 'vambrace'
 			},
 			{
 				title: 'CóRDOBAN HALBERD',
 				description: 'the córdoban halberd combines the intricate artistrty of the monarchy with the unparalleled killing power of the inquisition. featuring tempered steel and ornate gold gilding in the staff, this weapon is both beautiful and deadly.',
-				image: 'textures/halberd.png'
+				image: 'textures/halberd.png',
+				key: 'halberd'
 			}
 		],
 		position: [-445, 0, 30],
@@ -433,17 +449,20 @@ let hotspotObjects = [
 			{
 				title: 'BLADED SPEAR de BILBOA',
 				description: 'This bladed spear is sure to keep enemies at bay. with a heavy ash base and a finely hewn blade forged by bilboan craftsmen, in the hands of an assassin this weapon can defeat an entire batallion of templar enemies.',
-				image: 'textures/bladed-spear.png'
+				image: 'textures/bladed-spear.png',
+				key: 'bladed-spear'
 			},
 			{
 				title: 'LEATHER ASSASSIN VAMBRACE',
 				description: 'the leather vambrace as an essential piece of every assassin’s armor. this blade- concealing armor both proects from attacks and gives the assassin access to a hidden blade with a simple flick of the wrist.',
 				image: 'textures/vambrace.png',
+				key: 'vambrace'
 			},
 			{
 				title: 'CóRDOBAN HALBERD',
 				description: 'the córdoban halberd combines the intricate artistrty of the monarchy with the unparalleled killing power of the inquisition. featuring tempered steel and ornate gold gilding in the staff, this weapon is both beautiful and deadly.',
-				image: 'textures/halberd.png'
+				image: 'textures/halberd.png',
+				key: 'halberd'
 			}
 		],
 		position: [-265, 0, -380],
@@ -455,17 +474,20 @@ let hotspotObjects = [
 			{
 				title: 'BLADED SPEAR de BILBOA',
 				description: 'This bladed spear is sure to keep enemies at bay. with a heavy ash base and a finely hewn blade forged by bilboan craftsmen, in the hands of an assassin this weapon can defeat an entire batallion of templar enemies.',
-				image: 'textures/bladed-spear.png'
+				image: 'textures/bladed-spear.png',
+				key: 'bladed-spear'
 			},
 			{
 				title: 'LEATHER ASSASSIN VAMBRACE',
 				description: 'the leather vambrace as an essential piece of every assassin’s armor. this blade- concealing armor both proects from attacks and gives the assassin access to a hidden blade with a simple flick of the wrist.',
 				image: 'textures/vambrace.png',
+				key: 'vambrace'
 			},
 			{
 				title: 'CóRDOBAN HALBERD',
 				description: 'the córdoban halberd combines the intricate artistrty of the monarchy with the unparalleled killing power of the inquisition. featuring tempered steel and ornate gold gilding in the staff, this weapon is both beautiful and deadly.',
-				image: 'textures/halberd.png'
+				image: 'textures/halberd.png',
+				key: 'halberd'
 			}
 		],
 		position: [-60, 0, -455],
@@ -477,17 +499,20 @@ let hotspotObjects = [
 			{
 				title: 'BLADED SPEAR de BILBOA',
 				description: 'This bladed spear is sure to keep enemies at bay. with a heavy ash base and a finely hewn blade forged by bilboan craftsmen, in the hands of an assassin this weapon can defeat an entire batallion of templar enemies.',
-				image: 'textures/bladed-spear.png'
+				image: 'textures/bladed-spear.png',
+				key: 'bladed-spear'
 			},
 			{
 				title: 'LEATHER ASSASSIN VAMBRACE',
 				description: 'the leather vambrace as an essential piece of every assassin’s armor. this blade- concealing armor both proects from attacks and gives the assassin access to a hidden blade with a simple flick of the wrist.',
 				image: 'textures/vambrace.png',
+				key: 'vambrace'
 			},
 			{
 				title: 'CóRDOBAN HALBERD',
 				description: 'the córdoban halberd combines the intricate artistrty of the monarchy with the unparalleled killing power of the inquisition. featuring tempered steel and ornate gold gilding in the staff, this weapon is both beautiful and deadly.',
-				image: 'textures/halberd.png'
+				image: 'textures/halberd.png',
+				key: 'halberd'
 			}
 		],
 		position: [125, 0, -455],
@@ -499,17 +524,20 @@ let hotspotObjects = [
 			{
 				title: 'BLADED SPEAR de BILBOA',
 				description: 'This bladed spear is sure to keep enemies at bay. with a heavy ash base and a finely hewn blade forged by bilboan craftsmen, in the hands of an assassin this weapon can defeat an entire batallion of templar enemies.',
-				image: 'textures/bladed-spear.png'
+				image: 'textures/bladed-spear.png',
+				key: 'bladed-spear'
 			},
 			{
 				title: 'LEATHER ASSASSIN VAMBRACE',
 				description: 'the leather vambrace as an essential piece of every assassin’s armor. this blade- concealing armor both proects from attacks and gives the assassin access to a hidden blade with a simple flick of the wrist.',
 				image: 'textures/vambrace.png',
+				key: 'vambrace'
 			},
 			{
 				title: 'CóRDOBAN HALBERD',
 				description: 'the córdoban halberd combines the intricate artistrty of the monarchy with the unparalleled killing power of the inquisition. featuring tempered steel and ornate gold gilding in the staff, this weapon is both beautiful and deadly.',
-				image: 'textures/halberd.png'
+				image: 'textures/halberd.png',
+				key: 'halberd'
 			}
 		],
 		position: [400, 0, -205]
