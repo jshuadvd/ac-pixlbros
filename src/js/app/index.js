@@ -93,6 +93,8 @@ function Modal(hotspot) {
 	this.modal = $('.modal');
 	this.item = this.modal.find('.item');
 	this.content = this.modal.find('.content');
+	this.description = this.modal.find('.description');
+	this.title = this.modal.find('.title');
 	$('.modal-container .close').on('click', this.hide);
 	$('.overlay').on('click', this.hide);
 }
@@ -104,7 +106,7 @@ Modal.prototype = {
 		let duration = this.duration;
 		TweenMax.to(content, duration, {autoAlpha: 0, onComplete: () => {
 			this.offset = this.offset === 0 ? this.hotspot.slides.length-1 : this.offset-1;
-			this.item.attr('src', this.hotspot.slides[this.offset].image);
+			this.setModalValues(this.hotspot.slides[this.offset]);
 			TweenMax.to(content, duration, {autoAlpha: 1});
 		}});
 	},
@@ -114,12 +116,17 @@ Modal.prototype = {
 		let duration = this.duration;
 		TweenMax.to(content, duration, {autoAlpha: 0, onComplete: () => {
 			this.offset = this.offset+1 === this.hotspot.slides.length ? 0 : this.offset+1;
-			this.item.attr('src', this.hotspot.slides[this.offset].image);
+			this.setModalValues(this.hotspot.slides[this.offset]);
 			TweenMax.to(content, duration, {autoAlpha: 1});
 		}})
 	},
 	duration: 0.35,
 	offset: 0,
+	setModalValues(hotspot) {
+		this.description.text(hotspot.description);
+		this.title.text(hotspot.title);
+		this.item.attr('src', hotspot.image);
+	},
 	showSliderControls() {
 		$('.modal .controls').fadeIn();
 	},
@@ -147,7 +154,7 @@ Modal.prototype = {
 		if(hotspot.slides && hotspot.slides.length > 0) {
 			this.showSliderControls();
 			let firstSlide = hotspot.slides[this.offset];
-			$('.modal .item').attr('src', firstSlide.image);
+			this.setModalValues(firstSlide);
 		}
 		TweenMax.to($('.modal-container') , 0.3, {autoAlpha: 1})
 		TweenMax.to(camera, duration, {fov: fovMax, onComplete: () => {
@@ -241,16 +248,19 @@ let hotspotObjects = [
 		id: 0,
 		slides: [
 			{
-				image: 'textures/cowl.png'
+				title: 'BLADED SPEAR de BILBOA',
+				description: 'This bladed spear is sure to keep enemies at bay. with a heavy ash base and a finely hewn blade forged by bilboan craftsmen, in the hands of an assassin this weapon can defeat an entire batallion of templar enemies.',
+				image: 'textures/bladed-spear.png'
 			},
 			{
-				image: 'textures/glaive.png'
+				title: 'LEATHER ASSASSIN VAMBRACE',
+				description: 'the leather vambrace as an essential piece of every assassin’s armor. this blade- concealing armor both proects from attacks and gives the assassin access to a hidden blade with a simple flick of the wrist.',
+				image: 'textures/vambrace.png',
 			},
 			{
+				title: 'CóRDOBAN HALBERD',
+				description: 'the córdoban halberd combines the intricate artistrty of the monarchy with the unparalleled killing power of the inquisition. featuring tempered steel and ornate gold gilding in the staff, this weapon is both beautiful and deadly.',
 				image: 'textures/halberd.png'
-			},
-			{
-				image: 'textures/vambrace.png'
 			}
 		],
 		lon: 19,
