@@ -1,8 +1,10 @@
 let siteConfig = {
-    shareText: 'bla',
-    siteTweet: 'poo'
+	
+    shareText: 'Welcome to the Animus. Enter the 360º experience and discover the weapons and armor of the Assassins and Templars.',
+    siteTweet: 'Welcome to the Animus. Enter the 360º experience and discover the weapons and armor of the Assassins and Templars. #AssassinsCreed [URL]',
+	assetShare: 'I entered the 360º Animus and discovered the [Object Name], an ancient artifact of Assassins\' lore. Enter the Animus now to uncover ancient Assassins and Templar relics.',
+	assetTweet: 'I entered the 360º Animus and discovered the [Object Name]. #AssassinsCreed [URL]'
 }
-
 
 let position = {
 	lon: 30
