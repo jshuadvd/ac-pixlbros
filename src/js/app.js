@@ -1,5 +1,10 @@
 'use strict';
 
+var siteConfig = {
+	shareText: 'bla',
+	siteTweet: 'poo'
+};
+
 var position = {
 	lon: 30
 };

@@ -1,3 +1,8 @@
+let siteConfig = {
+    shareText: 'bla',
+    siteTweet: 'poo'
+}
+
 
 let position = {
 	lon: 30
