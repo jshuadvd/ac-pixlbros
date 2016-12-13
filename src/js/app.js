@@ -1,11 +1,11 @@
 'use strict';
 
 var siteConfig = {
-
+	siteURL: 'http://somesite.com/',
 	shareText: 'Welcome to the Animus. Enter the 360º experience and discover the weapons and armor of the Assassins and Templars.',
 	siteTweet: 'Welcome to the Animus. Enter the 360º experience and discover the weapons and armor of the Assassins and Templars. #AssassinsCreed [URL]',
 	assetShare: 'I entered the 360º Animus and discovered the [Object Name], an ancient artifact of Assassins\' lore. Enter the Animus now to uncover ancient Assassins and Templar relics.',
-	assetTweet: 'I entered the 360º Animus and discovered the [Object Name]. #AssassinsCreed [URL]'
+	assetTweet: 'I entered the 360º Animus and discovered the [Object Name]. #AssassinsCreed'
 };
 
 var position = {
@@ -102,36 +102,76 @@ function Modal(hotspot) {
 	this.content = this.modal.find('.content');
 	this.description = this.modal.find('.description');
 	this.title = this.modal.find('.title');
+	this.facebookShare = this.modal.find('.button-outer.fb');
+	this.twitterShare = this.modal.find('.button-outer.twitter');
 	$('.modal-container .close').on('click', this.hide);
 	$('.overlay').on('click', this.hide);
+	// this.bindEvents();
 }
 
 Modal.prototype = {
-	prev: function prev() {
+	bindEvents: function bindEvents() {
 		var _this = this;
+
+		this.facebookShare.on('click', function () {
+			_this.shareFacebook();
+		});
+		this.twitterShare.on('click', function () {
+			_this.shareTwitter();
+		});
+	},
+	prev: function prev() {
+		var _this2 = this;
 
 		console.log('prev!');
 		var content = this.content;
 		var duration = this.duration;
 		TweenMax.to(content, duration, { autoAlpha: 0, onComplete: function onComplete() {
-				_this.offset = _this.offset === 0 ? _this.hotspot.slides.length - 1 : _this.offset - 1;
-				_this.setModalValues(_this.hotspot.slides[_this.offset]);
+				_this2.offset = _this2.offset === 0 ? _this2.hotspot.slides.length - 1 : _this2.offset - 1;
+				_this2.setModalValues(_this2.hotspot.slides[_this2.offset]);
 				TweenMax.to(content, duration, { autoAlpha: 1 });
 			} });
 	},
 	next: function next() {
-		var _this2 = this;
+		var _this3 = this;
 
 		console.log('next!');
 		var content = this.content;
 		var duration = this.duration;
 		TweenMax.to(content, duration, { autoAlpha: 0, onComplete: function onComplete() {
-				_this2.offset = _this2.offset + 1 === _this2.hotspot.slides.length ? 0 : _this2.offset + 1;
-				_this2.setModalValues(_this2.hotspot.slides[_this2.offset]);
+				_this3.offset = _this3.offset + 1 === _this3.hotspot.slides.length ? 0 : _this3.offset + 1;
+				_this3.setModalValues(_this3.hotspot.slides[_this3.offset]);
 				TweenMax.to(content, duration, { autoAlpha: 1 });
 			} });
 	},
 
+	// share: {
+	shareFacebook: function shareFacebook() {
+		console.log(this, this.hotspot, this.offset);
+		var slide = this.hotspot.slides[this.offset];
+		FB.ui({
+			method: 'share',
+			href: '' + makeUrlParams(this.hotspot.id, this.offset),
+			title: slide.title,
+			picture: 'textures/' + slide.image,
+			// caption: 'your_caption',
+			description: siteConfig.assetShare.replace('[Object Name]', slide.title)
+		}, function (response) {
+			// your code to manage the response
+		});
+	},
+	shareTwitter: function shareTwitter() {
+
+		var params = encodeURIComponent(makeUrlParams(this.hotspot.id, this.offset));
+		var url = '' + siteConfig.siteURL + params;
+		var slide = this.hotspot.slides[this.offset];
+		var text = siteConfig.assetTweet.replace('[Object Name]', slide.title);
+		// .replace('[URL]', `${url}${params}`);
+		var hashtags = 'AssassinsCreed';
+		window.open('http://twitter.com/share?url=' + url + '&amp;text=' + text + '&amp;hashtags=' + hashtags);
+	},
+
+	// },
 	duration: 0.35,
 	offset: 0,
 	setModalValues: function setModalValues(hotspot) {
@@ -165,8 +205,8 @@ Modal.prototype = {
 		showingModal = true;
 		if (hotspot.slides && hotspot.slides.length > 0) {
 			this.showSliderControls();
-			var firstSlide = hotspot.slides[this.offset];
-			this.setModalValues(firstSlide);
+			this.activeSlide = hotspot.slides[this.offset];
+			this.setModalValues(this.activeSlide);
 		}
 		TweenMax.to($('.modal-container'), 0.3, { autoAlpha: 1 });
 		TweenMax.to(camera, duration, { fov: fovMax, onComplete: function onComplete() {
@@ -180,6 +220,7 @@ Modal.prototype = {
 	}
 };
 var modal = new Modal();
+modal.bindEvents();
 
 var audio = new Audio('audio/AC-Trailer.mp3');
 // audio.play();
@@ -309,13 +350,17 @@ var hotspotObjects = [{
 	id: 1,
 	lon: 39,
 	slides: [{
-		image: 'textures/cowl.png'
+		title: 'BLADED SPEAR de BILBOA',
+		description: 'This bladed spear is sure to keep enemies at bay. with a heavy ash base and a finely hewn blade forged by bilboan craftsmen, in the hands of an assassin this weapon can defeat an entire batallion of templar enemies.',
+		image: 'textures/bladed-spear.png'
 	}, {
-		image: 'textures/glaive.png'
-	}, {
-		image: 'textures/halberd.png'
-	}, {
+		title: 'LEATHER ASSASSIN VAMBRACE',
+		description: 'the leather vambrace as an essential piece of every assassin’s armor. this blade- concealing armor both proects from attacks and gives the assassin access to a hidden blade with a simple flick of the wrist.',
 		image: 'textures/vambrace.png'
+	}, {
+		title: 'CóRDOBAN HALBERD',
+		description: 'the córdoban halberd combines the intricate artistrty of the monarchy with the unparalleled killing power of the inquisition. featuring tempered steel and ornate gold gilding in the staff, this weapon is both beautiful and deadly.',
+		image: 'textures/halberd.png'
 	}],
 	position: [370, 0, 280]
 }, {
@@ -500,9 +545,9 @@ function init() {
 	buildHotspots();
 
 	// Device Orientation Stuff	
-	deviceControls = new DeviceOrientationController(camera, renderer.domElement);
-	deviceControls.connect();
-	setupControllerEventHandlers(deviceControls);
+	// deviceControls = new DeviceOrientationController( camera, renderer.domElement );
+	// deviceControls.connect()
+	// setupControllerEventHandlers( deviceControls )
 
 	// if (window.DeviceOrientationEvent) {
 	// 	console.log("Wonderful, Our browser supports DeviceOrientation");
@@ -606,12 +651,12 @@ function orientCamera() {
 }
 
 var buttonClicks = {
-	'ig-header': function igHeader() {
-		console.log('igHeader');
-	},
-	fb: function fb() {
-		console.log('fbshare');
-	}
+	// 'ig-header'() {
+	// 	console.log('igHeader');
+	// },
+	// fb() {
+	// 	// modal.share('fb');
+	// }
 };
 function handleButtonClick(key) {
 	if (key in buttonClicks) buttonClicks[key]();
@@ -1031,7 +1076,7 @@ function update() {
 	// 	}, false);
 	// }
 
-	deviceControls.update();
+	// deviceControls.update()
 
 	// deviceControls.connect();
 	renderer.render(scene, camera);
