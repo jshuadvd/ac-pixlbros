@@ -361,3 +361,11 @@ a {
 		}
 	}
 }
+
+.modal-container.new .share {
+	position: absolute;
+	top: 5%;
+	left: 14%;
+	transform: translate(-50%, 0);
+	width: 90px;
+}
