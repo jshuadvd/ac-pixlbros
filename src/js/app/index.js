@@ -1,9 +1,9 @@
 let siteConfig = {
-	siteURL: 'http://somesite.com/',
+	siteURL: 'http://numinoustechnologies.com/animus/',
 	shareText: 'Welcome to the Animus. Enter the 360º experience and discover the weapons and armor of the Assassins and Templars.',
 	siteTweet: 'Welcome to the Animus. Enter the 360º experience and discover the weapons and armor of the Assassins and Templars. #AssassinsCreed [URL]',
 	assetShare: 'I entered the 360º Animus and discovered the [Object Name], an ancient artifact of Assassins\' lore. Enter the Animus now to uncover ancient Assassins and Templar relics.',
-	assetTweet: 'I entered the 360º Animus and discovered the [Object Name]. #AssassinsCreed'
+	assetTweet: 'I entered the 360º Animus and discovered the [Object Name].'
 }
 
 let position = {
@@ -99,13 +99,24 @@ function Modal(hotspot) {
 	this.title = this.modal.find('.title');
 	this.facebookShare = this.modal.find('.button-outer.fb');
 	this.twitterShare = this.modal.find('.button-outer.twitter');
-	$('.modal-container .close').on('click', this.hide);
+	this.nextButton = this.modal.find('.next');
+	this.prevButton = this.modal.find('.prev');
+	$('.modal-container .close').on('click', () => {
+		this.hide();
+	});
 	$('.overlay').on('click', this.hide);
-	// this.bindEvents();
+	this.bindEvents();
 }
 
 Modal.prototype = {
 	bindEvents() {
+		this.nextButton.on('click', () => {
+			this.next();
+		});
+
+		this.prevButton.on('click', () => {
+			this.prev();
+		});
 		this.facebookShare.on('click', () => {
 			this.shareFacebook();
 		});
@@ -114,7 +125,6 @@ Modal.prototype = {
 		});
 	},
 	prev() {
-		console.log('prev!');
 		let content = this.content;
 		let duration = this.duration;
 		TweenMax.to(content, duration, {autoAlpha: 0, onComplete: () => {
@@ -124,7 +134,6 @@ Modal.prototype = {
 		}});
 	},
 	next() {
-		console.log('next!');
 		let content = this.content;
 		let duration = this.duration;
 		TweenMax.to(content, duration, {autoAlpha: 0, onComplete: () => {
@@ -137,12 +146,16 @@ Modal.prototype = {
 		shareFacebook() {
 			console.log(this, this.hotspot, this.offset);
 			let slide = this.hotspot.slides[this.offset];
+			let href = `${siteConfig.siteURL}${makeUrlParams(this.hotspot.id, this.offset)}`;
+			let picture = `${siteConfig.siteURL}${slide.image}`;
+			console.log('p', picture);
+			console.log('href', href);
 			FB.ui(
 			{
 				method: 'share',
-				href: `${makeUrlParams(this.hotspot.id, this.offset)}`,
+				href: href,
 				title: slide.title,
-				picture: `textures/${slide.image}`,
+				picture: picture,
 				// caption: 'your_caption',
 				description: siteConfig.assetShare.replace('[Object Name]', slide.title)
 			 },
@@ -158,7 +171,7 @@ Modal.prototype = {
 			let text = siteConfig.assetTweet.replace('[Object Name]', slide.title)
 			// .replace('[URL]', `${url}${params}`);
 			let hashtags = 'AssassinsCreed'
-			window.open(`http://twitter.com/share?url=${url}&amp;text=${text}&amp;hashtags=${hashtags}`);
+			window.open(`http://twitter.com/intent/tweet?url=${url}&text=${text}&hashtags=${hashtags}`);
 		},
 	// },
 	duration: 0.35,
@@ -167,11 +180,13 @@ Modal.prototype = {
 		this.description.text(hotspot.description);
 		this.title.text(hotspot.title);
 		this.item.attr('src', hotspot.image);
+		this.modal.attr('class', `modal ${hotspot.key}`);
 	},
 	showSliderControls() {
 		$('.modal .controls').fadeIn();
 	},
 	hide() {
+		this.modal.attr('class', 'modal');
 		for(var i in buttons) {
 			buttons[i].set(0);
 		}
@@ -243,16 +258,6 @@ $(document).ready(function() {
 		// $(event.currentTarget).find('.outer-path').data('progress').set(0);
 	});
 
-	$('.controls.next').on('click', (event) => {
-		modal.next();
-		event.stopPropagation();
-	});
-
-	$('.controls.prev').on('click', (event) => {
-		modal.prev();
-		event.stopPropagation();
-	});
-
 	$('.button-outer').on('click', (event) => {
 		var key = $(event.currentTarget).attr('key');
 		handleButtonClick(key);
@@ -292,17 +297,20 @@ let hotspotObjects = [
 			{
 				title: 'BLADED SPEAR de BILBOA',
 				description: 'This bladed spear is sure to keep enemies at bay. with a heavy ash base and a finely hewn blade forged by bilboan craftsmen, in the hands of an assassin this weapon can defeat an entire batallion of templar enemies.',
-				image: 'textures/bladed-spear.png'
+				image: 'textures/bladed-spear.png',
+				key: 'bladed-spear'
 			},
 			{
 				title: 'LEATHER ASSASSIN VAMBRACE',
 				description: 'the leather vambrace as an essential piece of every assassin’s armor. this blade- concealing armor both proects from attacks and gives the assassin access to a hidden blade with a simple flick of the wrist.',
 				image: 'textures/vambrace.png',
+				key: 'vambrace'
 			},
 			{
 				title: 'CóRDOBAN HALBERD',
 				description: 'the córdoban halberd combines the intricate artistrty of the monarchy with the unparalleled killing power of the inquisition. featuring tempered steel and ornate gold gilding in the staff, this weapon is both beautiful and deadly.',
-				image: 'textures/halberd.png'
+				image: 'textures/halberd.png',
+				key: 'halberd'
 			}
 		],
 		lon: 19,

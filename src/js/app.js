@@ -1,11 +1,11 @@
 'use strict';
 
 var siteConfig = {
-	siteURL: 'http://somesite.com/',
+	siteURL: 'http://numinoustechnologies.com/animus/',
 	shareText: 'Welcome to the Animus. Enter the 360º experience and discover the weapons and armor of the Assassins and Templars.',
 	siteTweet: 'Welcome to the Animus. Enter the 360º experience and discover the weapons and armor of the Assassins and Templars. #AssassinsCreed [URL]',
 	assetShare: 'I entered the 360º Animus and discovered the [Object Name], an ancient artifact of Assassins\' lore. Enter the Animus now to uncover ancient Assassins and Templar relics.',
-	assetTweet: 'I entered the 360º Animus and discovered the [Object Name]. #AssassinsCreed'
+	assetTweet: 'I entered the 360º Animus and discovered the [Object Name].'
 };
 
 var position = {
@@ -97,6 +97,8 @@ var buttons = {};
 // audio.play();
 
 function Modal(hotspot) {
+	var _this = this;
+
 	this.modal = $('.modal');
 	this.item = this.modal.find('.item');
 	this.content = this.modal.find('.content');
@@ -104,43 +106,52 @@ function Modal(hotspot) {
 	this.title = this.modal.find('.title');
 	this.facebookShare = this.modal.find('.button-outer.fb');
 	this.twitterShare = this.modal.find('.button-outer.twitter');
-	$('.modal-container .close').on('click', this.hide);
+	this.nextButton = this.modal.find('.next');
+	this.prevButton = this.modal.find('.prev');
+	$('.modal-container .close').on('click', function () {
+		_this.hide();
+	});
 	$('.overlay').on('click', this.hide);
-	// this.bindEvents();
+	this.bindEvents();
 }
 
 Modal.prototype = {
 	bindEvents: function bindEvents() {
-		var _this = this;
+		var _this2 = this;
 
+		this.nextButton.on('click', function () {
+			_this2.next();
+		});
+
+		this.prevButton.on('click', function () {
+			_this2.prev();
+		});
 		this.facebookShare.on('click', function () {
-			_this.shareFacebook();
+			_this2.shareFacebook();
 		});
 		this.twitterShare.on('click', function () {
-			_this.shareTwitter();
+			_this2.shareTwitter();
 		});
 	},
 	prev: function prev() {
-		var _this2 = this;
+		var _this3 = this;
 
-		console.log('prev!');
 		var content = this.content;
 		var duration = this.duration;
 		TweenMax.to(content, duration, { autoAlpha: 0, onComplete: function onComplete() {
-				_this2.offset = _this2.offset === 0 ? _this2.hotspot.slides.length - 1 : _this2.offset - 1;
-				_this2.setModalValues(_this2.hotspot.slides[_this2.offset]);
+				_this3.offset = _this3.offset === 0 ? _this3.hotspot.slides.length - 1 : _this3.offset - 1;
+				_this3.setModalValues(_this3.hotspot.slides[_this3.offset]);
 				TweenMax.to(content, duration, { autoAlpha: 1 });
 			} });
 	},
 	next: function next() {
-		var _this3 = this;
+		var _this4 = this;
 
-		console.log('next!');
 		var content = this.content;
 		var duration = this.duration;
 		TweenMax.to(content, duration, { autoAlpha: 0, onComplete: function onComplete() {
-				_this3.offset = _this3.offset + 1 === _this3.hotspot.slides.length ? 0 : _this3.offset + 1;
-				_this3.setModalValues(_this3.hotspot.slides[_this3.offset]);
+				_this4.offset = _this4.offset + 1 === _this4.hotspot.slides.length ? 0 : _this4.offset + 1;
+				_this4.setModalValues(_this4.hotspot.slides[_this4.offset]);
 				TweenMax.to(content, duration, { autoAlpha: 1 });
 			} });
 	},
@@ -149,11 +160,15 @@ Modal.prototype = {
 	shareFacebook: function shareFacebook() {
 		console.log(this, this.hotspot, this.offset);
 		var slide = this.hotspot.slides[this.offset];
+		var href = '' + siteConfig.siteURL + makeUrlParams(this.hotspot.id, this.offset);
+		var picture = '' + siteConfig.siteURL + slide.image;
+		console.log('p', picture);
+		console.log('href', href);
 		FB.ui({
 			method: 'share',
-			href: '' + makeUrlParams(this.hotspot.id, this.offset),
+			href: href,
 			title: slide.title,
-			picture: 'textures/' + slide.image,
+			picture: picture,
 			// caption: 'your_caption',
 			description: siteConfig.assetShare.replace('[Object Name]', slide.title)
 		}, function (response) {
@@ -168,7 +183,7 @@ Modal.prototype = {
 		var text = siteConfig.assetTweet.replace('[Object Name]', slide.title);
 		// .replace('[URL]', `${url}${params}`);
 		var hashtags = 'AssassinsCreed';
-		window.open('http://twitter.com/share?url=' + url + '&amp;text=' + text + '&amp;hashtags=' + hashtags);
+		window.open('http://twitter.com/intent/tweet?url=' + url + '&text=' + text + '&hashtags=' + hashtags);
 	},
 
 	// },
@@ -178,11 +193,13 @@ Modal.prototype = {
 		this.description.text(hotspot.description);
 		this.title.text(hotspot.title);
 		this.item.attr('src', hotspot.image);
+		this.modal.attr('class', 'modal ' + hotspot.key);
 	},
 	showSliderControls: function showSliderControls() {
 		$('.modal .controls').fadeIn();
 	},
 	hide: function hide() {
+		this.modal.attr('class', 'modal');
 		for (var i in buttons) {
 			buttons[i].set(0);
 		}
@@ -252,16 +269,6 @@ $(document).ready(function () {
 		var key = $(event.currentTarget).attr('key');
 		buttons[key].set(0);
 		// $(event.currentTarget).find('.outer-path').data('progress').set(0);
-	});
-
-	$('.controls.next').on('click', function (event) {
-		modal.next();
-		event.stopPropagation();
-	});
-
-	$('.controls.prev').on('click', function (event) {
-		modal.prev();
-		event.stopPropagation();
 	});
 
 	$('.button-outer').on('click', function (event) {
@@ -334,15 +341,18 @@ var hotspotObjects = [{
 	slides: [{
 		title: 'BLADED SPEAR de BILBOA',
 		description: 'This bladed spear is sure to keep enemies at bay. with a heavy ash base and a finely hewn blade forged by bilboan craftsmen, in the hands of an assassin this weapon can defeat an entire batallion of templar enemies.',
-		image: 'textures/bladed-spear.png'
+		image: 'textures/bladed-spear.png',
+		key: 'bladed-spear'
 	}, {
 		title: 'LEATHER ASSASSIN VAMBRACE',
 		description: 'the leather vambrace as an essential piece of every assassin’s armor. this blade- concealing armor both proects from attacks and gives the assassin access to a hidden blade with a simple flick of the wrist.',
-		image: 'textures/vambrace.png'
+		image: 'textures/vambrace.png',
+		key: 'vambrace'
 	}, {
 		title: 'CóRDOBAN HALBERD',
 		description: 'the córdoban halberd combines the intricate artistrty of the monarchy with the unparalleled killing power of the inquisition. featuring tempered steel and ornate gold gilding in the staff, this weapon is both beautiful and deadly.',
-		image: 'textures/halberd.png'
+		image: 'textures/halberd.png',
+		key: 'halberd'
 	}],
 	lon: 19,
 	position: [450, 0, 150]
