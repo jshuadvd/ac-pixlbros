@@ -170,7 +170,7 @@ a {
 		background: rgba(0,0,0,0.8)
 	}
 	.modal {
-		background-image: url(../textures/modal-bg.png);
+		background-image: url(../textures/modal-bg-new.png);
 		color: #fff;
 		width: 60%;
 		background-size: 100% 100%;
@@ -204,7 +204,9 @@ a {
 		&::before {
 			content: "";
 			display: block;
-			padding-top: 72.530864197531%;
+			padding-top: 64.864864864865%;
+			// old modal sizing
+			// padding-top: 72.530864197531%;
 		}
 	}
 	// .modal {
