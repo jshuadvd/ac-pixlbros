@@ -551,7 +551,7 @@ a {
     .modal-container .overlay:hover {
       cursor: pointer; }
   .modal-container .modal {
-    background-image: url(../textures/modal-bg-new.png);
+    background-image: url(../textures/AC_360_ModalDesign_V3_Desktop.png);
     color: #fff;
     width: 60%;
     background-size: 100% 100%;
@@ -665,13 +665,32 @@ a {
   position: fixed;
   bottom: 10px;
   left: 10px;
-  width: 150px; }
+  width: 98%; 
+  /*height: 50px;*/
+}
   .footer-controls .button-outer {
     float: left;
-    width: 33%;
-    height: auto; }
+    width: 1%;
+    height: auto; 
+}
     .footer-controls .button-outer svg {
-      fill: none; }
+      fill: none; 
+      width: 50px;
+  }
+
+.footer-controls .button-right {
+  float: left;
+  width: 100%;
+}
+
+.footer-controls .button-right a {
+    font-size: 12px;
+    font-family: 'Trajan W01 Bd';
+    margin-top: -30px;
+    margin-right: 5px;
+    float: right;
+    /* margin-bottom: 020px; */
+}
 
 .modal-container.new .border img {
   width: 100%; }
