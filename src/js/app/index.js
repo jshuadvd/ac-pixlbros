@@ -589,7 +589,12 @@ function init() {
 	var height = window.innerHeight || 1;
 	var devicePixelRatio = window.devicePixelRatio || 1;
 	renderer = new THREE.WebGLRenderer( { antialias: false } );
+	renderer.physicallyCorrectLights = true;
+	renderer.gammaInput = true;
+	renderer.gammaOutput = true;
 	renderer.shadowMap.enabled = true;
+	renderer.toneMapping = THREE.ReinhardToneMapping;
+	renderer.toneMappingExposure = 0.4;
 	renderer.setClearColor( 0xa0a0a0 );
 	renderer.setPixelRatio( 1 );
 	renderer.setSize( width, height );
@@ -614,6 +619,25 @@ function init() {
 	
 	raycaster = new THREE.Raycaster();
 	mouse = new THREE.Vector2();
+
+	// bulb
+	var bulbGeometry = new THREE.SphereGeometry( 0.02, 16, 8 );
+	var bulbLight = new THREE.PointLight( 0xffee88, 1, 100, 2 );
+	var bulbMat = new THREE.MeshStandardMaterial( {
+		emissive: 0xffffee,
+		emissiveIntensity: 1,
+		color: 0x000000
+	});
+	bulbLight.add( new THREE.Mesh( bulbGeometry, bulbMat ) );
+	// bulbLight.position.set( 0, 2, 0 );
+	bulbLight.position.set(400, 0, -205);
+	// bulbLight.position.set(0, 10, 0);
+	bulbLight.castShadow = true;
+	bulbLight.power = 1000;
+	scene.add( bulbLight );
+	var hemiLight = new THREE.HemisphereLight( 0xddeeff, 0x0f0e0d, 0.1 );
+	hemiLight.intensity = 8;
+	scene.add( hemiLight );
 	
 	// Build items for raycaster clicks
 	buildHotspots();
@@ -751,15 +775,15 @@ function buildHotspots() {
 
 			let scale = 27;
 
-			// let newMat = new THREE.MeshPhongMaterial( { 
-			// 	color: 0x996633, 
-			// 	specular: 0x050505,
-			// 	shininess: 100
-			// } ) 
+			let newMat = new THREE.MeshPhongMaterial( { 
+				color: 0xFFFFFF, 
+				specular: 0x000000,
+				shininess: 100
+			} ) 
 
 			let oldMat = new THREE.MeshBasicMaterial( { color: '#cccccc', opacity: 1 } )
 
-			let hotspot = new THREE.Mesh(geometry, oldMat);
+			let hotspot = new THREE.Mesh(geometry, newMat);
 			hotspot.name = `hotspot-${index}`;
 			var box = new THREE.Box3().setFromObject(hotspot);
 			hotspot.scale.x = hotspot.scale.y = hotspot.scale.z = scale
