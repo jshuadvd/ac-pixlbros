@@ -259,7 +259,7 @@ function loadTick() {
 	numAnim.update(percent);
 	progressBar.css('width', `${percent}%`);
 	if(percent === 100) {
-		TweenMax.to($('#preloader'), 750/1000, {autoAlpha: 0, onComplete: () => {
+		TweenMax.to($('#preloader'), 750/1000, {delay: 550/1000, autoAlpha: 0, onComplete: () => {
 			audio.volume = 0.5;
 			audio.play();
 		}});
@@ -278,16 +278,15 @@ function preloadAudio(url) {
 }
 
 function preloadImages() {
-	hotspotObjects.forEach((hotspotObject) => {
-		hotspotObject.slides.forEach((slide) => {
-			totalFiles += 1;
-			let image = new Image();
-			image.onload = () => {
-				filesLoaded += 1;
-				loadTick();
-			}
-			image.src = slide.image;
-		});
+	let slides = hotspotObjects.map( hotspotObject => hotspotObject.slides ).reduce( (prev, current) => prev.concat(current) )
+	totalFiles += slides.length;
+	slides.forEach((slide) => {
+		let image = new Image();
+		image.onload = () => {
+			filesLoaded += 1;
+			loadTick();
+		}
+		image.src = slide.image;
 	});
 }
 
@@ -295,9 +294,7 @@ if(showLoader) {
 	preloadImages();
 	audio = preloadAudio('audio/AC-Trailer.mp3');
 	THREE.DefaultLoadingManager.onProgress = function ( item, loaded, total ) {
-		if(loaded === 1) {
-			totalFiles += total;
-		}
+		if(loaded === 1) totalFiles += total;
 		filesLoaded += 1;
 		loadTick();
 	};
