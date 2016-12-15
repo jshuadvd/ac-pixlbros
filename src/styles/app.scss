@@ -261,20 +261,20 @@ a {
     @media only screen and (max-width: 640px) {
         .modal {
             background-image: url(../textures/AC_360_ModalDesign_V3_Mobile.png);
-            width: 90%;
+            width: 80%;
             background-size: 100% 100%;
             max-width: 640px;
-            height: 80%;
+            height: 65%;
 
             .close {
                 top: 10% !important;
             }
             
-            // .share {
-            // top: 0 !important;
-            // left: 0 !important;
-            // width: 25% !important;
-            // }
+            .share {
+            top: 84% !important;
+            left: 50% !important;
+            width: 25% !important;
+            }
     	}     
     }
     
