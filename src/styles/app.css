@@ -698,6 +698,7 @@ a {
   position: fixed;
   bottom: 10px;
   left: 10px;
+<<<<<<< 8b7ee818bdd0f2b2492abf92603a0611c7c1bdd4
   width: 98%; }
   .footer-controls .button-outer {
     float: left;
@@ -715,6 +716,15 @@ a {
     margin-top: -30px;
     float: right;
     /* margin-bottom: 020px; */ }
+=======
+  width: 150px; }
+  .footer-controls .button-outer {
+    float: left;
+    width: 33%;
+    height: auto; }
+    .footer-controls .button-outer svg {
+      fill: none; }
+>>>>>>> modal fixes, playing with lights, weapons and text
 
 .modal-container.new .border img {
   width: 100%; }
