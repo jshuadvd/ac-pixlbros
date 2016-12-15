@@ -209,6 +209,49 @@ a {
 			// padding-top: 72.530864197531%;
 		}
 	}
+    
+    @media only screen and (max-width: 600px) {
+        .modal {
+    		background-image: url(../textures/AC_360_ModalDesign_V3_Mobile.png);
+    		color: #fff;
+    		width: 60%;
+    		background-size: 100% 100%;
+    		position: relative;
+    		margin: 0 auto;
+    		z-index: 1;
+    		top: 50%;
+    		transform: translate(0, -50%);
+    		max-width: 850px;
+    		.controls {
+    			&:hover {
+    				cursor: pointer;
+    			}
+    			position: absolute;
+    			top: 50%;
+    			transform: translate(0%,50%);
+    			color: $red;
+    			display: none;
+    			z-index: 1;
+    			width: 28px;
+    			height: 37px;
+    			&.next {
+    				right: 25px;
+    				background-image: url(../textures/next.png);
+    			}
+    			&.prev {
+    				left: 10px;
+    				background-image: url(../textures/prev.png);
+    			}
+    		}
+    		&::before {
+    			content: "";
+    			display: block;
+    			padding-top: 64.864864864865%;
+    			// old modal sizing
+    			// padding-top: 72.530864197531%;
+    		}
+    	}
+    }
 	// .modal {
 	// 	position: absolute;
 	// 	width: 80%;
@@ -351,15 +394,29 @@ a {
 	position: fixed;
 	bottom: 10px;
 	left: 10px;
-	width: 150px;
+	width: 98%;
 	.button-outer {
 		float: left;
-		width: 33%;
+		width: 1%;
 		height: auto;
 		svg {
 			fill: none;
+            width: 50PX;
 		}
 	}
+}
+
+.footer-controls .button-right {
+  float: left;
+  width: 100%;
+}
+
+.footer-controls .button-right a {
+    font-size: 12px;
+    font-family: 'Trajan W01 Bd';
+    margin-top: -30px;
+    float: right;
+    /* margin-bottom: 020px; */
 }
 
 .modal-container.new {
