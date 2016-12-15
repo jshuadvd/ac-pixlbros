@@ -245,7 +245,7 @@ if ('ontouchstart' in window || window.DocumentTouch && document instanceof Docu
 	touchDevice = true;
 }
 
-var showLoader = false;
+var showLoader = true;
 var playAudio = true;
 // var audioLoader = new THREE.AudioLoader();
 // audioLoader.load(audioFile);
@@ -264,6 +264,7 @@ function loadTick() {
 			var footerPoll = setInterval(function () {
 				if ($('#legalinclude-legal').length) {
 					clearInterval(footerPoll);
+					onWindowResize();
 					TweenMax.to($('#preloader'), 750 / 1000, { delay: 550 / 1000, autoAlpha: 0, onComplete: function onComplete() {
 							audio.volume = 0.5;
 							// audio.play();
@@ -311,6 +312,7 @@ if (showLoader) {
 		loadTick();
 	};
 } else {
+	onWindowResize();
 	$('#preloader').hide();
 }
 
@@ -533,8 +535,6 @@ animate();
 //************************************************************************//
 
 function init() {
-
-	console.log('fh', $('#footer').height());
 
 	// var width = window.innerWidth || 1;
 	// var height = window.innerHeight || 1;
@@ -1119,7 +1119,6 @@ function animate() {
 	update();
 	var width = $(window).innerWidth();
 	var height = $(window).innerHeight() - $('#footer').innerHeight();
-	console.log(width, height);
 	renderer.setSize(width, height);
 }
 
