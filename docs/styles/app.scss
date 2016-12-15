@@ -36,18 +36,7 @@ html, body {
 	background-color: #000;
 	z-index: 2;
 	svg {
-		position: relative;
-		top: 50%;
-		transform: translate(0, -50%);
-		width: 40%;
-		height: auto;
 		fill: #fff;
-		path {
-			stroke: $red;
-		}
-		text {
-			fill: $red;
-		}
 	}
 }
 #blocker {

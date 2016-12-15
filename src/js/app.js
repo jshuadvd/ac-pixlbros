@@ -23,275 +23,6 @@ var touchStartX = void 0;
 //                             Init Loader                                //
 //************************************************************************//
 
-var showLoader = false;
-
-if (showLoader) {
-	var bar;
-
-	(function () {
-		bar = new ProgressBar.Path('.st0', {
-			easing: 'easeInOut',
-			duration: 800
-		});
-
-		bar.set(0);
-
-		var percent = 0.1;
-		var int = setInterval(function () {
-			percent += 0.1;
-			if (percent >= 1.0) {
-				clearInterval(int);
-			} else {
-				bar.animate(percent, function () {
-					TweenMax.to($('#loader'), 0.3, { autoAlpha: 0, display: 'none' });
-				});
-				var fixed = (percent * 100).toFixed(0);
-				$('text').html(fixed + '%');
-			}
-		}, 500);
-
-		// THREE.DefaultLoadingManager.onProgress = function ( item, loaded, total ) {
-		// 	let percent = loaded/total
-		// 	bar.animate(percent, function() {
-		// 		TweenMax.to($('#loader') , 0.3, {autoAlpha: 0, display: 'none'});
-		// 	});
-		// 	let fixed = (percent*100).toFixed(0);
-		// 	$('text').html(`${fixed}%`);
-		// };
-	})();
-} else {
-	$('#loader').hide();
-}
-
-function setupButtons() {
-	$('.button-outer .logo').each(function () {
-		var $el = $(this);
-		var clone = $el.find('.clone').clone().attr('class', 'fill blur');
-		$el.append(clone);
-	});
-	$('.inner-path').each(function () {
-		var $el = $(this);
-		var clone = $el.clone().attr('class', 'blur');
-		$el.after(clone);
-	});
-	$('.button-outer').on('mouseenter', function () {
-		var key = $(this).attr('key');
-		console.log('moustenter', key);
-		buttons[key].animate(1);
-	});
-	$('.button-outer').on('mouseleave', function (event) {
-		var key = $(event.currentTarget).attr('key');
-		buttons[key].set(0);
-	});
-}
-
-var buttons = {};
-
-//************************************************************************//
-//                             Init Audio                                 //
-//************************************************************************//
-
-// let audio = document.createElement('audio');
-// let source = document.createElement('source');
-// source.src = 'audio/AC-Trailer.mp3';
-// audio.appendChild(source);
-// audio.play();
-
-function Modal(hotspot) {
-	var _this = this;
-
-	this.modal = $('.modal');
-	this.item = this.modal.find('.item');
-	this.content = this.modal.find('.content');
-	this.description = this.modal.find('.description');
-	this.title = this.modal.find('.title');
-	this.facebookShare = this.modal.find('.button-outer.fb');
-	this.twitterShare = this.modal.find('.button-outer.twitter');
-	this.nextButton = this.modal.find('.next');
-	this.prevButton = this.modal.find('.prev');
-	this.controls = this.modal.find('.controls');
-	$('.modal-container .close').on('click', function () {
-		_this.hide();
-	});
-	$('.overlay').on('click', this.hide);
-	this.bindEvents();
-}
-
-Modal.prototype = {
-	bindEvents: function bindEvents() {
-		var _this2 = this;
-
-		this.nextButton.on('click', function () {
-			_this2.next();
-		});
-
-		this.prevButton.on('click', function () {
-			_this2.prev();
-		});
-		this.facebookShare.on('click', function () {
-			_this2.shareFacebook();
-		});
-		this.twitterShare.on('click', function () {
-			_this2.shareTwitter();
-		});
-	},
-	prev: function prev() {
-		var _this3 = this;
-
-		var content = this.content;
-		var duration = this.duration;
-		TweenMax.to(content, duration, { autoAlpha: 0, onComplete: function onComplete() {
-				_this3.offset = _this3.offset === 0 ? _this3.hotspot.slides.length - 1 : _this3.offset - 1;
-				_this3.setModalValues(_this3.hotspot.slides[_this3.offset]);
-				TweenMax.to(content, duration, { autoAlpha: 1 });
-			} });
-	},
-	next: function next() {
-		var _this4 = this;
-
-		var content = this.content;
-		var duration = this.duration;
-		TweenMax.to(content, duration, { autoAlpha: 0, onComplete: function onComplete() {
-				_this4.offset = _this4.offset + 1 === _this4.hotspot.slides.length ? 0 : _this4.offset + 1;
-				_this4.setModalValues(_this4.hotspot.slides[_this4.offset]);
-				TweenMax.to(content, duration, { autoAlpha: 1 });
-			} });
-	},
-
-	// share: {
-	shareFacebook: function shareFacebook() {
-		var slide = this.hotspot.slides[this.offset];
-		var href = '' + siteConfig.siteURL + makeUrlParams(this.hotspot.id, this.offset);
-		var picture = '' + siteConfig.siteURL + slide.image;
-		FB.ui({
-			method: 'share',
-			href: href,
-			title: slide.title,
-			picture: picture,
-			// caption: 'your_caption',
-			description: siteConfig.assetShare.replace('[Object Name]', slide.title)
-		}, function (response) {
-			// your code to manage the response
-		});
-	},
-	shareTwitter: function shareTwitter() {
-		var params = encodeURIComponent(makeUrlParams(this.hotspot.id, this.offset));
-		var url = '' + siteConfig.siteURL + params;
-		var slide = this.hotspot.slides[this.offset];
-		var text = siteConfig.assetTweet.replace('[Object Name]', slide.title);
-		// .replace('[URL]', `${url}${params}`);
-		var hashtags = 'AssassinsCreed';
-		window.open('http://twitter.com/intent/tweet?url=' + url + '&text=' + text + '&hashtags=' + hashtags);
-	},
-
-	// },
-	duration: 0.35,
-	offset: 0,
-	setModalValues: function setModalValues(hotspot) {
-		console.log('setModalValues', hotspot);
-		this.description.text(hotspot.description);
-		this.title.text(hotspot.title);
-		this.item.attr('src', hotspot.image);
-		this.modal.attr('class', 'modal ' + hotspot.key);
-	},
-	hide: function hide() {
-		freeze = false;
-		this.modal.attr('class', 'modal');
-		for (var i in buttons) {
-			buttons[i].set(0);
-		}
-		var duration = 550 / 1000;
-		showingModal = false;
-		this.controls.hide();
-		// pointerLock();
-		TweenMax.to($('.modal-container'), 0.3, { autoAlpha: 0 });
-		TweenMax.to(camera, duration, { fov: fovMin, onComplete: function onComplete() {
-				blocked = false;
-			} });
-		$(document).off('keydown');
-	},
-	show: function show(hotspot, subid) {
-		this.hotspot = hotspot;
-		this.subid = subid;
-		this.offset = 0;
-		// let urlParams = makeUrlParams(hotspot.id);
-		// history.replaceState(null, null, urlParams);
-		var duration = 550 / 1000;
-		showingModal = true;
-		if (hotspot.slides && hotspot.slides.length > 0) {
-			if (hotspot.slides.length > 1) this.controls.fadeIn();
-			this.activeSlide = hotspot.slides[this.offset];
-			this.setModalValues(this.activeSlide);
-		}
-		TweenMax.to($('.modal-container'), 0.3, { autoAlpha: 1 });
-		TweenMax.to(camera, duration, { fov: fovMax, onComplete: function onComplete() {
-				$('.modal-container').css({ top: 0 });
-				$(document).on('keydown', function (event) {
-					if (event.keyCode === 27) {
-						modal.hide();
-					}
-				});
-			} });
-	}
-};
-var modal = new Modal();
-modal.bindEvents();
-
-var audio = new Audio('audio/AC-Trailer.mp3');
-// audio.play();
-
-var playAudio = true;
-
-// herp derp
-
-$(document).ready(function () {
-
-	$('.button-outer').each(function (index, el) {
-		var $el = $(el);
-		var key = $el.attr('key');
-		buttons[key] = new ProgressBar.Path($el.find('.outer-path').get(0), {
-			easing: 'easeInOut',
-			duration: 500
-		});
-		buttons[key].set(0);
-	});
-
-	$('.button-outer').on('mouseenter', function () {
-		var key = $(this).attr('key');
-		console.log('moustenter', key);
-		buttons[key].animate(1);
-		// $(this).find('.outer-path').data('progress')
-	});
-
-	$('.button-outer').on('mouseleave', function (event) {
-		var key = $(event.currentTarget).attr('key');
-		buttons[key].set(0);
-		// $(event.currentTarget).find('.outer-path').data('progress').set(0);
-	});
-
-	$('.button-outer').on('click', function (event) {
-		var key = $(event.currentTarget).attr('key');
-		handleButtonClick(key);
-	});
-
-	var offLine = $('.sound line');
-	var container = offLine.parents('svg');
-	$('.sound').on('click', function () {
-		if (playAudio) {
-			audio.pause();
-			offLine.show();
-			container.attr('class', 'off');
-		} else {
-			audio.play();
-			offLine.hide();
-			container.attr('class', '');
-		}
-		playAudio = !playAudio;
-	});
-
-	setupButtons();
-});
-
 //************************************************************************//
 //                              Variables                           	  //
 //************************************************************************//
@@ -514,6 +245,285 @@ if ('ontouchstart' in window || window.DocumentTouch && document instanceof Docu
 	touchDevice = true;
 }
 
+var showLoader = true;
+var playAudio = true;
+// var audioLoader = new THREE.AudioLoader();
+// audioLoader.load(audioFile);
+
+var audio = void 0;
+var progressBar = $('.progress');
+var numAnim = new CountUp(percent, 0, 0, 0, 0.5, { suffix: '%' });
+var filesLoaded = 0;
+var totalFiles = 0;
+function loadTick() {
+	var percent = filesLoaded / totalFiles * 100;
+	numAnim.update(percent);
+	progressBar.css('width', percent + '%');
+	if (percent === 100) {
+		TweenMax.to($('#preloader'), 750 / 1000, { delay: 550 / 1000, autoAlpha: 0, onComplete: function onComplete() {
+				audio.volume = 0.5;
+				audio.play();
+			} });
+	}
+}
+
+function preloadAudio(url) {
+	totalFiles += 1;
+	var audio = new Audio();
+	audio.addEventListener('canplaythrough', function () {
+		filesLoaded += 1;
+		loadTick();
+	}, false);
+	audio.src = url;
+	return audio;
+}
+
+function preloadImages() {
+	var slides = hotspotObjects.map(function (hotspotObject) {
+		return hotspotObject.slides;
+	}).reduce(function (prev, current) {
+		return prev.concat(current);
+	});
+	totalFiles += slides.length;
+	slides.forEach(function (slide) {
+		var image = new Image();
+		image.onload = function () {
+			filesLoaded += 1;
+			loadTick();
+		};
+		image.src = slide.image;
+	});
+}
+
+if (showLoader) {
+	preloadImages();
+	audio = preloadAudio('audio/AC-Trailer.mp3');
+	THREE.DefaultLoadingManager.onProgress = function (item, loaded, total) {
+		if (loaded === 1) totalFiles += total;
+		filesLoaded += 1;
+		loadTick();
+	};
+} else {
+	$('#loader').hide();
+}
+
+function setupButtons() {
+	$('.button-outer .logo').each(function () {
+		var $el = $(this);
+		var clone = $el.find('.clone').clone().attr('class', 'fill blur');
+		$el.append(clone);
+	});
+	$('.inner-path').each(function () {
+		var $el = $(this);
+		var clone = $el.clone().attr('class', 'blur');
+		$el.after(clone);
+	});
+	$('.button-outer').on('mouseenter', function () {
+		var key = $(this).attr('key');
+		buttons[key].animate(1);
+	});
+	$('.button-outer').on('mouseleave', function (event) {
+		var key = $(event.currentTarget).attr('key');
+		buttons[key].set(0);
+	});
+}
+
+var buttons = {};
+
+//************************************************************************//
+//                             Init Audio                                 //
+//************************************************************************//
+
+// let audio = document.createElement('audio');
+// let source = document.createElement('source');
+// source.src = 'audio/AC-Trailer.mp3';
+// audio.appendChild(source);
+// audio.play();
+
+function Modal(hotspot) {
+	var _this = this;
+
+	this.modal = $('.modal');
+	this.item = this.modal.find('.item');
+	this.content = this.modal.find('.content');
+	this.description = this.modal.find('.description');
+	this.title = this.modal.find('.title');
+	this.facebookShare = this.modal.find('.button-outer.fb');
+	this.twitterShare = this.modal.find('.button-outer.twitter');
+	this.nextButton = this.modal.find('.next');
+	this.prevButton = this.modal.find('.prev');
+	this.controls = this.modal.find('.controls');
+	$('.modal-container .close').on('click', function () {
+		_this.hide();
+	});
+	$('.overlay').on('click', this.hide);
+	this.bindEvents();
+}
+
+Modal.prototype = {
+	bindEvents: function bindEvents() {
+		var _this2 = this;
+
+		this.nextButton.on('click', function () {
+			_this2.next();
+		});
+
+		this.prevButton.on('click', function () {
+			_this2.prev();
+		});
+		this.facebookShare.on('click', function () {
+			_this2.shareFacebook();
+		});
+		this.twitterShare.on('click', function () {
+			_this2.shareTwitter();
+		});
+	},
+	prev: function prev() {
+		var _this3 = this;
+
+		var content = this.content;
+		var duration = this.duration;
+		TweenMax.to(content, duration, { autoAlpha: 0, onComplete: function onComplete() {
+				_this3.offset = _this3.offset === 0 ? _this3.hotspot.slides.length - 1 : _this3.offset - 1;
+				_this3.setModalValues(_this3.hotspot.slides[_this3.offset]);
+				TweenMax.to(content, duration, { autoAlpha: 1 });
+			} });
+	},
+	next: function next() {
+		var _this4 = this;
+
+		var content = this.content;
+		var duration = this.duration;
+		TweenMax.to(content, duration, { autoAlpha: 0, onComplete: function onComplete() {
+				_this4.offset = _this4.offset + 1 === _this4.hotspot.slides.length ? 0 : _this4.offset + 1;
+				_this4.setModalValues(_this4.hotspot.slides[_this4.offset]);
+				TweenMax.to(content, duration, { autoAlpha: 1 });
+			} });
+	},
+
+	// share: {
+	shareFacebook: function shareFacebook() {
+		var slide = this.hotspot.slides[this.offset];
+		var href = '' + siteConfig.siteURL + makeUrlParams(this.hotspot.id, this.offset);
+		var picture = '' + siteConfig.siteURL + slide.image;
+		FB.ui({
+			method: 'share',
+			href: href,
+			title: slide.title,
+			picture: picture,
+			// caption: 'your_caption',
+			description: siteConfig.assetShare.replace('[Object Name]', slide.title)
+		}, function (response) {
+			// your code to manage the response
+		});
+	},
+	shareTwitter: function shareTwitter() {
+		var params = encodeURIComponent(makeUrlParams(this.hotspot.id, this.offset));
+		var url = '' + siteConfig.siteURL + params;
+		var slide = this.hotspot.slides[this.offset];
+		var text = siteConfig.assetTweet.replace('[Object Name]', slide.title);
+		// .replace('[URL]', `${url}${params}`);
+		var hashtags = 'AssassinsCreed';
+		window.open('http://twitter.com/intent/tweet?url=' + url + '&text=' + text + '&hashtags=' + hashtags);
+	},
+
+	// },
+	duration: 0.35,
+	offset: 0,
+	setModalValues: function setModalValues(hotspot) {
+		this.description.text(hotspot.description);
+		this.title.text(hotspot.title);
+		this.item.attr('src', hotspot.image);
+		this.modal.attr('class', 'modal ' + hotspot.key);
+	},
+	hide: function hide() {
+		freeze = false;
+		this.modal.attr('class', 'modal');
+		for (var i in buttons) {
+			buttons[i].set(0);
+		}
+		var duration = 550 / 1000;
+		showingModal = false;
+		this.controls.hide();
+		// pointerLock();
+		TweenMax.to($('.modal-container'), 0.3, { autoAlpha: 0 });
+		TweenMax.to(camera, duration, { fov: fovMin, onComplete: function onComplete() {
+				blocked = false;
+			} });
+		$(document).off('keydown');
+	},
+	show: function show(hotspot, subid) {
+		this.hotspot = hotspot;
+		this.subid = subid;
+		this.offset = 0;
+		// let urlParams = makeUrlParams(hotspot.id);
+		// history.replaceState(null, null, urlParams);
+		var duration = 550 / 1000;
+		showingModal = true;
+		if (hotspot.slides && hotspot.slides.length > 0) {
+			if (hotspot.slides.length > 1) this.controls.fadeIn();
+			this.activeSlide = hotspot.slides[this.offset];
+			this.setModalValues(this.activeSlide);
+		}
+		TweenMax.to($('.modal-container'), 0.3, { autoAlpha: 1 });
+		TweenMax.to(camera, duration, { fov: fovMax, onComplete: function onComplete() {
+				$('.modal-container').css({ top: 0 });
+				$(document).on('keydown', function (event) {
+					if (event.keyCode === 27) {
+						modal.hide();
+					}
+				});
+			} });
+	}
+};
+var modal = new Modal();
+modal.bindEvents();
+
+$(document).ready(function () {
+
+	$('.button-outer').each(function (index, el) {
+		var $el = $(el);
+		var key = $el.attr('key');
+		buttons[key] = new ProgressBar.Path($el.find('.outer-path').get(0), {
+			easing: 'easeInOut',
+			duration: 500
+		});
+		buttons[key].set(0);
+	});
+
+	$('.button-outer').on('mouseenter', function () {
+		var key = $(this).attr('key');
+		buttons[key].animate(1);
+	});
+
+	$('.button-outer').on('mouseleave', function (event) {
+		var key = $(event.currentTarget).attr('key');
+		buttons[key].set(0);
+	});
+
+	$('.button-outer').on('click', function (event) {
+		var key = $(event.currentTarget).attr('key');
+		handleButtonClick(key);
+	});
+
+	var offLine = $('.sound line');
+	var container = offLine.parents('svg');
+	$('.sound').on('click', function () {
+		if (playAudio) {
+			audio.pause();
+			offLine.show();
+			container.attr('class', 'off');
+		} else {
+			audio.play();
+			offLine.hide();
+			container.attr('class', '');
+		}
+		playAudio = !playAudio;
+	});
+
+	setupButtons();
+});
+
 init();
 animate();
 
@@ -698,12 +708,12 @@ function orientCamera() {
 }
 
 var buttonClicks = {
-	// 'ig-header'() {
-	// 	console.log('igHeader');
-	// },
-	// fb() {
-	// 	// modal.share('fb');
-	// }
+	'ig-header': function igHeader() {
+		console.log('igHeader');
+	},
+	fb: function fb() {
+		// modal.share('fb');
+	}
 };
 function handleButtonClick(key) {
 	if (key in buttonClicks) buttonClicks[key]();
@@ -908,7 +918,6 @@ function onWindowResize() {
 // }
 
 function onDocumentTouchStart(event) {
-	console.log('---- onDocumentTouchStart ----', event);
 	if (event.touches && event.touches.length === 1) {
 		var touch = event.touches[0];
 		touchStartX = touch.pageX;
@@ -920,14 +929,9 @@ function onDocumentTouchStart(event) {
 	} else {
 		event.preventDefault();
 	}
-	// console.log('--- INDEX TOUCH START ---');
-	// event.preventDefault();
-	// event.clientX = event.touches[0].clientX;
-	// event.clientY = event.touches[0].clientY;
 }
 
 function onDocumentTouchMove(event) {
-	console.log('---- onDocumentTouchMove ----');
 	if (event.touches && event.touches.length) {
 		var delta = touchStartX - event.touches[0].pageX;
 		touchStartX = event.touches[0].pageX;
@@ -1016,7 +1020,6 @@ function makeUrlParams(id, subid) {
 	}
 	if (!subid) subid = 0;
 	str += '&subid=' + subid;
-	console.log('makeUrlParams', id, subid, str);
 	return str;
 }
 
@@ -1033,16 +1036,11 @@ function tweenArc(start, end) {
 }
 
 function onDocumentMouseDown(event, isTouch) {
-	console.log('---- onDocumentMouseDown ----', freeze);
-	if (freeze) {
-		console.log('action frozen');
-		return;
-	}
+	if (freeze) return;
 	isUserInteracting = true;
 	if (selectedObjects.length && !showingModal) {
 		(function () {
 			var so = selectedObjects[0].hotspot;
-			console.log('hotspot id', selectedObjects[0].hotspot.id);
 			var currentLon = position.lon;
 			var hotspotLon = selectedObjects[0].hotspot.lon;
 			var data = tweenArc(currentLon, hotspotLon);
@@ -1076,11 +1074,7 @@ function rotateHotspots() {
 }
 
 function onDocumentMouseMove(event) {
-	console.log('---- onDocumentMouseMove ----', freeze);
-	if (freeze) {
-		console.log('action frozen');
-		return;
-	}
+	if (freeze) return;
 	checkRaycasterCollisions(event.clientX, event.clientY);
 	if (isUserInteracting && !showingModal) {
 		var movementX = event.movementX || event.mozMovementX || event.webkitMovementX || 0;
