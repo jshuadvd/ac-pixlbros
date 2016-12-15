@@ -21,263 +21,6 @@ let touchStartX;
 //                             Init Loader                                //
 //************************************************************************//
 
-let showLoader = false;
-
-if(showLoader) {
-	var bar = new ProgressBar.Path('.st0', {
-		easing: 'easeInOut',
-		duration: 800
-	});
-	bar.set(0)
-
-	let percent = 0.1
-	let int = setInterval(function() {
-		percent += 0.1;
-		if(percent >= 1.0) {
-			clearInterval(int);
-		} else {
-			bar.animate(percent, () => {
-				TweenMax.to($('#loader') , 0.3, {autoAlpha: 0, display: 'none'});
-			});
-			let fixed = (percent*100).toFixed(0);
-			$('text').html(`${fixed}%`)
-		}
-	}, 500)
-
-	// THREE.DefaultLoadingManager.onProgress = function ( item, loaded, total ) {
-	// 	let percent = loaded/total
-	// 	bar.animate(percent, function() {
-	// 		TweenMax.to($('#loader') , 0.3, {autoAlpha: 0, display: 'none'});
-	// 	});
-	// 	let fixed = (percent*100).toFixed(0);
-	// 	$('text').html(`${fixed}%`);
-	// };
-} else {
-	$('#loader').hide();
-}
-
-function setupButtons() {
-	$('.button-outer .logo').each(function() {
-		var $el = $(this);
-		var clone = $el.find('.clone').clone().attr('class', 'fill blur');
-		$el.append(clone);
-	});
-	$('.inner-path').each(function() {
-		var $el = $(this);
-		var clone = $el.clone().attr('class', 'blur');
-		$el.after(clone);
-	});
-	$('.button-outer').on('mouseenter', function() {
-		var key = $(this).attr('key');
-		console.log('moustenter', key);
-		buttons[key].animate(1);
-	});
-	$('.button-outer').on('mouseleave', (event) => {
-		var key = $(event.currentTarget).attr('key');
-		buttons[key].set(0);
-	});
-}
-
-var buttons = {};
-
-
-//************************************************************************//
-//                             Init Audio                                 //
-//************************************************************************//
-
-// let audio = document.createElement('audio');
-// let source = document.createElement('source');
-// source.src = 'audio/AC-Trailer.mp3';
-// audio.appendChild(source);
-// audio.play();
-
-function Modal(hotspot) {
-	this.modal = $('.modal');
-	this.item = this.modal.find('.item');
-	this.content = this.modal.find('.content');
-	this.description = this.modal.find('.description');
-	this.title = this.modal.find('.title');
-	this.facebookShare = this.modal.find('.button-outer.fb');
-	this.twitterShare = this.modal.find('.button-outer.twitter');
-	this.nextButton = this.modal.find('.next');
-	this.prevButton = this.modal.find('.prev');
-	this.controls = this.modal.find('.controls');
-	$('.modal-container .close').on('click', () => {
-		this.hide();
-	});
-	$('.overlay').on('click', this.hide);
-	this.bindEvents();
-}
-
-Modal.prototype = {
-	bindEvents() {
-		this.nextButton.on('click', () => {
-			this.next();
-		});
-
-		this.prevButton.on('click', () => {
-			this.prev();
-		});
-		this.facebookShare.on('click', () => {
-			this.shareFacebook();
-		});
-		this.twitterShare.on('click', () => {
-			this.shareTwitter();
-		});
-	},
-	prev() {
-		let content = this.content;
-		let duration = this.duration;
-		TweenMax.to(content, duration, {autoAlpha: 0, onComplete: () => {
-			this.offset = this.offset === 0 ? this.hotspot.slides.length-1 : this.offset-1;
-			this.setModalValues(this.hotspot.slides[this.offset]);
-			TweenMax.to(content, duration, {autoAlpha: 1});
-		}});
-	},
-	next() {
-		let content = this.content;
-		let duration = this.duration;
-		TweenMax.to(content, duration, {autoAlpha: 0, onComplete: () => {
-			this.offset = this.offset+1 === this.hotspot.slides.length ? 0 : this.offset+1;
-			this.setModalValues(this.hotspot.slides[this.offset]);
-			TweenMax.to(content, duration, {autoAlpha: 1});
-		}})
-	},
-	// share: {
-		shareFacebook() {
-			let slide = this.hotspot.slides[this.offset];
-			let href = `${siteConfig.siteURL}${makeUrlParams(this.hotspot.id, this.offset)}`;
-			let picture = `${siteConfig.siteURL}${slide.image}`;
-			FB.ui(
-			{
-				method: 'share',
-				href: href,
-				title: slide.title,
-				picture: picture,
-				// caption: 'your_caption',
-				description: siteConfig.assetShare.replace('[Object Name]', slide.title)
-			 },
-			 function(response){
-				// your code to manage the response
-			 });
-		},
-		shareTwitter() {
-			let params = encodeURIComponent(makeUrlParams(this.hotspot.id, this.offset));
-			let url = `${siteConfig.siteURL}${params}`;
-			let slide = this.hotspot.slides[this.offset];
-			let text = siteConfig.assetTweet.replace('[Object Name]', slide.title)
-			// .replace('[URL]', `${url}${params}`);
-			let hashtags = 'AssassinsCreed'
-			window.open(`http://twitter.com/intent/tweet?url=${url}&text=${text}&hashtags=${hashtags}`);
-		},
-	// },
-	duration: 0.35,
-	offset: 0,
-	setModalValues(hotspot) {
-		console.log('setModalValues', hotspot);
-		this.description.text(hotspot.description);
-		this.title.text(hotspot.title);
-		this.item.attr('src', hotspot.image);
-		this.modal.attr('class', `modal ${hotspot.key}`);
-	},
-	hide() {
-		freeze = false;
-		this.modal.attr('class', 'modal');
-		for(var i in buttons) {
-			buttons[i].set(0);
-		}
-		let duration = 550/1000
-		showingModal = false;
-		this.controls.hide();
-		// pointerLock();
-		TweenMax.to($('.modal-container') , 0.3, {autoAlpha: 0})
-		TweenMax.to(camera, duration, {fov: fovMin, onComplete: function() {
-			blocked = false;
-		}});
-		$(document).off('keydown');
-	},
-	show(hotspot, subid) {
-		this.hotspot = hotspot;
-		this.subid = subid;
-		this.offset = 0;
-		// let urlParams = makeUrlParams(hotspot.id);
-		// history.replaceState(null, null, urlParams);
-		let duration = 550/1000;
-		showingModal = true;
-		if(hotspot.slides && hotspot.slides.length > 0) {
-			if(hotspot.slides.length > 1) this.controls.fadeIn();
-			this.activeSlide = hotspot.slides[this.offset];
-			this.setModalValues(this.activeSlide);
-		}
-		TweenMax.to($('.modal-container') , 0.3, {autoAlpha: 1})
-		TweenMax.to(camera, duration, {fov: fovMax, onComplete: () => {
-			$('.modal-container').css({top: 0})
-			$(document).on('keydown', (event) => {
-				if(event.keyCode === 27) {
-					modal.hide();
-				} 
-			});
-		}})
-	}
-}
-let modal = new Modal();
-modal.bindEvents();
-
-let audio = new Audio('audio/AC-Trailer.mp3');
-// audio.play();
-
-let playAudio = true;
-
-// herp derp
-
-$(document).ready(function() {
-
-	$('.button-outer').each((index, el) => {
-		var $el = $(el);
-		var key = $el.attr('key');
-		buttons[key] = new ProgressBar.Path($el.find('.outer-path').get(0), {
-			easing: 'easeInOut',
-			duration: 500
-		});
-		buttons[key].set(0);
-	});
-
-	$('.button-outer').on('mouseenter', function() {
-		var key = $(this).attr('key');
-		console.log('moustenter', key);
-		buttons[key].animate(1);
-		// $(this).find('.outer-path').data('progress')
-	});
-
-	$('.button-outer').on('mouseleave', (event) => {
-		var key = $(event.currentTarget).attr('key');
-		buttons[key].set(0);
-		// $(event.currentTarget).find('.outer-path').data('progress').set(0);
-	});
-
-	$('.button-outer').on('click', (event) => {
-		var key = $(event.currentTarget).attr('key');
-		handleButtonClick(key);
-	});
-
-	let offLine = $('.sound line');
-	let container = offLine.parents('svg');
-	$('.sound').on('click', () => {
-		if(playAudio) {
-			audio.pause();
-			offLine.show();
-			container.attr('class', 'off');
-		} else {
-			audio.play();
-			offLine.hide();
-			container.attr('class', '');
-		}
-		playAudio = !playAudio;
-	});
-
-	setupButtons();
-});
-
 //************************************************************************//
 //                              Variables                           	  //
 //************************************************************************//
@@ -501,6 +244,277 @@ if (('ontouchstart' in window) || window.DocumentTouch && document instanceof Do
 	touchDevice = true;
 }
 
+let showLoader = true;
+let playAudio = true;
+// var audioLoader = new THREE.AudioLoader();
+// audioLoader.load(audioFile);
+
+let audio;
+let progressBar = $('.progress');
+let numAnim = new CountUp(percent, 0, 0, 0, 0.5, {suffix: '%'});
+let filesLoaded = 0;
+let totalFiles = 0;
+function loadTick() {
+	let percent = filesLoaded/totalFiles*100;
+	numAnim.update(percent);
+	progressBar.css('width', `${percent}%`);
+	if(percent === 100) {
+		TweenMax.to($('#preloader'), 750/1000, {autoAlpha: 0, onComplete: () => {
+			audio.volume = 0.5;
+			audio.play();
+		}});
+	}
+}
+
+function preloadAudio(url) {
+	totalFiles += 1;
+	let audio = new Audio();
+	audio.addEventListener('canplaythrough', () => {
+		filesLoaded += 1;
+		loadTick();
+	}, false);
+	audio.src = url;
+	return audio;
+}
+
+function preloadImages() {
+	hotspotObjects.forEach((hotspotObject) => {
+		hotspotObject.slides.forEach((slide) => {
+			totalFiles += 1;
+			let image = new Image();
+			image.onload = () => {
+				filesLoaded += 1;
+				loadTick();
+			}
+			image.src = slide.image;
+		});
+	});
+}
+
+if(showLoader) {
+	preloadImages();
+	audio = preloadAudio('audio/AC-Trailer.mp3');
+	THREE.DefaultLoadingManager.onProgress = function ( item, loaded, total ) {
+		if(loaded === 1) {
+			totalFiles += total;
+		}
+		filesLoaded += 1;
+		loadTick();
+	};
+} else {
+	$('#loader').hide();
+}
+
+function setupButtons() {
+	$('.button-outer .logo').each(function() {
+		var $el = $(this);
+		var clone = $el.find('.clone').clone().attr('class', 'fill blur');
+		$el.append(clone);
+	});
+	$('.inner-path').each(function() {
+		var $el = $(this);
+		var clone = $el.clone().attr('class', 'blur');
+		$el.after(clone);
+	});
+	$('.button-outer').on('mouseenter', function() {
+		var key = $(this).attr('key');
+		buttons[key].animate(1);
+	});
+	$('.button-outer').on('mouseleave', (event) => {
+		var key = $(event.currentTarget).attr('key');
+		buttons[key].set(0);
+	});
+}
+
+var buttons = {};
+
+
+//************************************************************************//
+//                             Init Audio                                 //
+//************************************************************************//
+
+// let audio = document.createElement('audio');
+// let source = document.createElement('source');
+// source.src = 'audio/AC-Trailer.mp3';
+// audio.appendChild(source);
+// audio.play();
+
+function Modal(hotspot) {
+	this.modal = $('.modal');
+	this.item = this.modal.find('.item');
+	this.content = this.modal.find('.content');
+	this.description = this.modal.find('.description');
+	this.title = this.modal.find('.title');
+	this.facebookShare = this.modal.find('.button-outer.fb');
+	this.twitterShare = this.modal.find('.button-outer.twitter');
+	this.nextButton = this.modal.find('.next');
+	this.prevButton = this.modal.find('.prev');
+	this.controls = this.modal.find('.controls');
+	$('.modal-container .close').on('click', () => {
+		this.hide();
+	});
+	$('.overlay').on('click', this.hide);
+	this.bindEvents();
+}
+
+Modal.prototype = {
+	bindEvents() {
+		this.nextButton.on('click', () => {
+			this.next();
+		});
+
+		this.prevButton.on('click', () => {
+			this.prev();
+		});
+		this.facebookShare.on('click', () => {
+			this.shareFacebook();
+		});
+		this.twitterShare.on('click', () => {
+			this.shareTwitter();
+		});
+	},
+	prev() {
+		let content = this.content;
+		let duration = this.duration;
+		TweenMax.to(content, duration, {autoAlpha: 0, onComplete: () => {
+			this.offset = this.offset === 0 ? this.hotspot.slides.length-1 : this.offset-1;
+			this.setModalValues(this.hotspot.slides[this.offset]);
+			TweenMax.to(content, duration, {autoAlpha: 1});
+		}});
+	},
+	next() {
+		let content = this.content;
+		let duration = this.duration;
+		TweenMax.to(content, duration, {autoAlpha: 0, onComplete: () => {
+			this.offset = this.offset+1 === this.hotspot.slides.length ? 0 : this.offset+1;
+			this.setModalValues(this.hotspot.slides[this.offset]);
+			TweenMax.to(content, duration, {autoAlpha: 1});
+		}})
+	},
+	// share: {
+		shareFacebook() {
+			let slide = this.hotspot.slides[this.offset];
+			let href = `${siteConfig.siteURL}${makeUrlParams(this.hotspot.id, this.offset)}`;
+			let picture = `${siteConfig.siteURL}${slide.image}`;
+			FB.ui(
+			{
+				method: 'share',
+				href: href,
+				title: slide.title,
+				picture: picture,
+				// caption: 'your_caption',
+				description: siteConfig.assetShare.replace('[Object Name]', slide.title)
+			 },
+			 function(response){
+				// your code to manage the response
+			 });
+		},
+		shareTwitter() {
+			let params = encodeURIComponent(makeUrlParams(this.hotspot.id, this.offset));
+			let url = `${siteConfig.siteURL}${params}`;
+			let slide = this.hotspot.slides[this.offset];
+			let text = siteConfig.assetTweet.replace('[Object Name]', slide.title)
+			// .replace('[URL]', `${url}${params}`);
+			let hashtags = 'AssassinsCreed'
+			window.open(`http://twitter.com/intent/tweet?url=${url}&text=${text}&hashtags=${hashtags}`);
+		},
+	// },
+	duration: 0.35,
+	offset: 0,
+	setModalValues(hotspot) {
+		this.description.text(hotspot.description);
+		this.title.text(hotspot.title);
+		this.item.attr('src', hotspot.image);
+		this.modal.attr('class', `modal ${hotspot.key}`);
+	},
+	hide() {
+		freeze = false;
+		this.modal.attr('class', 'modal');
+		for(var i in buttons) {
+			buttons[i].set(0);
+		}
+		let duration = 550/1000
+		showingModal = false;
+		this.controls.hide();
+		// pointerLock();
+		TweenMax.to($('.modal-container') , 0.3, {autoAlpha: 0})
+		TweenMax.to(camera, duration, {fov: fovMin, onComplete: function() {
+			blocked = false;
+		}});
+		$(document).off('keydown');
+	},
+	show(hotspot, subid) {
+		this.hotspot = hotspot;
+		this.subid = subid;
+		this.offset = 0;
+		// let urlParams = makeUrlParams(hotspot.id);
+		// history.replaceState(null, null, urlParams);
+		let duration = 550/1000;
+		showingModal = true;
+		if(hotspot.slides && hotspot.slides.length > 0) {
+			if(hotspot.slides.length > 1) this.controls.fadeIn();
+			this.activeSlide = hotspot.slides[this.offset];
+			this.setModalValues(this.activeSlide);
+		}
+		TweenMax.to($('.modal-container') , 0.3, {autoAlpha: 1})
+		TweenMax.to(camera, duration, {fov: fovMax, onComplete: () => {
+			$('.modal-container').css({top: 0})
+			$(document).on('keydown', (event) => {
+				if(event.keyCode === 27) {
+					modal.hide();
+				} 
+			});
+		}})
+	}
+}
+let modal = new Modal();
+modal.bindEvents();
+
+$(document).ready(function() {
+
+	$('.button-outer').each((index, el) => {
+		var $el = $(el);
+		var key = $el.attr('key');
+		buttons[key] = new ProgressBar.Path($el.find('.outer-path').get(0), {
+			easing: 'easeInOut',
+			duration: 500
+		});
+		buttons[key].set(0);
+	});
+
+	$('.button-outer').on('mouseenter', function() {
+		var key = $(this).attr('key');
+		buttons[key].animate(1);
+	});
+
+	$('.button-outer').on('mouseleave', (event) => {
+		var key = $(event.currentTarget).attr('key');
+		buttons[key].set(0);
+	});
+
+	$('.button-outer').on('click', (event) => {
+		var key = $(event.currentTarget).attr('key');
+		handleButtonClick(key);
+	});
+
+	let offLine = $('.sound line');
+	let container = offLine.parents('svg');
+	$('.sound').on('click', () => {
+		if(playAudio) {
+			audio.pause();
+			offLine.show();
+			container.attr('class', 'off');
+		} else {
+			audio.play();
+			offLine.hide();
+			container.attr('class', '');
+		}
+		playAudio = !playAudio;
+	});
+
+	setupButtons();
+});
+
 init();
 animate();
 
@@ -679,17 +693,17 @@ function orientCamera() {
 	}
 }
 
-let buttonClicks = {
-	// 'ig-header'() {
-	// 	console.log('igHeader');
-	// },
-	// fb() {
-	// 	// modal.share('fb');
-	// }
-}
-function handleButtonClick(key) {
-	if(key in buttonClicks) buttonClicks[key]();
-}
+// let buttonClicks = {
+// 	'ig-header'() {
+// 		console.log('igHeader');
+// 	},
+// 	fb() {
+// 		// modal.share('fb');
+// 	}
+// }
+// function handleButtonClick(key) {
+// 	if(key in buttonClicks) buttonClicks[key]();
+// }
 
 function buildHotspots() {
 	loader = new THREE.JSONLoader();
@@ -891,7 +905,6 @@ function onWindowResize() {
 // }
 
 function onDocumentTouchStart(event) {
-	console.log('---- onDocumentTouchStart ----', event);
 	if(event.touches && event.touches.length === 1) {
 		let touch = event.touches[0];
 		touchStartX = touch.pageX;
@@ -902,15 +915,9 @@ function onDocumentTouchStart(event) {
 		}
 	} else {
 		event.preventDefault();
-	}
-	// console.log('--- INDEX TOUCH START ---');
-	// event.preventDefault();
-	// event.clientX = event.touches[0].clientX;
-	// event.clientY = event.touches[0].clientY;
 }
 
 function onDocumentTouchMove(event) {
-	console.log('---- onDocumentTouchMove ----')
 	if(event.touches && event.touches.length) {
 		var delta = touchStartX - event.touches[0].pageX;
 		touchStartX = event.touches[0].pageX;
@@ -999,7 +1006,6 @@ function makeUrlParams(id, subid) {
 	}
 	if(!subid) subid = 0;
 	str += `&subid=${subid}`;
-	console.log('makeUrlParams', id, subid, str);
 	return str;
 }
 
@@ -1016,15 +1022,10 @@ function tweenArc(start, end) {
 }
 
 function onDocumentMouseDown(event, isTouch) {
-	console.log('---- onDocumentMouseDown ----', freeze)
-	if(freeze) {
-		console.log('action frozen');
-		return;
-	}
+	if(freeze) return;
 	isUserInteracting = true;
 	if(selectedObjects.length && !showingModal) {
 		let so = selectedObjects[0].hotspot;
-		console.log('hotspot id', selectedObjects[0].hotspot.id);
 		let currentLon = position.lon
 		let hotspotLon = selectedObjects[0].hotspot.lon
 		let data = tweenArc(currentLon, hotspotLon);
@@ -1055,11 +1056,7 @@ function rotateHotspots() {
 }
 
 function onDocumentMouseMove(event) {
-	console.log('---- onDocumentMouseMove ----', freeze);
-	if(freeze) {
-		console.log('action frozen');
-		return;
-	}
+	if(freeze) return;
 	checkRaycasterCollisions(event.clientX, event.clientY);
 	if(isUserInteracting && !showingModal) {
 		let movementX = event.movementX || event.mozMovementX || event.webkitMovementX || 0;

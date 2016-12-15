@@ -26,7 +26,7 @@ html, body {
 	padding: 0px;
 	overflow: hidden;
 }
-#loader {
+#preloader {
 	position: absolute;
 	top: 0;
 	left: 0;
@@ -35,19 +35,41 @@ html, body {
 	text-align: center;
 	background-color: #000;
 	z-index: 2;
+	.loading-status::after {
+		content: "";
+		display: block;
+		clear: both;
+	}
+	.info {
+		position: absolute;
+		right: 10px;
+		bottom: 10px;
+		width: 200px;
+	}
+	.bar {
+		border: 2px solid #fff;
+		width: 70%;
+		height: 25px;
+		padding: 4px;
+		display: inline-block;
+		vertical-align: middle;
+	}
+	.progress {
+		background-color: #fff;
+		width: 0%;
+		height: 100%;
+		transition: all 350ms ease-in-out;
+	}
+	#percent {
+		display: inline-block;
+		vertical-align: middle;
+		width: 20%;
+		color: #fff;
+	}
 	svg {
-		position: relative;
-		top: 50%;
-		transform: translate(0, -50%);
-		width: 40%;
-		height: auto;
 		fill: #fff;
-		path {
-			stroke: $red;
-		}
-		text {
-			fill: $red;
-		}
+		width: 50%;
+		margin-bottom: 20px;
 	}
 }
 #blocker {
@@ -445,9 +467,9 @@ a {
 	}
 	&:hover {
 		cursor: pointer;
-		.logo {
-			transform: scale(1.1);
-		}
+		// .logo {
+		// 	transform: scale(1.1);
+		// }
 	}
 	&.sound {
 		line {
