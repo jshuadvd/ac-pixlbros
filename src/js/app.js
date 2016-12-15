@@ -364,8 +364,8 @@ var hotspotObjects = [{
 	lon: 87.5,
 	slides: [{
 		title: 'Legendary Prowler Hood',
-		image: 'textures/weapons/legendary-prower-hood.png',
-		key: 'legendary-prower-hood',
+		image: 'textures/weapons/legendary-prowler-hood.png',
+		key: 'legendary-prowler-hood',
 		description: 'if you’re talking stealth look no further than the legendary prowler hood. this stylish-but-effecient garb features discreet pockets for hidden blades and gives any assassin the ability to disappear into a crowd at a moment’s notice.'
 	}, {
 		title: 'Assassin\'s Hidden Blade with Grappling Hook',
@@ -611,9 +611,9 @@ function init() {
 	outlinePass = new THREE.OutlinePass(new THREE.Vector2(window.innerWidth, window.innerHeight), scene, camera);
 
 	outlinePass.edgeStrength = 0.5;
-	outlinePass.edgeGlow = 5.0;
+	outlinePass.edgeGlow = 1.0;
 	outlinePass.edgeThickness = 1.0;
-	outlinePass.pulsePeriod = 0.5;
+	outlinePass.pulsePeriod = 0.1;
 	outlinePass.visibleEdgeColor = { r: 255, g: 255, b: 255 };
 
 	composer.addPass(outlinePass);
@@ -730,13 +730,13 @@ function buildHotspots() {
 			//js/ac-logo-simple.js
 			// let scale = 27;
 
-			var newMat = new THREE.MeshLambertMaterial();
+			// let newMat = new THREE.MeshLambertMaterial()
 
-			// let newMat = new THREE.MeshPhongMaterial( { 
-			// 	color: 0xFFFFFF, 
-			// 	specular: 0x000000,
-			// 	shininess: 1000
-			// } ) 
+			var newMat = new THREE.MeshPhongMaterial({
+				color: 0xFFFFFF,
+				specular: 0x000000,
+				shininess: 1000
+			});
 
 			var oldMat = new THREE.MeshBasicMaterial({ color: '#cccccc', opacity: 1 });
 
