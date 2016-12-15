@@ -245,7 +245,7 @@ if ('ontouchstart' in window || window.DocumentTouch && document instanceof Docu
 	touchDevice = true;
 }
 
-var showLoader = true;
+var showLoader = false;
 var playAudio = true;
 // var audioLoader = new THREE.AudioLoader();
 // audioLoader.load(audioFile);
@@ -260,10 +260,17 @@ function loadTick() {
 	numAnim.update(percent);
 	progressBar.css('width', percent + '%');
 	if (percent === 100) {
-		TweenMax.to($('#preloader'), 750 / 1000, { delay: 550 / 1000, autoAlpha: 0, onComplete: function onComplete() {
-				audio.volume = 0.5;
-				audio.play();
-			} });
+		(function () {
+			var footerPoll = setInterval(function () {
+				if ($('#legalinclude-legal').length) {
+					clearInterval(footerPoll);
+					TweenMax.to($('#preloader'), 750 / 1000, { delay: 550 / 1000, autoAlpha: 0, onComplete: function onComplete() {
+							audio.volume = 0.5;
+							// audio.play();
+						} });
+				}
+			}, 350);
+		})();
 	}
 }
 
@@ -304,7 +311,7 @@ if (showLoader) {
 		loadTick();
 	};
 } else {
-	$('#loader').hide();
+	$('#preloader').hide();
 }
 
 function setupButtons() {
@@ -333,12 +340,6 @@ var buttons = {};
 //************************************************************************//
 //                             Init Audio                                 //
 //************************************************************************//
-
-// let audio = document.createElement('audio');
-// let source = document.createElement('source');
-// source.src = 'audio/AC-Trailer.mp3';
-// audio.appendChild(source);
-// audio.play();
 
 function Modal(hotspot) {
 	var _this = this;
@@ -533,8 +534,13 @@ animate();
 
 function init() {
 
-	var width = window.innerWidth || 1;
-	var height = window.innerHeight || 1;
+	console.log('fh', $('#footer').height());
+
+	// var width = window.innerWidth || 1;
+	// var height = window.innerHeight || 1;
+	var width = $(window).innerWidth();
+	var height = $(window).innerHeight() - $('#footer').innerHeight();
+
 	var devicePixelRatio = window.devicePixelRatio || 1;
 	renderer = new THREE.WebGLRenderer({ antialias: false });
 	renderer.physicallyCorrectLights = true;
@@ -668,8 +674,6 @@ function init() {
 	// initRain();
 	// buildSmoke();
 	orientCamera();
-
-	document.body.appendChild(renderer.domElement);
 }
 
 function getUrlParams() {
@@ -903,14 +907,18 @@ function buildHotspots() {
 // }
 
 function onWindowResize() {
-	var width = window.innerWidth || 1;
-	var height = window.innerHeight || 1;
+	console.log('onWindowResize');
+	// var width = window.innerWidth || 1;
+	// var height = window.innerHeight || 1;
+	var width = $(window).innerWidth();
+	var height = $(window).innerHeight() - $('#footer').innerHeight();
+	console.log(height);
 	var devicePixelRatio = window.devicePixelRatio || 1;
 	camera.aspect = width / height;
 	camera.updateProjectionMatrix();
 	renderer.setSize(width, height);
 	composer.setSize(width, height);
-	effectFXAA.uniforms['resolution'].value.set(1 / window.innerWidth, 1 / window.innerHeight);
+	effectFXAA.uniforms['resolution'].value.set(1 / width, 1 / height);
 }
 
 // function onDocumentTouchEnd() {
@@ -1075,7 +1083,7 @@ function rotateHotspots() {
 
 function onDocumentMouseMove(event) {
 	if (freeze) return;
-	checkRaycasterCollisions(event.clientX, event.clientY);
+	checkRaycasterCollisions(event.clientX, event.clientY + $('#footer').innerHeight() / 2);
 	if (isUserInteracting && !showingModal) {
 		var movementX = event.movementX || event.mozMovementX || event.webkitMovementX || 0;
 		var movementY = event.movementY || event.mozMovementY || event.webkitMovementY || 0;
@@ -1109,7 +1117,10 @@ function onDocumentMouseWheel(event) {
 function animate() {
 	requestAnimationFrame(animate);
 	update();
-	renderer.setSize(window.innerWidth, window.innerHeight);
+	var width = $(window).innerWidth();
+	var height = $(window).innerHeight() - $('#footer').innerHeight();
+	console.log(width, height);
+	renderer.setSize(width, height);
 }
 
 function update() {
