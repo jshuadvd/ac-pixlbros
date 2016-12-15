@@ -270,10 +270,38 @@ a {
                 top: 10% !important;
             }
             
+            .content {
+        		top: 30%;
+        		left: 0;
+        		text-align: center;
+        		width: 100%;
+        		padding-top: 3%;
+        		img {
+        			height: auto;
+        			display: block;
+        			margin: 0 auto;
+        		}
+        		.item {
+        			// width: 40.222575516693%;
+        			width: 50%;
+        			margin-bottom: 3.982300884956%;
+        		}
+        		.words {
+        			width: 78.5%;
+        			// width: 81.558028616852%;
+        		}
+                .description {
+                    font-size: 12px;
+                }
+                .title {
+                    font-size: 3vw;
+                }
+        	}
+            
             .share {
-            top: 84% !important;
-            left: 50% !important;
-            width: 25% !important;
+                top: 84% !important;
+                left: 50% !important;
+                width: 25% !important;
             }
     	}     
     }
