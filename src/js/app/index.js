@@ -259,16 +259,10 @@ function loadTick() {
 	numAnim.update(percent);
 	progressBar.css('width', `${percent}%`);
 	if(percent === 100) {
-		let footerPoll = setInterval(() => {
-			if($('#legalinclude-legal').length) {
-				clearInterval(footerPoll);
-				onWindowResize();
-				TweenMax.to($('#preloader'), 750/1000, {delay: 550/1000, autoAlpha: 0, onComplete: () => {
-					audio.volume = 0.5;
-					// audio.play();
-				}});
-			}
-		}, 350);
+		TweenMax.to($('#preloader'), 750/1000, {delay: 550/1000, autoAlpha: 0, onComplete: () => {
+			audio.volume = 0.5;
+			audio.play();
+		}});
 	}
 }
 
@@ -305,8 +299,7 @@ if(showLoader) {
 		loadTick();
 	};
 } else {
-	onWindowResize();
-	$('#preloader').hide();
+	$('#loader').hide();
 }
 
 function setupButtons() {
@@ -336,6 +329,12 @@ var buttons = {};
 //************************************************************************//
 //                             Init Audio                                 //
 //************************************************************************//
+
+// let audio = document.createElement('audio');
+// let source = document.createElement('source');
+// source.src = 'audio/AC-Trailer.mp3';
+// audio.appendChild(source);
+// audio.play();
 
 function Modal(hotspot) {
 	this.modal = $('.modal');
@@ -522,11 +521,8 @@ animate();
 
 function init() {
 
-	// var width = window.innerWidth || 1;
-	// var height = window.innerHeight || 1;
-	let width = $(window).innerWidth();
-	let height = $(window).innerHeight() - $('#footer').innerHeight();
-
+	var width = window.innerWidth || 1;
+	var height = window.innerHeight || 1;
 	var devicePixelRatio = window.devicePixelRatio || 1;
 	renderer = new THREE.WebGLRenderer( { antialias: false } );
 	renderer.physicallyCorrectLights = true;
@@ -661,6 +657,8 @@ function init() {
 	// initRain();
 	// buildSmoke();
 	orientCamera();
+	
+	document.body.appendChild( renderer.domElement );
 
 }
 
@@ -889,18 +887,14 @@ function buildHotspots() {
 // }
 
 function onWindowResize() {
-	console.log('onWindowResize');
-	// var width = window.innerWidth || 1;
-	// var height = window.innerHeight || 1;
-	let width = $(window).innerWidth();
-	let height = $(window).innerHeight() - $('#footer').innerHeight();
-	console.log(height)
+	var width = window.innerWidth || 1;
+	var height = window.innerHeight || 1;
 	var devicePixelRatio = window.devicePixelRatio || 1;
 	camera.aspect = width / height;
 	camera.updateProjectionMatrix();
 	renderer.setSize( width, height );
 	composer.setSize( width, height );
-	effectFXAA.uniforms['resolution'].value.set(1 / width, 1 / height );
+	effectFXAA.uniforms['resolution'].value.set(1 / window.innerWidth, 1 / window.innerHeight );
 }
 
 // function onDocumentTouchEnd() {
@@ -1061,7 +1055,7 @@ function rotateHotspots() {
 
 function onDocumentMouseMove(event) {
 	if(freeze) return;
-	checkRaycasterCollisions(event.clientX, event.clientY+($('#footer').innerHeight()/2));
+	checkRaycasterCollisions(event.clientX, event.clientY);
 	if(isUserInteracting && !showingModal) {
 		let movementX = event.movementX || event.mozMovementX || event.webkitMovementX || 0;
 		let movementY = event.movementY || event.mozMovementY || event.webkitMovementY || 0;
@@ -1095,9 +1089,7 @@ function onDocumentMouseWheel( event ) {
 function animate() {
 	requestAnimationFrame( animate );
 	update();
-	let width = $(window).innerWidth();
-	let height = $(window).innerHeight() - $('#footer').innerHeight();
-	renderer.setSize( width, height );
+	renderer.setSize( window.innerWidth, window.innerHeight );
 }
 
 function update() {
