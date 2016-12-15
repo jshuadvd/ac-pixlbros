@@ -404,20 +404,20 @@ a {
             width: 50PX;
 		}
 	}
+    .button-right {
+        float: left;
+        width: 100%;
+    }
+    
+    .button-right a {
+        font-size: 12px;
+        font-family: 'Trajan W01 Bd';
+        margin-top: -30px;
+        float: right;
+        /* margin-bottom: 020px; */
+    }
 }
 
-.footer-controls .button-right {
-  float: left;
-  width: 100%;
-}
-
-.footer-controls .button-right a {
-    font-size: 12px;
-    font-family: 'Trajan W01 Bd';
-    margin-top: -30px;
-    float: right;
-    /* margin-bottom: 020px; */
-}
 
 .modal-container.new {
 	.border img {
