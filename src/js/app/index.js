@@ -693,17 +693,17 @@ function orientCamera() {
 	}
 }
 
-// let buttonClicks = {
-// 	'ig-header'() {
-// 		console.log('igHeader');
-// 	},
-// 	fb() {
-// 		// modal.share('fb');
-// 	}
-// }
-// function handleButtonClick(key) {
-// 	if(key in buttonClicks) buttonClicks[key]();
-// }
+let buttonClicks = {
+	'ig-header'() {
+		console.log('igHeader');
+	},
+	fb() {
+		// modal.share('fb');
+	}
+}
+function handleButtonClick(key) {
+	if(key in buttonClicks) buttonClicks[key]();
+}
 
 function buildHotspots() {
 	loader = new THREE.JSONLoader();
@@ -915,6 +915,7 @@ function onDocumentTouchStart(event) {
 		}
 	} else {
 		event.preventDefault();
+	}
 }
 
 function onDocumentTouchMove(event) {
