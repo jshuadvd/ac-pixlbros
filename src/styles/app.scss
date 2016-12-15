@@ -137,7 +137,7 @@ a {
 	font-family:'Trajan W01 Regular';
 }
 .title {
-	font-size: 3vw;
+	font-size: 2vw;
 	font-family: 'Trajan W01 Bd';
 	background-image: -webkit-linear-gradient(180deg, #fff, #fff 60%, #b4b6b8);
 	background-image: -moz-linear-gradient(180deg, #fff, #fff 60%, #b4b6b8);
@@ -170,7 +170,7 @@ a {
 		background: rgba(0,0,0,0.8)
 	}
 	.modal {
-		background-image: url(../textures/modal-bg-new.png);
+		background-image: url(../textures/AC_360_ModalDesign_V5.png);
 		color: #fff;
 		width: 60%;
 		background-size: 100% 100%;
@@ -179,7 +179,7 @@ a {
 		z-index: 1;
 		top: 50%;
 		transform: translate(0, -50%);
-		max-width: 850px;
+		max-width: 860px;
 		.controls {
 			&:hover {
 				cursor: pointer;
@@ -210,9 +210,13 @@ a {
 		}
 	}
     
-    @media only screen and (max-width: 600px) {
+    //************************************************************************//
+    //                           Media Queries                                //
+    //************************************************************************//
+    
+    @media only screen and (min-width: 1443px) {
         .modal {
-    		background-image: url(../textures/AC_360_ModalDesign_V3_Mobile.png);
+    		// background-image: url(../textures/AC_360_ModalDesign_V3_Mobile.png);
     		color: #fff;
     		width: 60%;
     		background-size: 100% 100%;
@@ -221,37 +225,100 @@ a {
     		z-index: 1;
     		top: 50%;
     		transform: translate(0, -50%);
-    		max-width: 850px;
-    		.controls {
-    			&:hover {
-    				cursor: pointer;
-    			}
-    			position: absolute;
-    			top: 50%;
-    			transform: translate(0%,50%);
-    			color: $red;
-    			display: none;
-    			z-index: 1;
-    			width: 28px;
-    			height: 37px;
-    			&.next {
-    				right: 25px;
-    				background-image: url(../textures/next.png);
-    			}
-    			&.prev {
-    				left: 10px;
-    				background-image: url(../textures/prev.png);
-    			}
-    		}
-    		&::before {
-    			content: "";
-    			display: block;
-    			padding-top: 64.864864864865%;
-    			// old modal sizing
-    			// padding-top: 72.530864197531%;
-    		}
+    		max-width: 860px;
+            .title {
+        		font-size: 20px;
+        	}
+        	.description {
+        		font-size: 20px;
+        	}
     	}
     }
+    
+    @media only screen and (max-width: 640px) {
+        .modal {
+    		// background-image: url(../textures/AC_360_ModalDesign_V3_Mobile.png);
+    		width: 100%;
+    		background-size: 100% 100%;
+    		max-width: 640px;
+            -webkit-transform: rotate(90deg);
+            -moz-transform: rotate(90deg);
+            -ms-transform: rotate(90deg);
+            -o-transform: rotate(90deg);
+            transform: rotate(90deg);
+            .title {
+        		font-size: 20px;
+        	}
+        	.description {
+        		font-size: 20px;
+        	}
+            
+    	}
+        
+        .modal-container.new {
+        	.border img {
+        		width: 100%;
+        	}
+        	.modal.bladed-spear .item {
+        		width: 90%;
+        	}
+        	.modal.vambrace .item {
+        		width: 29%;
+        	}
+        	.modal.halberd .item {
+        		width: 85%;
+        	}
+        	.title {
+        		font-size: 2vw;
+                -webkit-transform: rotate(270deg);
+                -moz-transform: rotate(270deg);
+                -ms-transform: rotate(270deg);
+                -o-transform: rotate(270deg);
+                transform: rotate(270deg);
+        	}
+        	.inner {
+        		padding: 0 16% 0 17%;
+        	}
+        	.description {
+        		font-size: 0.9vw;
+                -webkit-transform: rotate(270deg);
+                -moz-transform: rotate(270deg);
+                -ms-transform: rotate(270deg);
+                -o-transform: rotate(270deg);
+                transform: rotate(270deg);
+        	}
+        	.modal .controls.next {
+        		right: 10%;
+        	}
+        	.modal .controls.prev {
+        		left: 12%;
+        	}
+        	.share {
+        		.twitter {
+        			margin-left: -11%;
+        		}
+        		position: absolute;
+        		top: 5%;
+        		left: 15.5%;
+        		transform: translate(-50%, 0);
+        		width: 12%;
+        	}
+        	.close {
+        		position: relative;
+        		top: 3%;
+        		right: 10%;
+        		line-height: 0;
+        		color: #720001;
+        		width: 16%;
+        		height: auto;
+        		z-index: 1;
+        	}
+        }
+        
+    }
+    
+    
+    
 	// .modal {
 	// 	position: absolute;
 	// 	width: 80%;
@@ -433,13 +500,13 @@ a {
 		width: 85%;
 	}
 	.title {
-		font-size: 2.5vw;
+		font-size: 2vw;
 	}
 	.inner {
 		padding: 0 16% 0 17%;
 	}
 	.description {
-		font-size: 1vw;
+		font-size: 0.9vw;
 	}
 	.modal .controls.next {
 		right: 10%;
@@ -467,4 +534,82 @@ a {
 		height: auto;
 		z-index: 1;
 	}
+}
+
+
+
+#footer {
+    padding: 20px;
+    color: #8A8A8A;
+    background: #000;
+}
+
+#footer .footer-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+#footer .footer-left {
+    float: left;
+    width: 200px;
+    text-align: right;
+}
+
+#footer .footer-left img:first-child {
+    width: calc((100% - 20px) / 2);
+}
+
+#footer .footer-left img {
+    float: left;
+    width: calc((100% - 20px) / 4);
+    margin-right: 10px;
+}
+
+#footer .footer-left img:last-child {
+    margin-right: 0;
+}
+
+#footer .footer-center {
+    float: left;
+    width: calc(100% - 320px);
+}
+
+#footer .footer-center span {
+    font-size: 10px;
+    margin: 0 auto;
+    text-align: left;
+    display: block;
+    width: 100%;
+    padding: 0 10px;
+    box-sizing: border-box;
+}
+
+#footer .footer-center span a {
+    font-size: 10px;
+    color: #8A8A8A;
+}
+
+#footer .footer-right {
+    float: left;
+    width: 120px;
+    text-align: center;
+}
+
+#footer .footer-right span {
+    font-size: 7px;
+    display: block;
+    width: 100%;
+}
+
+#footer .footer-right span a {
+    color: #8A8A8A;
+    font-size: 10px !important;
+}
+
+#footer .footer-right span.rating {
+    font-size: 10px;
+    border: 1px solid #8a8a8a;
+    padding: 2px 5px;
+    box-sizing: border-box;
+    margin: 10px 0;
 }
