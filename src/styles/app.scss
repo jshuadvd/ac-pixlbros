@@ -217,6 +217,7 @@ a {
     @media only screen and (min-width: 1443px) {
         .modal {
     		// background-image: url(../textures/AC_360_ModalDesign_V3_Mobile.png);
+            background-image: url(../textures/AC_360_ModalDesign_V5.png);
     		color: #fff;
     		width: 60%;
     		background-size: 100% 100%;
@@ -237,85 +238,34 @@ a {
     
     @media only screen and (max-width: 640px) {
         .modal {
-    		// background-image: url(../textures/AC_360_ModalDesign_V3_Mobile.png);
-    		width: 100%;
-    		background-size: 100% 100%;
-    		max-width: 640px;
-            -webkit-transform: rotate(90deg);
-            -moz-transform: rotate(90deg);
-            -ms-transform: rotate(90deg);
-            -o-transform: rotate(90deg);
-            transform: rotate(90deg);
-            .title {
-        		font-size: 20px;
-        	}
-        	.description {
-        		font-size: 20px;
-        	}
+            background-image: url(../textures/AC_360_ModalDesign_V3_Mobile.png);
+            width: 90%;
+            background-size: 100% 100%;
+            max-width: 640px;
+            height: 80%;
+
+            .close {
+                top: 10% !important;
+            }
             
-    	}
-        
-        .modal-container.new {
-        	.border img {
-        		width: 100%;
-        	}
-        	.modal.bladed-spear .item {
-        		width: 90%;
-        	}
-        	.modal.vambrace .item {
-        		width: 29%;
-        	}
-        	.modal.halberd .item {
-        		width: 85%;
-        	}
-        	.title {
-        		font-size: 2vw;
-                -webkit-transform: rotate(270deg);
-                -moz-transform: rotate(270deg);
-                -ms-transform: rotate(270deg);
-                -o-transform: rotate(270deg);
-                transform: rotate(270deg);
-        	}
-        	.inner {
-        		padding: 0 16% 0 17%;
-        	}
-        	.description {
-        		font-size: 0.9vw;
-                -webkit-transform: rotate(270deg);
-                -moz-transform: rotate(270deg);
-                -ms-transform: rotate(270deg);
-                -o-transform: rotate(270deg);
-                transform: rotate(270deg);
-        	}
-        	.modal .controls.next {
-        		right: 10%;
-        	}
-        	.modal .controls.prev {
-        		left: 12%;
-        	}
-        	.share {
-        		.twitter {
-        			margin-left: -11%;
-        		}
-        		position: absolute;
-        		top: 5%;
-        		left: 15.5%;
-        		transform: translate(-50%, 0);
-        		width: 12%;
-        	}
-        	.close {
-        		position: relative;
-        		top: 3%;
-        		right: 10%;
-        		line-height: 0;
-        		color: #720001;
-        		width: 16%;
-        		height: auto;
-        		z-index: 1;
-        	}
-        }
-        
+            // .share {
+            // top: 0 !important;
+            // left: 0 !important;
+            // width: 25% !important;
+            // }
+    	}     
     }
+    
+    @media only screen and (max-width: 640px) {
+        modal-container.new .share {
+            position: absolute;
+            /* top: 5%; */
+            /* left: 15.5%; */
+            /* transform: translate(-50%, 0); */
+            width: 25%;
+            margin-bottom: 10px;
+        } 
+    }          
     
     
     
