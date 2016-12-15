@@ -17,42 +17,287 @@ let onPointerDownLon;
 let blocked = false;
 let touchStartX;
 
-
 //************************************************************************//
 //                             Init Loader                                //
 //************************************************************************//
 
-let showLoader = false;
+//************************************************************************//
+//                              Variables                           	  //
+//************************************************************************//
+
+let camera, container, color, controls, clock, delta, deviceControls, h, hotspot, info, logoGeo, logoMaterial, logoMesh, logoTexture, marker, mesh, materials = [], mouse, mousePos, objects = [], parameters, particles, particleMaterial, rainDensity = 20000, rainGeometry, raycaster, renderer, scene, size, smokeParticles = [], spotLight, spotLightHelper, sprite, stats; 
+let layer = false;
+let hsParticles = [];
+let rotateSpeed = 0.03
+let hotspots = [];
+let hotspotObjects = [
+	{
+		id: 0,
+		slides: [
+			{
+				title: 'Bladed Spear de Bilboa',
+				image: 'textures/weapons/bladed-spear-de-bilboa.png',
+				key: 'bladed-spear-de-bilboa',
+				description: 'this bladed spear is sure to keep enemies at bay. with a heavy ash base and a finely hewn blade forged by bilboan craftsmen, in the hands of an assassin this weapon can defeat an entire batallion of templar enemies.'
+			},
+			{
+				title: 'Assassin\'s Hidden Blade',
+				image: 'textures/weapons/assassins-hidden-blade.png',
+				key: 'assassins-hidden-blade',
+				description: 'this simple leather vambrace as an essential piece of every assassin’s outfit. theblade-concealing armor both proects from attacks and gives the assassin access to a deadly hidden blade with a simple flick of the wrist.'
+			}
+		],
+		lon: 19,
+		position: [450, 0, 150],
+	},
+	{
+		id: 1,
+		lon: 39,
+		slides: [
+			{
+				title: 'Córdoban Halberd',
+				image: 'textures/weapons/cordoban-halberd.png',
+				key: 'cordoban-halberd',
+				description: 'the córdoban halberd combines the intricate artistrty of the monarchy with the unparalleled killing power of the inquisition. featuring tempered steel and ornate gold gilding in the staff, this weapon is both beautiful and deadly.'
+			}
+		],
+		position: [370, 0, 280],
+	},
+	{
+		id: 2,
+		lon: 87.5,
+		slides: [
+			{
+				title: 'Legendary Prowler Hood',
+				image: 'textures/weapons/legendary-prowler-hood.png',
+				key: 'legendary-prowler-hood',
+				description: 'if you’re talking stealth look no further than the legendary prowler hood. this stylish-but-effecient garb features discreet pockets for hidden blades and gives any assassin the ability to disappear into a crowd at a moment’s notice.'
+			},
+			{
+				title: 'Assassin\'s Hidden Blade with Grappling Hook',
+				image: 'textures/weapons/assassins-hidden-blade-with.png',
+				key: 'assassins-hidden-blade-with',
+				description: 'these leather killing machines hide a deadly blade on the right wrist and a powerful propulsive grappling hook on the left, creating a gauntlet of pain and dexterity unsurprassed throughout the kingdom.'
+			}
+		],
+		position: [25, 0, 400],
+	},
+	{
+		id: 3,
+		lon: 106,
+		slides: [
+			{
+				title: 'Shadow Brigadine',
+				image: 'textures/weapons/shadow-brigandine.png',
+				key: 'shadow-brigandine',
+				description: 'this obsidian chainmail armor gives any assassin the ability to bleed into the shadows undetected, all the better to stalk and eliminate their templar prey.'
+			},
+			{
+				title: 'Blade de Barcelona',
+				image: 'textures/weapons/blade-de-barcelona.png',
+				key: 'blade-de-barcelona',
+				description: 'this curved blade was created by the greatest assassin craftsmen of barcelona to withstand blows from the strongest of weaponry. it’s unqiue curved design is designed to deflect direct blows from swords, spears and sabres.'
+			},
+			{
+				title: 'Long Sword de Don Quixote',
+				image: 'textures/weapons/long-sword-de-don-quixote.png',
+				key: 'long-sword-de-don-quixote',
+				description: 'this long sword, rumored to be owned by the legendary warrior don quixote, features tempered steel and a gold-infused hilt. just don’t try to fight a windmill with it. things probably won’t work out the way you want them to.'
+			}
+		],
+		position: [-115, 0, 400],
+	},
+	{
+		id: 4,
+		lon: 153,
+		slides: [
+			{
+				title: 'Bow de silencio',
+				image: 'textures/weapons/bow-de-silencio.png',
+				key: 'bow-de-silencio',
+				description: 'your enemy will hear naught but the wind rustling through the trees as you release the string on this silent but deadly longbow. using arrows forged from strong spanish oak, this stealth weapon is a key in every assassin’s arsenal.'
+			},
+			{
+				title: 'Piece of Eden',
+				image: 'textures/weapons/piece-of-eden.png',
+				key: 'piece-of-eden',
+				description: 'this mysterious orb is rumored by many to unlock the mysteries of mind control, allowing the owner to manipulate freedom of thought. so if you’ve ever felt like an assassin was reading your mind, odds are you’re probably right.'
+			}
+		],
+		position: [-400, 0, 205],
+	},
+	{
+		id: 5,
+		lon: 175,
+		slides: [
+			{
+				title: 'Umbrella Blade',
+				image: 'textures/weapons/umbrella-blade.png',
+				key: 'umbrella-blade',
+				description: 'this stealthy blade is not what you think it is. disguised as an early version of an umbrella, the hidden steel contained within is just as deadly as any weapon in the assassin’s collection.'
+			},
+			// missing slide here, "Cloak of Midnight"
+			{
+				title: 'Ceremonial Digit Removal Blade',
+				image: 'textures/weapons/ceremonial-digit-removal-blade.png',
+				key: 'ceremonial-digit-removal-blade',
+				description: 'a shared touchpoint on every assassin’s journey involves this ceremonial digit removal blade. used to prove the assassin’s loyalty to the cause, seeing this device in a master assassin’s hands means final admittance to a very exclusive club...and a fairly uncomfortable afternoon.'
+			}
+		],
+		position: [-445, 0, 30],
+	},
+	{
+		id: 6,
+		lon: 236,
+		slides: [
+			{
+				title: 'Smoke Bombs',
+				image: 'textures/weapons/smoke-bombs.png',
+				key: 'smoke-bombs',
+				description: 'used for both attack and escape, these pouch bombs use a combination of gunpowder, sulfur, and secret alchemy to create a variety of effects, from explosions to smoke screens. perfect for destraction...or destruction.'
+			},
+			{
+				title: 'Pistola de Pyreness',
+				image: 'textures/weapons/pistola-de-pyrenees.png',
+				key: 'pistola-de-pyrenees',
+				description: 'this pistola is an exclellent choice when stealth is no longer an option. perfect for disorienting groups of enemies or eliminating a lone inquisitor, this weapon is essential for every assassin in the field (or the mountains).'
+			}
+			// missing slide, piece of eden (gold)
+		],
+		position: [-265, 0, -380],
+	},
+	{
+		id: 7,
+		lon: 262.5,
+		slides: [
+			{
+				title: 'Elche de Ballesta',
+				image: 'textures/weapons/elche-de-ballesta.png',
+				key: 'elche-de-ballesta',
+				description: 'this powerful crossbow fires tungsten bolts at a velocity unmatched in ancient times, providing assassins with a silent option for long-range attacks.'
+			}
+		],
+		position: [-60, 0, -455],
+	},
+	{
+		id: 8,
+		lon: 286.5,
+		slides: [
+			{
+				title: 'Inquisitors Shield',
+				image: 'textures/weapons/inquisitors-shield.png',
+				key: 'inquisitors-shield',
+				description: 'this standard bronze shield “borrowed” from the spanish inquisition gives assassin’s a powerful defensive tool for use in seige, or a valuable prop when infiltrating a spanish dungeon.'
+			},
+			{
+				title: 'Armada Bow',
+				image: 'textures/weapons/armada-bow.png',
+				key: 'armada-bow',
+				description: 'this powerful longbow favored by spanish seamen provides hightened accuracy and increased distance for maximum killing power. if that’s a thing you’re looking for.'
+			}
+		],
+		position: [125, 0, -455],
+	},
+	{
+		id: 9,
+		lon: 332,
+		slides: [
+			{
+				title: 'Blade of the Assassin',
+				image: 'textures/weapons/blades-of-the-assassin.png',
+				key: 'blades-of-the-assassin',
+				description: 'whether leaping from a ledge or silently stalking a victim through a crowded marketplace, an assassin is only as good as his blades. featuring a variety of shapes and sizes customizable to its owner, no self-respecting assassin would be caught dead without one of these handy weapons.'
+			}
+		],
+		position: [400, 0, -205]
+	},
+];
+let onMouseDownMouseX = 0, onMouseDownMouseY = 0,
+onMouseDownLon = 0,
+lat = 0, onMouseDownLat = 0,
+phi = 0, theta = 0;
+
+container = document.getElementById( 'container' );
+
+let containerWidth = container.clientWidth;
+let containerHeight = container.clientHeight;
+
+let selectedObjects = [];
+let loader;
+let renderPass;
+let outlinePass;
+let composer;
+let effectFXAA;
+// let controlsEnabled = true;
+let showingModal = false;
+let initialOrientation;
+let isUserInteracting = false;
+let freeze;
+
+let projector = new THREE.Projector();
+let mouseVector = new THREE.Vector3();
+
+let currentHotspot;
+
+let touchDevice
+if (('ontouchstart' in window) || window.DocumentTouch && document instanceof DocumentTouch) { 
+	touchDevice = true;
+}
+
+let showLoader = true;
+let playAudio = true;
+// var audioLoader = new THREE.AudioLoader();
+// audioLoader.load(audioFile);
+
+let audio;
+let progressBar = $('.progress');
+let numAnim = new CountUp(percent, 0, 0, 0, 0.5, {suffix: '%'});
+let filesLoaded = 0;
+let totalFiles = 0;
+function loadTick() {
+	let percent = filesLoaded/totalFiles*100;
+	numAnim.update(percent);
+	progressBar.css('width', `${percent}%`);
+	if(percent === 100) {
+		TweenMax.to($('#preloader'), 750/1000, {delay: 550/1000, autoAlpha: 0, onComplete: () => {
+			audio.volume = 0.5;
+			audio.play();
+		}});
+	}
+}
+
+function preloadAudio(url) {
+	totalFiles += 1;
+	let audio = new Audio();
+	audio.addEventListener('canplaythrough', () => {
+		filesLoaded += 1;
+		loadTick();
+	}, false);
+	audio.src = url;
+	return audio;
+}
+
+function preloadImages() {
+	let slides = hotspotObjects.map( hotspotObject => hotspotObject.slides ).reduce( (prev, current) => prev.concat(current) )
+	totalFiles += slides.length;
+	slides.forEach((slide) => {
+		let image = new Image();
+		image.onload = () => {
+			filesLoaded += 1;
+			loadTick();
+		}
+		image.src = slide.image;
+	});
+}
 
 if(showLoader) {
-	var bar = new ProgressBar.Path('.st0', {
-		easing: 'easeInOut',
-		duration: 800
-	});
-	bar.set(0)
-
-	let percent = 0.1
-	let int = setInterval(function() {
-		percent += 0.1;
-		if(percent >= 1.0) {
-			clearInterval(int);
-		} else {
-			bar.animate(percent, () => {
-				TweenMax.to($('#loader') , 0.3, {autoAlpha: 0, display: 'none'});
-			});
-			let fixed = (percent*100).toFixed(0);
-			$('text').html(`${fixed}%`)
-		}
-	}, 500)
-
-	// THREE.DefaultLoadingManager.onProgress = function ( item, loaded, total ) {
-	// 	let percent = loaded/total
-	// 	bar.animate(percent, function() {
-	// 		TweenMax.to($('#loader') , 0.3, {autoAlpha: 0, display: 'none'});
-	// 	});
-	// 	let fixed = (percent*100).toFixed(0);
-	// 	$('text').html(`${fixed}%`);
-	// };
+	preloadImages();
+	audio = preloadAudio('audio/AC-Trailer.mp3');
+	THREE.DefaultLoadingManager.onProgress = function ( item, loaded, total ) {
+		if(loaded === 1) totalFiles += total;
+		filesLoaded += 1;
+		loadTick();
+	};
 } else {
 	$('#loader').hide();
 }
@@ -70,7 +315,6 @@ function setupButtons() {
 	});
 	$('.button-outer').on('mouseenter', function() {
 		var key = $(this).attr('key');
-		console.log('moustenter', key);
 		buttons[key].animate(1);
 	});
 	$('.button-outer').on('mouseleave', (event) => {
@@ -102,6 +346,7 @@ function Modal(hotspot) {
 	this.twitterShare = this.modal.find('.button-outer.twitter');
 	this.nextButton = this.modal.find('.next');
 	this.prevButton = this.modal.find('.prev');
+	this.controls = this.modal.find('.controls');
 	$('.modal-container .close').on('click', () => {
 		this.hide();
 	});
@@ -145,12 +390,9 @@ Modal.prototype = {
 	},
 	// share: {
 		shareFacebook() {
-			console.log(this, this.hotspot, this.offset);
 			let slide = this.hotspot.slides[this.offset];
 			let href = `${siteConfig.siteURL}${makeUrlParams(this.hotspot.id, this.offset)}`;
 			let picture = `${siteConfig.siteURL}${slide.image}`;
-			console.log('p', picture);
-			console.log('href', href);
 			FB.ui(
 			{
 				method: 'share',
@@ -165,7 +407,6 @@ Modal.prototype = {
 			 });
 		},
 		shareTwitter() {
-			
 			let params = encodeURIComponent(makeUrlParams(this.hotspot.id, this.offset));
 			let url = `${siteConfig.siteURL}${params}`;
 			let slide = this.hotspot.slides[this.offset];
@@ -178,22 +419,20 @@ Modal.prototype = {
 	duration: 0.35,
 	offset: 0,
 	setModalValues(hotspot) {
-		console.log('setModalValues', hotspot);
 		this.description.text(hotspot.description);
 		this.title.text(hotspot.title);
 		this.item.attr('src', hotspot.image);
 		this.modal.attr('class', `modal ${hotspot.key}`);
 	},
-	showSliderControls() {
-		$('.modal .controls').fadeIn();
-	},
 	hide() {
+		freeze = false;
 		this.modal.attr('class', 'modal');
 		for(var i in buttons) {
 			buttons[i].set(0);
 		}
 		let duration = 550/1000
 		showingModal = false;
+		this.controls.hide();
 		// pointerLock();
 		TweenMax.to($('.modal-container') , 0.3, {autoAlpha: 0})
 		TweenMax.to(camera, duration, {fov: fovMin, onComplete: function() {
@@ -210,7 +449,7 @@ Modal.prototype = {
 		let duration = 550/1000;
 		showingModal = true;
 		if(hotspot.slides && hotspot.slides.length > 0) {
-			this.showSliderControls();
+			if(hotspot.slides.length > 1) this.controls.fadeIn();
 			this.activeSlide = hotspot.slides[this.offset];
 			this.setModalValues(this.activeSlide);
 		}
@@ -228,13 +467,6 @@ Modal.prototype = {
 let modal = new Modal();
 modal.bindEvents();
 
-let audio = new Audio('audio/AC-Trailer.mp3');
-// audio.play();
-
-let playAudio = true;
-
-// herp derp
-
 $(document).ready(function() {
 
 	$('.button-outer').each((index, el) => {
@@ -249,15 +481,12 @@ $(document).ready(function() {
 
 	$('.button-outer').on('mouseenter', function() {
 		var key = $(this).attr('key');
-		console.log('moustenter', key);
 		buttons[key].animate(1);
-		// $(this).find('.outer-path').data('progress')
 	});
 
 	$('.button-outer').on('mouseleave', (event) => {
 		var key = $(event.currentTarget).attr('key');
 		buttons[key].set(0);
-		// $(event.currentTarget).find('.outer-path').data('progress').set(0);
 	});
 
 	$('.button-outer').on('click', (event) => {
@@ -283,298 +512,6 @@ $(document).ready(function() {
 	setupButtons();
 });
 
-//************************************************************************//
-//                              Variables                           	  //
-//************************************************************************//
-
-let camera, container, color, controls, clock, delta, deviceControls, h, hotspot, info, logoGeo, logoMaterial, logoMesh, logoTexture, marker, mesh, materials = [], mouse, mousePos, objects = [], parameters, particles, particleMaterial, rainDensity = 20000, rainGeometry, raycaster, renderer, scene, size, smokeParticles = [], spotLight, spotLightHelper, sprite, stats; 
-let layer = false;
-let hsParticles = [];
-let rotateSpeed = 0.03
-let hotspots = [];
-let hotspotObjects = [
-	{
-		id: 0,
-		slides: [
-			{
-				title: 'BLADED SPEAR de BILBOA',
-				description: 'This bladed spear is sure to keep enemies at bay. with a heavy ash base and a finely hewn blade forged by bilboan craftsmen, in the hands of an assassin this weapon can defeat an entire batallion of templar enemies.',
-				image: 'textures/bladed-spear.png',
-				key: 'bladed-spear'
-			},
-			{
-				title: 'LEATHER ASSASSIN VAMBRACE',
-				description: 'the leather vambrace as an essential piece of every assassin’s armor. this blade- concealing armor both proects from attacks and gives the assassin access to a hidden blade with a simple flick of the wrist.',
-				image: 'textures/vambrace.png',
-				key: 'vambrace'
-			},
-			{
-				title: 'CóRDOBAN HALBERD',
-				description: 'the córdoban halberd combines the intricate artistrty of the monarchy with the unparalleled killing power of the inquisition. featuring tempered steel and ornate gold gilding in the staff, this weapon is both beautiful and deadly.',
-				image: 'textures/halberd.png',
-				key: 'halberd'
-			}
-		],
-		lon: 19,
-		position: [450, 0, 150],
-	},
-	{
-		id: 1,
-		lon: 39,
-		slides: [
-			{
-				title: 'BLADED SPEAR de BILBOA',
-				description: 'This bladed spear is sure to keep enemies at bay. with a heavy ash base and a finely hewn blade forged by bilboan craftsmen, in the hands of an assassin this weapon can defeat an entire batallion of templar enemies.',
-				image: 'textures/bladed-spear.png',
-				key: 'bladed-spear'
-			},
-			{
-				title: 'LEATHER ASSASSIN VAMBRACE',
-				description: 'the leather vambrace as an essential piece of every assassin’s armor. this blade- concealing armor both proects from attacks and gives the assassin access to a hidden blade with a simple flick of the wrist.',
-				image: 'textures/vambrace.png',
-				key: 'vambrace'
-			},
-			{
-				title: 'CóRDOBAN HALBERD',
-				description: 'the córdoban halberd combines the intricate artistrty of the monarchy with the unparalleled killing power of the inquisition. featuring tempered steel and ornate gold gilding in the staff, this weapon is both beautiful and deadly.',
-				image: 'textures/halberd.png',
-				key: 'halberd'
-			}
-		],
-		position: [370, 0, 280],
-	},
-	{
-		id: 2,
-		lon: 87.5,
-		slides: [
-			{
-				title: 'BLADED SPEAR de BILBOA',
-				description: 'This bladed spear is sure to keep enemies at bay. with a heavy ash base and a finely hewn blade forged by bilboan craftsmen, in the hands of an assassin this weapon can defeat an entire batallion of templar enemies.',
-				image: 'textures/bladed-spear.png',
-				key: 'bladed-spear'
-			},
-			{
-				title: 'LEATHER ASSASSIN VAMBRACE',
-				description: 'the leather vambrace as an essential piece of every assassin’s armor. this blade- concealing armor both proects from attacks and gives the assassin access to a hidden blade with a simple flick of the wrist.',
-				image: 'textures/vambrace.png',
-				key: 'vambrace'
-			},
-			{
-				title: 'CóRDOBAN HALBERD',
-				description: 'the córdoban halberd combines the intricate artistrty of the monarchy with the unparalleled killing power of the inquisition. featuring tempered steel and ornate gold gilding in the staff, this weapon is both beautiful and deadly.',
-				image: 'textures/halberd.png',
-				key: 'halberd'
-			}
-		],
-		position: [25, 0, 400],
-	},
-	{
-		id: 3,
-		lon: 106,
-		slides: [
-			{
-				title: 'BLADED SPEAR de BILBOA',
-				description: 'This bladed spear is sure to keep enemies at bay. with a heavy ash base and a finely hewn blade forged by bilboan craftsmen, in the hands of an assassin this weapon can defeat an entire batallion of templar enemies.',
-				image: 'textures/bladed-spear.png',
-				key: 'bladed-spear'
-			},
-			{
-				title: 'LEATHER ASSASSIN VAMBRACE',
-				description: 'the leather vambrace as an essential piece of every assassin’s armor. this blade- concealing armor both proects from attacks and gives the assassin access to a hidden blade with a simple flick of the wrist.',
-				image: 'textures/vambrace.png',
-				key: 'vambrace'
-			},
-			{
-				title: 'CóRDOBAN HALBERD',
-				description: 'the córdoban halberd combines the intricate artistrty of the monarchy with the unparalleled killing power of the inquisition. featuring tempered steel and ornate gold gilding in the staff, this weapon is both beautiful and deadly.',
-				image: 'textures/halberd.png',
-				key: 'halberd'
-			}
-		],
-		position: [-115, 0, 400],
-	},
-	{
-		id: 4,
-		lon: 153,
-		slides: [
-			{
-				title: 'BLADED SPEAR de BILBOA',
-				description: 'This bladed spear is sure to keep enemies at bay. with a heavy ash base and a finely hewn blade forged by bilboan craftsmen, in the hands of an assassin this weapon can defeat an entire batallion of templar enemies.',
-				image: 'textures/bladed-spear.png',
-				key: 'bladed-spear'
-			},
-			{
-				title: 'LEATHER ASSASSIN VAMBRACE',
-				description: 'the leather vambrace as an essential piece of every assassin’s armor. this blade- concealing armor both proects from attacks and gives the assassin access to a hidden blade with a simple flick of the wrist.',
-				image: 'textures/vambrace.png',
-				key: 'vambrace'
-			},
-			{
-				title: 'CóRDOBAN HALBERD',
-				description: 'the córdoban halberd combines the intricate artistrty of the monarchy with the unparalleled killing power of the inquisition. featuring tempered steel and ornate gold gilding in the staff, this weapon is both beautiful and deadly.',
-				image: 'textures/halberd.png',
-				key: 'halberd'
-			}
-		],
-		position: [-400, 0, 205],
-	},
-	{
-		id: 5,
-		lon: 175,
-		slides: [
-			{
-				title: 'BLADED SPEAR de BILBOA',
-				description: 'This bladed spear is sure to keep enemies at bay. with a heavy ash base and a finely hewn blade forged by bilboan craftsmen, in the hands of an assassin this weapon can defeat an entire batallion of templar enemies.',
-				image: 'textures/bladed-spear.png',
-				key: 'bladed-spear'
-			},
-			{
-				title: 'LEATHER ASSASSIN VAMBRACE',
-				description: 'the leather vambrace as an essential piece of every assassin’s armor. this blade- concealing armor both proects from attacks and gives the assassin access to a hidden blade with a simple flick of the wrist.',
-				image: 'textures/vambrace.png',
-				key: 'vambrace'
-			},
-			{
-				title: 'CóRDOBAN HALBERD',
-				description: 'the córdoban halberd combines the intricate artistrty of the monarchy with the unparalleled killing power of the inquisition. featuring tempered steel and ornate gold gilding in the staff, this weapon is both beautiful and deadly.',
-				image: 'textures/halberd.png',
-				key: 'halberd'
-			}
-		],
-		position: [-445, 0, 30],
-	},
-	{
-		id: 6,
-		lon: 236,
-		slides: [
-			{
-				title: 'BLADED SPEAR de BILBOA',
-				description: 'This bladed spear is sure to keep enemies at bay. with a heavy ash base and a finely hewn blade forged by bilboan craftsmen, in the hands of an assassin this weapon can defeat an entire batallion of templar enemies.',
-				image: 'textures/bladed-spear.png',
-				key: 'bladed-spear'
-			},
-			{
-				title: 'LEATHER ASSASSIN VAMBRACE',
-				description: 'the leather vambrace as an essential piece of every assassin’s armor. this blade- concealing armor both proects from attacks and gives the assassin access to a hidden blade with a simple flick of the wrist.',
-				image: 'textures/vambrace.png',
-				key: 'vambrace'
-			},
-			{
-				title: 'CóRDOBAN HALBERD',
-				description: 'the córdoban halberd combines the intricate artistrty of the monarchy with the unparalleled killing power of the inquisition. featuring tempered steel and ornate gold gilding in the staff, this weapon is both beautiful and deadly.',
-				image: 'textures/halberd.png',
-				key: 'halberd'
-			}
-		],
-		position: [-265, 0, -380],
-	},
-	{
-		id: 7,
-		lon: 262.5,
-		slides: [
-			{
-				title: 'BLADED SPEAR de BILBOA',
-				description: 'This bladed spear is sure to keep enemies at bay. with a heavy ash base and a finely hewn blade forged by bilboan craftsmen, in the hands of an assassin this weapon can defeat an entire batallion of templar enemies.',
-				image: 'textures/bladed-spear.png',
-				key: 'bladed-spear'
-			},
-			{
-				title: 'LEATHER ASSASSIN VAMBRACE',
-				description: 'the leather vambrace as an essential piece of every assassin’s armor. this blade- concealing armor both proects from attacks and gives the assassin access to a hidden blade with a simple flick of the wrist.',
-				image: 'textures/vambrace.png',
-				key: 'vambrace'
-			},
-			{
-				title: 'CóRDOBAN HALBERD',
-				description: 'the córdoban halberd combines the intricate artistrty of the monarchy with the unparalleled killing power of the inquisition. featuring tempered steel and ornate gold gilding in the staff, this weapon is both beautiful and deadly.',
-				image: 'textures/halberd.png',
-				key: 'halberd'
-			}
-		],
-		position: [-60, 0, -455],
-	},
-	{
-		id: 8,
-		lon: 286.5,
-		slides: [
-			{
-				title: 'BLADED SPEAR de BILBOA',
-				description: 'This bladed spear is sure to keep enemies at bay. with a heavy ash base and a finely hewn blade forged by bilboan craftsmen, in the hands of an assassin this weapon can defeat an entire batallion of templar enemies.',
-				image: 'textures/bladed-spear.png',
-				key: 'bladed-spear'
-			},
-			{
-				title: 'LEATHER ASSASSIN VAMBRACE',
-				description: 'the leather vambrace as an essential piece of every assassin’s armor. this blade- concealing armor both proects from attacks and gives the assassin access to a hidden blade with a simple flick of the wrist.',
-				image: 'textures/vambrace.png',
-				key: 'vambrace'
-			},
-			{
-				title: 'CóRDOBAN HALBERD',
-				description: 'the córdoban halberd combines the intricate artistrty of the monarchy with the unparalleled killing power of the inquisition. featuring tempered steel and ornate gold gilding in the staff, this weapon is both beautiful and deadly.',
-				image: 'textures/halberd.png',
-				key: 'halberd'
-			}
-		],
-		position: [125, 0, -455],
-	},
-	{
-		id: 9,
-		lon: 332,
-		slides: [
-			{
-				title: 'BLADED SPEAR de BILBOA',
-				description: 'This bladed spear is sure to keep enemies at bay. with a heavy ash base and a finely hewn blade forged by bilboan craftsmen, in the hands of an assassin this weapon can defeat an entire batallion of templar enemies.',
-				image: 'textures/bladed-spear.png',
-				key: 'bladed-spear'
-			},
-			{
-				title: 'LEATHER ASSASSIN VAMBRACE',
-				description: 'the leather vambrace as an essential piece of every assassin’s armor. this blade- concealing armor both proects from attacks and gives the assassin access to a hidden blade with a simple flick of the wrist.',
-				image: 'textures/vambrace.png',
-				key: 'vambrace'
-			},
-			{
-				title: 'CóRDOBAN HALBERD',
-				description: 'the córdoban halberd combines the intricate artistrty of the monarchy with the unparalleled killing power of the inquisition. featuring tempered steel and ornate gold gilding in the staff, this weapon is both beautiful and deadly.',
-				image: 'textures/halberd.png',
-				key: 'halberd'
-			}
-		],
-		position: [400, 0, -205]
-	},
-];
-let onMouseDownMouseX = 0, onMouseDownMouseY = 0,
-onMouseDownLon = 0,
-lat = 0, onMouseDownLat = 0,
-phi = 0, theta = 0;
-
-container = document.getElementById( 'container' );
-
-let containerWidth = container.clientWidth;
-let containerHeight = container.clientHeight;
-
-let selectedObjects = [];
-let loader;
-let renderPass;
-let outlinePass;
-let composer;
-let effectFXAA;
-// let controlsEnabled = true;
-let showingModal = false;
-let initialOrientation;
-let isUserInteracting = false;
-
-let projector = new THREE.Projector();
-let mouseVector = new THREE.Vector3();
-
-let currentHotspot;
-
-let touchDevice
-if (('ontouchstart' in window) || window.DocumentTouch && document instanceof DocumentTouch) { 
-	touchDevice = true;
-}
-
 init();
 animate();
 
@@ -588,7 +525,16 @@ function init() {
 	var height = window.innerHeight || 1;
 	var devicePixelRatio = window.devicePixelRatio || 1;
 	renderer = new THREE.WebGLRenderer( { antialias: false } );
+	renderer.physicallyCorrectLights = true;
+	renderer.gammaInput = true;
+	renderer.gammaOutput = true;
 	renderer.shadowMap.enabled = true;
+	renderer.gammaInput = true;
+	renderer.gammaOutput = true;
+	renderer.shadowMap.enabled = true;
+	renderer.shadowMap.renderReverseSided = false;
+	renderer.toneMapping = THREE.ReinhardToneMapping;
+	renderer.toneMappingExposure = 0.8;
 	renderer.setClearColor( 0xa0a0a0 );
 	renderer.setPixelRatio( 1 );
 	renderer.setSize( width, height );
@@ -613,6 +559,29 @@ function init() {
 	
 	raycaster = new THREE.Raycaster();
 	mouse = new THREE.Vector2();
+
+	// bulb
+	// let bulbLight = new THREE.PointLight( 0xffee88, 1, 100, 2 );
+	// let bulbMat = new THREE.MeshStandardMaterial( {
+	// 	emissive: 0xffffee,
+	// 	emissiveIntensity: 1,
+	// 	color: 0x000000
+	// });
+	// bulbLight.add(new THREE.Mesh( bulbGeometry, bulbMat));
+	// bulbLight.position.set(0, 2, 0);
+	// bulbLight.castShadow = true;
+	// scene.add(bulbLight);
+	// bulbMat.emissiveIntensity = bulbLight.intensity / Math.pow( 0.02, 2.0 );
+
+	let hemiLight = new THREE.HemisphereLight( 0xffffff, 0xffffff, 5 );
+	// hemiLight.color.setHSL( 0.6, 1, 0.6 );
+	// hemiLight.groundColor.setHSL( 0.095, 1, 0.75 );
+	hemiLight.position.set(0, 200, 0);
+	scene.add(hemiLight);
+
+	// var hemiLight = new THREE.HemisphereLight( 0xddeeff, 0x0f0e0d, 0.1 );
+	// hemiLight.intensity = 8;
+	// scene.add( hemiLight );
 	
 	// Build items for raycaster clicks
 	buildHotspots();
@@ -640,9 +609,9 @@ function init() {
 	outlinePass = new THREE.OutlinePass( new THREE.Vector2(window.innerWidth, window.innerHeight), scene, camera);
 
 	outlinePass.edgeStrength = 0.5;
-	outlinePass.edgeGlow = 5.0;
+	outlinePass.edgeGlow = 1.0;
 	outlinePass.edgeThickness = 1.0;
-	outlinePass.pulsePeriod = 0.5;
+	outlinePass.pulsePeriod = 0.1;
 	outlinePass.visibleEdgeColor = {r: 255, g: 255, b: 255};
 
 	composer.addPass( outlinePass );
@@ -722,12 +691,12 @@ function orientCamera() {
 }
 
 let buttonClicks = {
-	// 'ig-header'() {
-	// 	console.log('igHeader');
-	// },
-	// fb() {
-	// 	// modal.share('fb');
-	// }
+	'ig-header'() {
+		console.log('igHeader');
+	},
+	fb() {
+		// modal.share('fb');
+	}
 }
 function handleButtonClick(key) {
 	if(key in buttonClicks) buttonClicks[key]();
@@ -735,12 +704,15 @@ function handleButtonClick(key) {
 
 function buildHotspots() {
 	loader = new THREE.JSONLoader();
-	loader.load('js/ac-logo-simple.js', function(geometry) {
+	loader.load('js/new-ac-logo-e3.js', function(geometry) {
+	// loader.load('js/ac-logo-simple.js', function(geometry) {
 	// loader.load('js/ac-badge-big.js', function(geometry) {
 	// loader.load('js/ac-badge.js', function(geometry) {
 	// loader.load('js/ac-logo.js', function(geometry) {
 		hotspots = hotspotObjects.map( (hotspotObject, index) => {
 			geometry.center();
+
+			let scale = 5;
 
 			// previous ac-logo.js scale
 			// let scale = 10;
@@ -748,17 +720,20 @@ function buildHotspots() {
 			// js/ac-badge-big.js
 			// let scale = 45;
 
-			let scale = 27;
+			//js/ac-logo-simple.js
+			// let scale = 27;
 
-			// let newMat = new THREE.MeshPhongMaterial( { 
-			// 	color: 0x996633, 
-			// 	specular: 0x050505,
-			// 	shininess: 100
-			// } ) 
+			// let newMat = new THREE.MeshLambertMaterial()
+
+			let newMat = new THREE.MeshPhongMaterial( { 
+				color: 0xFFFFFF, 
+				specular: 0x000000,
+				shininess: 1000
+			} ) 
 
 			let oldMat = new THREE.MeshBasicMaterial( { color: '#cccccc', opacity: 1 } )
 
-			let hotspot = new THREE.Mesh(geometry, oldMat);
+			let hotspot = new THREE.Mesh(geometry, newMat);
 			hotspot.name = `hotspot-${index}`;
 			var box = new THREE.Box3().setFromObject(hotspot);
 			hotspot.scale.x = hotspot.scale.y = hotspot.scale.z = scale
@@ -922,20 +897,25 @@ function onWindowResize() {
 	effectFXAA.uniforms['resolution'].value.set(1 / window.innerWidth, 1 / window.innerHeight );
 }
 
-function onDocumentTouchStart( event ) {
-	console.log('---- onDocumentTouchStart ----');
-	if(event.touches && event.touches.length > 0) {
-		touchStartX = event.touches[0].pageX;
+// function onDocumentTouchEnd() {
+// 	console.log('---- onDocumentTouchEnd ----');
+// }
+
+function onDocumentTouchStart(event) {
+	if(event.touches && event.touches.length === 1) {
+		let touch = event.touches[0];
+		touchStartX = touch.pageX;
+		checkRaycasterCollisions(touch.pageX, touch.pageY);
+		if(selectedObjects.length) {
+			onDocumentMouseDown(event, true);
+			freeze = true;
+		}
+	} else {
+		event.preventDefault();
 	}
-	// console.log('--- INDEX TOUCH START ---');
-	// event.preventDefault();
-	// event.clientX = event.touches[0].clientX;
-	// event.clientY = event.touches[0].clientY;
-	// onDocumentMouseDown( event );
 }
 
 function onDocumentTouchMove(event) {
-	console.log('---- onDocumentTouchMove ----')
 	if(event.touches && event.touches.length) {
 		var delta = touchStartX - event.touches[0].pageX;
 		touchStartX = event.touches[0].pageX;
@@ -948,10 +928,10 @@ function addSelectedObject(object) {
 	selectedObjects.push(object);
 }
 
-function checkRaycasterCollisions(event) {
+function checkRaycasterCollisions(x, y) {
 
-	var mouse3D = new THREE.Vector3( ( event.clientX / window.innerWidth ) * 2 - 1,
-									-( event.clientY / window.innerHeight ) * 2 + 1,
+	var mouse3D = new THREE.Vector3( ( x / window.innerWidth ) * 2 - 1,
+									-( y / window.innerHeight ) * 2 + 1,
 									0.5 );
 	raycaster.setFromCamera( mouse3D, camera );
 	let intersects = raycaster.intersectObjects(scene.children, true);
@@ -1024,7 +1004,6 @@ function makeUrlParams(id, subid) {
 	}
 	if(!subid) subid = 0;
 	str += `&subid=${subid}`;
-	console.log('makeUrlParams', id, subid, str);
 	return str;
 }
 
@@ -1040,20 +1019,33 @@ function tweenArc(start, end) {
 	return {value: 360-absDelta < absDelta ? 360-absDelta : absDelta, relativity: relativity};
 }
 
-function onDocumentMouseDown( event ) {
-	console.log('--- INDEX MOUSE DOWN ---')
+function onDocumentMouseDown(event, isTouch) {
+	if(freeze) return;
 	isUserInteracting = true;
 	if(selectedObjects.length && !showingModal) {
 		let so = selectedObjects[0].hotspot;
 		let currentLon = position.lon
 		let hotspotLon = selectedObjects[0].hotspot.lon
 		let data = tweenArc(currentLon, hotspotLon);
-		TweenMax.to(position, 550/1000, {lon: `${data.relativity}${data.value}`, onComplete: function() {
+
+		let maxDelta = 40;
+		let delta = data.value;
+		let maxDura = 550;
+		let duration = ((delta/maxDelta)*maxDura)/1000;
+
+		if(isTouch) {
 			position.lon = position.lon%360;
 			curPosX = position.lon;
 			currentHotspot = so
 			modal.show(so, 0);
-		}});
+		} else {
+			TweenMax.to(position, duration, {lon: `${data.relativity}${data.value}`, onComplete: function() {
+				position.lon = position.lon%360;
+				curPosX = position.lon;
+				currentHotspot = so
+				modal.show(so, 0);
+			}});
+		}
 	}
 }
 
@@ -1061,8 +1053,9 @@ function rotateHotspots() {
 	hotspots.forEach( hotspot => hotspot.children[0].rotation.z += rotateSpeed * 0.5 );
 }
 
-function onDocumentMouseMove( event ) {
-	checkRaycasterCollisions(event);
+function onDocumentMouseMove(event) {
+	if(freeze) return;
+	checkRaycasterCollisions(event.clientX, event.clientY);
 	if(isUserInteracting && !showingModal) {
 		let movementX = event.movementX || event.mozMovementX || event.webkitMovementX || 0;
 		let movementY = event.movementY || event.mozMovementY || event.webkitMovementY || 0;
