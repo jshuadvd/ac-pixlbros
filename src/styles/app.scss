@@ -271,7 +271,7 @@ a {
             }
             
             .content {
-        		top: 30%;
+        		top: 18%;
         		left: 0;
         		text-align: center;
         		width: 100%;
@@ -283,7 +283,7 @@ a {
         		}
         		.item {
         			// width: 40.222575516693%;
-        			width: 50%;
+        			width: 40%;
         			margin-bottom: 3.982300884956%;
         		}
         		.words {
@@ -291,7 +291,7 @@ a {
         			// width: 81.558028616852%;
         		}
                 .description {
-                    font-size: 12px;
+                    font-size: 10px;
                 }
                 .title {
                     font-size: 3vw;
@@ -299,11 +299,11 @@ a {
         	}
             
             .share {
-                top: 84% !important;
+                top: 80% !important;
                 left: 50% !important;
                 width: 25% !important;
             }
-    	}     
+    	}   
     }
     
     @media only screen and (max-width: 640px) {
@@ -481,6 +481,7 @@ a {
         font-family: 'Trajan W01 Bd';
         margin-top: -30px;
         float: right;
+        margin-right: 12px;
         /* margin-bottom: 020px; */
     }
 }
