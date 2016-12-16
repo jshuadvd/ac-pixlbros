@@ -18,6 +18,7 @@ var onPointerDownPointerX = void 0;
 var onPointerDownLon = void 0;
 var blocked = false;
 var touchStartX = void 0;
+var mouseStartX = void 0;
 
 //************************************************************************//
 //                             Init Loader                                //
@@ -262,7 +263,7 @@ function loadTick() {
 	if (percent === 100) {
 		TweenMax.to($('#preloader'), 750 / 1000, { delay: 550 / 1000, autoAlpha: 0, onComplete: function onComplete() {
 				audio.volume = 0.5;
-				audio.play();
+				// audio.play();
 			} });
 	}
 }
@@ -524,6 +525,8 @@ $(document).ready(function () {
 	setupButtons();
 });
 
+var glow = void 0;
+
 init();
 animate();
 
@@ -618,32 +621,46 @@ function init() {
 	composer = new THREE.EffectComposer(renderer);
 	renderPass = new THREE.RenderPass(scene, camera);
 	composer.addPass(renderPass);
-	outlinePass = new THREE.OutlinePass(new THREE.Vector2(window.innerWidth, window.innerHeight), scene, camera);
 
-	outlinePass.edgeStrength = 0.5;
-	outlinePass.edgeGlow = 1.0;
-	outlinePass.edgeThickness = 1.0;
-	outlinePass.pulsePeriod = 0.1;
-	outlinePass.visibleEdgeColor = { r: 255, g: 255, b: 255 };
+	// outline pass
+	// outlinePass = new THREE.OutlinePass( new THREE.Vector2(window.innerWidth, window.innerHeight), scene, camera);
+	// outlinePass.edgeStrength = 0.5;
+	// outlinePass.edgeGlow = 1.0;
+	// outlinePass.edgeThickness = 1.0;
+	// outlinePass.pulsePeriod = 0.1;
+	// outlinePass.visibleEdgeColor = {r: 255, g: 255, b: 255};
+	// composer.addPass( outlinePass );
+	// var onLoad = function(texture) {
+	// 	outlinePass.patternTexture = texture;
+	// 	texture.wrapS = THREE.RepeatWrapping;
+	// 	texture.wrapT = THREE.RepeatWrapping;
+	// };
+	// var lod = new THREE.TextureLoader();
+	// lod.load(
+	// 	// resource URL
+	// 	'textures/tri_pattern.jpg',
+	// 	// Function when resource is loaded
+	// 	onLoad
+	// );
 
-	composer.addPass(outlinePass);
-	// @todo: prob dont need this texture but SHRUG
-	var onLoad = function onLoad(texture) {
-		outlinePass.patternTexture = texture;
-		texture.wrapS = THREE.RepeatWrapping;
-		texture.wrapT = THREE.RepeatWrapping;
-	};
-	var lod = new THREE.TextureLoader();
-	lod.load(
-	// resource URL
-	'textures/tri_pattern.jpg',
-	// Function when resource is loaded
-	onLoad);
+	// init glow
+	var materialOn = new THREE.MeshBasicMaterial();
+	materialOn.color.set(0x88ccff);
+	var materialOff = new THREE.MeshBasicMaterial();
+	materialOff.color.set('black');
+	glow = new THREEx.Glow(renderer, camera);
+	glow.copyScene(scene, function (srcObject) {
+		console.log('srcObject', srcObject);
+		var domClasses = srcObject.userData.domClasses;
+		var glowing = domClasses && domClasses.match(/glowing/);
+		var material = glowing ? materialOn : materialOff;
+		return material;
+	});
 
-	effectFXAA = new THREE.ShaderPass(THREE.FXAAShader);
-	effectFXAA.uniforms['resolution'].value.set(1 / window.innerWidth, 1 / window.innerHeight);
-	effectFXAA.renderToScreen = true;
-	composer.addPass(effectFXAA);
+	// effectFXAA = new THREE.ShaderPass(THREE.BasicShader);
+	// effectFXAA.uniforms['resolution'].value.set(1 / window.innerWidth, 1 / window.innerHeight );
+	// effectFXAA.renderToScreen = true;
+	// composer.addPass( effectFXAA );
 
 	container.appendChild(renderer.domElement);
 	// container.addEventListener("mousemove", getPosition, false);
@@ -751,6 +768,7 @@ function buildHotspots() {
 			var oldMat = new THREE.MeshBasicMaterial({ color: '#cccccc', opacity: 1 });
 
 			var hotspot = new THREE.Mesh(geometry, newMat);
+			hotspot.userData.domClasses += ' glowing ';
 			hotspot.name = 'hotspot-' + index;
 			var box = new THREE.Box3().setFromObject(hotspot);
 			hotspot.scale.x = hotspot.scale.y = hotspot.scale.z = scale;
@@ -910,7 +928,7 @@ function onWindowResize() {
 	camera.updateProjectionMatrix();
 	renderer.setSize(width, height);
 	composer.setSize(width, height);
-	effectFXAA.uniforms['resolution'].value.set(1 / window.innerWidth, 1 / window.innerHeight);
+	// effectFXAA.uniforms['resolution'].value.set(1 / window.innerWidth, 1 / window.innerHeight );
 }
 
 // function onDocumentTouchEnd() {
@@ -964,7 +982,7 @@ function checkRaycasterCollisions(x, y) {
 		$('body').removeClass('hot');
 		selectedObjects = [];
 	}
-	outlinePass.selectedObjects = selectedObjects;
+	// outlinePass.selectedObjects = selectedObjects;
 }
 
 // function renderFeatureMesh() {
@@ -1038,6 +1056,7 @@ function tweenArc(start, end) {
 function onDocumentMouseDown(event, isTouch) {
 	if (freeze) return;
 	isUserInteracting = true;
+	mouseStartX = event.clientX;
 	if (selectedObjects.length && !showingModal) {
 		(function () {
 			var so = selectedObjects[0].hotspot;
@@ -1077,7 +1096,9 @@ function onDocumentMouseMove(event) {
 	if (freeze) return;
 	checkRaycasterCollisions(event.clientX, event.clientY);
 	if (isUserInteracting && !showingModal) {
-		var movementX = event.movementX || event.mozMovementX || event.webkitMovementX || 0;
+		var deltaX = mouseStartX - event.clientX;
+		mouseStartX = event.clientX;
+		var movementX = 'movementX' in event || 'mozMovementX' in event || 'webkitMovementX' in event ? event.movementX || event.mozMovementX || event.webkitMovementX || 0 : deltaX || 0;
 		var movementY = event.movementY || event.mozMovementY || event.webkitMovementY || 0;
 		curPosX += movementX;
 		if (curPosX < 0) {
@@ -1092,6 +1113,7 @@ function onDocumentMouseMove(event) {
 
 function onDocumentMouseUp(event) {
 	isUserInteracting = false;
+	// mouseStartX = 0;
 }
 
 // Zoom in & out | Need to limit this to the starting point and a endind point
@@ -1113,6 +1135,8 @@ function animate() {
 }
 
 function update() {
+
+	glow.update();
 	// if ( isUserInteracting === false ) {
 	// 	// lon += 0.1;
 	// }
