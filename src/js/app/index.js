@@ -16,6 +16,7 @@ let onPointerDownPointerX;
 let onPointerDownLon;
 let blocked = false;
 let touchStartX;
+let mouseStartX;
 
 //************************************************************************//
 //                             Init Loader                                //
@@ -1022,6 +1023,7 @@ function tweenArc(start, end) {
 function onDocumentMouseDown(event, isTouch) {
 	if(freeze) return;
 	isUserInteracting = true;
+	mouseStartX = event.clientX;
 	if(selectedObjects.length && !showingModal) {
 		let so = selectedObjects[0].hotspot;
 		let currentLon = position.lon
@@ -1057,7 +1059,9 @@ function onDocumentMouseMove(event) {
 	if(freeze) return;
 	checkRaycasterCollisions(event.clientX, event.clientY);
 	if(isUserInteracting && !showingModal) {
-		let movementX = event.movementX || event.mozMovementX || event.webkitMovementX || 0;
+		let deltaX = mouseStartX - event.clientX;
+		mouseStartX = event.clientX;
+		let movementX = 'movementX' in event || 'mozMovementX' in event || 'webkitMovementX' in event ? event.movementX || event.mozMovementX || event.webkitMovementX || 0 : deltaX || 0;
 		let movementY = event.movementY || event.mozMovementY || event.webkitMovementY || 0;
 		curPosX += movementX;
 		if(curPosX < 0) {
@@ -1072,6 +1076,7 @@ function onDocumentMouseMove(event) {
 
 function onDocumentMouseUp( event ) {
 	isUserInteracting = false;
+	// mouseStartX = 0;
 }
 
 // Zoom in & out | Need to limit this to the starting point and a endind point
