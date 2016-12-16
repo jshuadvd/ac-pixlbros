@@ -231,7 +231,16 @@ canvas {
     }
 }
 
-
+.title-treatment {
+	background-image: -webkit-linear-gradient(180deg, #fff, #fff 60%, #b4b6b8);
+	background-image: -moz-linear-gradient(180deg, #fff, #fff 60%, #b4b6b8);
+	background-image: -ms-linear-gradient(180deg, #fff, #fff 60%, #b4b6b8);
+	background-image: -o-linear-gradient(180deg, #fff, #fff 60%, #b4b6b8);
+	background-image: linear-gradient(180deg, #fff, #fff 60%, #b4b6b8);
+	-webkit-background-clip: text;
+	background-clip: text;
+	color: transparent;
+}
 
 
 .blur {
@@ -245,17 +254,10 @@ canvas {
 .title {
 	font-size: 2vw;
 	font-family: 'Trajan W01 Bd';
-	background-image: -webkit-linear-gradient(180deg, #fff, #fff 60%, #b4b6b8);
-	background-image: -moz-linear-gradient(180deg, #fff, #fff 60%, #b4b6b8);
-	background-image: -ms-linear-gradient(180deg, #fff, #fff 60%, #b4b6b8);
-	background-image: -o-linear-gradient(180deg, #fff, #fff 60%, #b4b6b8);
-	background-image: linear-gradient(180deg, #fff, #fff 60%, #b4b6b8);
-	-webkit-background-clip: text;
-	background-clip: text;
-	color: transparent;
 }
 .border {
 	margin: 10px 0;
+	width: 100%;
 }
 .modal-container.new {
 	position: absolute;
