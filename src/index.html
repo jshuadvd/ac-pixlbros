@@ -66,6 +66,25 @@
 		   }(document, 'script', 'facebook-jssdk'));
 		</script>
 
+        <script>
+        window.twttr = (function(d, s, id) {
+          var js, fjs = d.getElementsByTagName(s)[0],
+            t = window.twttr || {};
+          if (d.getElementById(id)) return t;
+          js = d.createElement(s);
+          js.id = id;
+          js.src = "https://platform.twitter.com/widgets.js";
+          fjs.parentNode.insertBefore(js, fjs);
+
+          t._e = [];
+          t.ready = function(f) {
+            t._e.push(f);
+          };
+
+          return t;
+        }(document, "script", "twitter-wjs"));
+        </script>
+
 		<div class="logo">
 			<a href="/" target="_blank">
 				<img src="textures/ac-logo-top.png" alt="Assasin's Creed" />
@@ -99,6 +118,9 @@
 			</div>
 		</div>
 		-->
+		<h1>
+			Explore the Animus
+		</h2>
 
 		<div class="header-share">
 
@@ -123,7 +145,7 @@
 			</div>
 
 			<div class="button-outer fb" key="fb-header">
-				<a href="https://www.facebook.com/AssassinsCreedMovie" target="_blank">
+				<a href="https://www.facebook.com/AssassinsCreedMovie" class="social-media__icon mod-fb" target="_blank">
 					<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 50.4 45.3" style="enable-background:new 0 0 50.4 45.3;" xml:space="preserve">
 						<path class="inner-path" d="M34.2,6.6L43.4 22.7 34.2 38.8 15.6 38.8 6.3 22.7 15.6 6.6 z"></path>
 						<path class="outer-path" d="M35.2,4.8L45.6 22.7 35.2 40.6 14.5 40.6 4.2 22.7 14.5 4.8 z"></path>
@@ -133,6 +155,10 @@
 						</g>
 					</svg>
 				</a>
+                <!-- FACEBOOK LIKE AND SHARE BUTTONS -->
+                <div class="social-media__btns mod-fb">
+                    <div class="fb-like" data-href="https://www.facebook.com/AssassinsCreedMovie" data-layout="button_count" data-action="like" data-size="small" data-show-faces="true" data-share="true"></div>
+                </div>
 			</div>
 
 			<div class="button-outer twitter" key="twitter-header">
@@ -149,6 +175,14 @@
 						</g>
 					</svg>
 				</a>
+                <!-- TWITTER TWEET AND FOLLOW BUTTONS -->
+                <div class="social-media__btns mod-twitter">
+                    <a class="twitter-share-button" href="https://twitter.com/intent/tweet">Tweet</a>
+                    <a class="twitter-follow-button" href="https://twitter.com/AssassinsMovie"
+                        data-show-count=false
+                        data-show-screen-name=false
+                    >Follow</a>
+                </div>
 			</div>
 		</div>
 

@@ -559,7 +559,7 @@ function init() {
 	geometry.scale(-1, 1, 1);
 
 	var material = new THREE.MeshBasicMaterial({
-		map: new THREE.TextureLoader().load('textures/AnimusPanorama_V2.jpg'),
+		map: new THREE.TextureLoader().load('textures/AnimusPanorama_V4.jpg'),
 		fog: true
 	});
 
