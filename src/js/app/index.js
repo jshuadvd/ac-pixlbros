@@ -1203,6 +1203,7 @@ function update() {
 	renderer.render( scene, camera );
 	// renderer.render( scene, camera );
 	camera.updateProjectionMatrix();
+	renderer.clear();
 	glowcomposer.render();
 	finalcomposer.render();
 	// composer.render();
