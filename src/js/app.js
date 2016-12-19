@@ -18,6 +18,8 @@ var onPointerDownPointerX = void 0;
 var onPointerDownLon = void 0;
 var blocked = false;
 var touchStartX = void 0;
+var mouseStartX = void 0;
+var glowscene = void 0;
 
 //************************************************************************//
 //                             Init Loader                                //
@@ -524,6 +526,11 @@ $(document).ready(function () {
 	setupButtons();
 });
 
+var renderTargetGlow = void 0;
+var renderModelGlow = void 0;
+var glowcomposer = void 0;
+var finalcomposer = void 0;
+
 init();
 animate();
 
@@ -614,19 +621,29 @@ function init() {
 
 	clock = new THREE.Clock();
 
-	// postprocessing
-	composer = new THREE.EffectComposer(renderer);
-	renderPass = new THREE.RenderPass(scene, camera);
-	composer.addPass(renderPass);
-	outlinePass = new THREE.OutlinePass(new THREE.Vector2(window.innerWidth, window.innerHeight), scene, camera);
+	var renderTargetParameters = { minFilter: THREE.LinearFilter, magFilter: THREE.LinearFilter, format: THREE.RGBFormat, stencilBufer: false };
+	var renderTarget = new THREE.WebGLRenderTarget(window.innerWidth, window.innerHeight, renderTargetParameters);
 
+	// glowscene 
+	glowscene = new THREE.Scene();
+	glowscene.add(new THREE.AmbientLight(0xffffff));
+	renderModelGlow = new THREE.RenderPass(glowscene, camera);
+	glowcomposer = new THREE.EffectComposer(renderer, renderTarget);
+
+	// postprocessing
+	// composer = new THREE.EffectComposer( renderer );
+	renderPass = new THREE.RenderPass(scene, camera);
+	finalcomposer = new THREE.EffectComposer(renderer, renderTarget);
+	// finalcomposer.addPass(renderModel);
+	finalcomposer.addPass(renderPass);
+
+	outlinePass = new THREE.OutlinePass(new THREE.Vector2(window.innerWidth, window.innerHeight), scene, camera);
 	outlinePass.edgeStrength = 0.5;
 	outlinePass.edgeGlow = 1.0;
 	outlinePass.edgeThickness = 1.0;
 	outlinePass.pulsePeriod = 0.1;
 	outlinePass.visibleEdgeColor = { r: 255, g: 255, b: 255 };
-
-	composer.addPass(outlinePass);
+	glowcomposer.addPass(outlinePass);
 	// @todo: prob dont need this texture but SHRUG
 	var onLoad = function onLoad(texture) {
 		outlinePass.patternTexture = texture;
@@ -643,7 +660,12 @@ function init() {
 	effectFXAA = new THREE.ShaderPass(THREE.FXAAShader);
 	effectFXAA.uniforms['resolution'].value.set(1 / window.innerWidth, 1 / window.innerHeight);
 	effectFXAA.renderToScreen = true;
-	composer.addPass(effectFXAA);
+	// glowcomposer.addPass( effectFXAA );
+
+	var effectBlend = new THREE.ShaderPass(THREE.AdditiveBlendShader, "tDiffuse1");
+	effectBlend.uniforms['tDiffuse2'].value = glowcomposer.renderTarget2;
+	effectBlend.renderToScreen = true;
+	finalcomposer.addPass(effectBlend);
 
 	container.appendChild(renderer.domElement);
 	// container.addEventListener("mousemove", getPosition, false);
@@ -772,6 +794,9 @@ function buildHotspots() {
 			scene.add(group);
 			group.add(hotspot);
 			group.add(hitboxMesh);
+
+			var ggroup = group.clone();
+			glowscene.add(ggroup);
 
 			return group;
 		});
@@ -909,7 +934,7 @@ function onWindowResize() {
 	camera.aspect = width / height;
 	camera.updateProjectionMatrix();
 	renderer.setSize(width, height);
-	composer.setSize(width, height);
+	finalcomposer.setSize(width, height);
 	effectFXAA.uniforms['resolution'].value.set(1 / window.innerWidth, 1 / window.innerHeight);
 }
 
@@ -1038,6 +1063,7 @@ function tweenArc(start, end) {
 function onDocumentMouseDown(event, isTouch) {
 	if (freeze) return;
 	isUserInteracting = true;
+	mouseStartX = event.clientX;
 	if (selectedObjects.length && !showingModal) {
 		(function () {
 			var so = selectedObjects[0].hotspot;
@@ -1077,7 +1103,9 @@ function onDocumentMouseMove(event) {
 	if (freeze) return;
 	checkRaycasterCollisions(event.clientX, event.clientY);
 	if (isUserInteracting && !showingModal) {
-		var movementX = event.movementX || event.mozMovementX || event.webkitMovementX || 0;
+		var deltaX = mouseStartX - event.clientX;
+		mouseStartX = event.clientX;
+		var movementX = 'movementX' in event || 'mozMovementX' in event || 'webkitMovementX' in event ? event.movementX || event.mozMovementX || event.webkitMovementX || 0 : deltaX || 0;
 		var movementY = event.movementY || event.mozMovementY || event.webkitMovementY || 0;
 		curPosX += movementX;
 		if (curPosX < 0) {
@@ -1092,6 +1120,7 @@ function onDocumentMouseMove(event) {
 
 function onDocumentMouseUp(event) {
 	isUserInteracting = false;
+	// mouseStartX = 0;
 }
 
 // Zoom in & out | Need to limit this to the starting point and a endind point
@@ -1193,7 +1222,9 @@ function update() {
 	renderer.render(scene, camera);
 	// renderer.render( scene, camera );
 	camera.updateProjectionMatrix();
-	composer.render();
+	glowcomposer.render();
+	finalcomposer.render();
+	// composer.render();
 	// renderer.autoClear = true;
 	// renderer.setClearColor( 0xfff0f0 );
 	// renderer.setClearAlpha( 0.0 );

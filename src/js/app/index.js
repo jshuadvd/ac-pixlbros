@@ -17,6 +17,7 @@ let onPointerDownLon;
 let blocked = false;
 let touchStartX;
 let mouseStartX;
+let glowscene;
 
 //************************************************************************//
 //                             Init Loader                                //
@@ -513,6 +514,11 @@ $(document).ready(function() {
 	setupButtons();
 });
 
+let renderTargetGlow;
+let renderModelGlow;
+let glowcomposer;
+let finalcomposer;
+
 init();
 animate();
 
@@ -561,6 +567,7 @@ function init() {
 	raycaster = new THREE.Raycaster();
 	mouse = new THREE.Vector2();
 
+
 	// bulb
 	// let bulbLight = new THREE.PointLight( 0xffee88, 1, 100, 2 );
 	// let bulbMat = new THREE.MeshStandardMaterial( {
@@ -603,19 +610,29 @@ function init() {
 	
 	clock = new THREE.Clock();
 
-	// postprocessing
-	composer = new THREE.EffectComposer( renderer );
-	renderPass = new THREE.RenderPass( scene, camera );
-	composer.addPass( renderPass );
-	outlinePass = new THREE.OutlinePass( new THREE.Vector2(window.innerWidth, window.innerHeight), scene, camera);
+	let renderTargetParameters = { minFilter: THREE.LinearFilter, magFilter: THREE.LinearFilter, format: THREE.RGBFormat, stencilBufer: false };
+	let renderTarget = new THREE.WebGLRenderTarget( window.innerWidth, window.innerHeight, renderTargetParameters );
 
+	// glowscene 
+	glowscene = new THREE.Scene();
+	glowscene.add(new THREE.AmbientLight(0xffffff));
+	renderModelGlow = new THREE.RenderPass(glowscene, camera);
+	glowcomposer = new THREE.EffectComposer(renderer, renderTarget);
+
+	// postprocessing
+	// composer = new THREE.EffectComposer( renderer );
+	renderPass = new THREE.RenderPass( scene, camera );
+	finalcomposer = new THREE.EffectComposer(renderer, renderTarget);
+	// finalcomposer.addPass(renderModel);
+	finalcomposer.addPass(renderPass);
+
+	outlinePass = new THREE.OutlinePass( new THREE.Vector2(window.innerWidth, window.innerHeight), scene, camera);
 	outlinePass.edgeStrength = 0.5;
 	outlinePass.edgeGlow = 1.0;
 	outlinePass.edgeThickness = 1.0;
 	outlinePass.pulsePeriod = 0.1;
 	outlinePass.visibleEdgeColor = {r: 255, g: 255, b: 255};
-
-	composer.addPass( outlinePass );
+	glowcomposer.addPass( outlinePass );
 	// @todo: prob dont need this texture but SHRUG
 	var onLoad = function(texture) {
 		outlinePass.patternTexture = texture;
@@ -633,7 +650,12 @@ function init() {
 	effectFXAA = new THREE.ShaderPass(THREE.FXAAShader);
 	effectFXAA.uniforms['resolution'].value.set(1 / window.innerWidth, 1 / window.innerHeight );
 	effectFXAA.renderToScreen = true;
-	composer.addPass( effectFXAA );
+	// glowcomposer.addPass( effectFXAA );
+
+	var effectBlend = new THREE.ShaderPass( THREE.AdditiveBlendShader, "tDiffuse1" );
+	effectBlend.uniforms[ 'tDiffuse2' ].value = glowcomposer.renderTarget2;
+	effectBlend.renderToScreen = true;
+	finalcomposer.addPass( effectBlend );
 
 	container.appendChild( renderer.domElement );
 	// container.addEventListener("mousemove", getPosition, false);
@@ -756,6 +778,9 @@ function buildHotspots() {
 			scene.add(group);
 			group.add(hotspot);
 			group.add(hitboxMesh);
+
+			let ggroup = group.clone();
+			glowscene.add(ggroup);
 
 			return group;
 
@@ -894,7 +919,7 @@ function onWindowResize() {
 	camera.aspect = width / height;
 	camera.updateProjectionMatrix();
 	renderer.setSize( width, height );
-	composer.setSize( width, height );
+	finalcomposer.setSize( width, height );
 	effectFXAA.uniforms['resolution'].value.set(1 / window.innerWidth, 1 / window.innerHeight );
 }
 
@@ -1178,7 +1203,9 @@ function update() {
 	renderer.render( scene, camera );
 	// renderer.render( scene, camera );
 	camera.updateProjectionMatrix();
-	composer.render();
+	glowcomposer.render();
+	finalcomposer.render();
+	// composer.render();
 	// renderer.autoClear = true;
 	// renderer.setClearColor( 0xfff0f0 );
 	// renderer.setClearAlpha( 0.0 );
