@@ -447,13 +447,18 @@ Modal.prototype = {
 		showingModal = false;
 		this.controls.hide();
 		// pointerLock();
-		TweenMax.to($('.modal-container'), 0.3, { autoAlpha: 0 });
+		TweenMax.to($('.modal-container'), 0.3, { autoAlpha: 0, onComplete: function () {
+				this.modal.removeClass('open');
+			}.bind(this)
+		});
 		TweenMax.to(camera, duration, { fov: fovMin, onComplete: function onComplete() {
 				blocked = false;
 			} });
 		$(document).off('keydown');
 	},
 	show: function show(hotspot, subid) {
+		var _this5 = this;
+
 		this.hotspot = hotspot;
 		this.subid = subid;
 		this.offset = 0;
@@ -467,6 +472,9 @@ Modal.prototype = {
 			this.setModalValues(this.activeSlide);
 		}
 		TweenMax.to($('.modal-container'), 0.3, { autoAlpha: 1 });
+		setTimeout(function () {
+			_this5.modal.addClass('open');
+		}, 200);
 		TweenMax.to(camera, duration, { fov: fovMax, onComplete: function onComplete() {
 				$('.modal-container').css({ top: 0 });
 				$(document).on('keydown', function (event) {

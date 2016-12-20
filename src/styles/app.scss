@@ -289,9 +289,12 @@ canvas {
 		z-index: 1;
 		top: 50%;
 		transform: translate(0, -50%) scale(1, 0.01);
-    transition: 1s ease;
+		transition: 750ms ease;
 		max-width: 860px;
-    z-index: 3;
+		z-index: 3;
+		&.open {
+			transform: translate(0, -50%) scale(1, 1);
+		}
 		.controls {
 			&:hover {
 				cursor: pointer;
@@ -492,6 +495,7 @@ canvas {
 
 
 .modal-container.new {
+	visibility: hidden; opacity: 0; top: 0px;
 	.border img {
 		width: 100%;
 	}

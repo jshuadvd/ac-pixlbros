@@ -435,7 +435,10 @@ Modal.prototype = {
 		showingModal = false;
 		this.controls.hide();
 		// pointerLock();
-		TweenMax.to($('.modal-container') , 0.3, {autoAlpha: 0})
+		TweenMax.to($('.modal-container') , 0.3, {autoAlpha: 0, onComplete: function() {
+				this.modal.removeClass('open');
+			}.bind(this)
+		})
 		TweenMax.to(camera, duration, {fov: fovMin, onComplete: function() {
 			blocked = false;
 		}});
@@ -454,7 +457,10 @@ Modal.prototype = {
 			this.activeSlide = hotspot.slides[this.offset];
 			this.setModalValues(this.activeSlide);
 		}
-		TweenMax.to($('.modal-container') , 0.3, {autoAlpha: 1})
+		TweenMax.to($('.modal-container') , 0.3, {autoAlpha: 1});
+		setTimeout(() => {
+			this.modal.addClass('open');
+		}, 200)
 		TweenMax.to(camera, duration, {fov: fovMax, onComplete: () => {
 			$('.modal-container').css({top: 0})
 			$(document).on('keydown', (event) => {
