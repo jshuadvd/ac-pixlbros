@@ -423,7 +423,7 @@ Modal.prototype = {
 		this.description.text(hotspot.description);
 		this.title.text(hotspot.title);
 		this.item.attr('src', hotspot.image);
-		this.modal.attr('class', `modal ${hotspot.key}`);
+		this.modal.attr('class', `modal ${hotspot.key} open`);
 	},
 	hide() {
 		freeze = false;
