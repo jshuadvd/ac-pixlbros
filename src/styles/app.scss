@@ -34,6 +34,9 @@ h1 {
   letter-spacing: 0.1em;
   margin: 5px 0;
   z-index: 4;
+  img {
+    width: 250px;
+  }
 }
 
 #container {
@@ -61,7 +64,7 @@ html, body {
 	height: 100%;
 	text-align: center;
 	background-color: #000;
-	z-index: 5;
+	z-index: 6;
 	.loading-status::after {
 		content: "";
 		display: block;
@@ -231,16 +234,7 @@ canvas {
     }
 }
 
-.title-treatment {
-	background-image: -webkit-linear-gradient(180deg, #fff, #fff 60%, #b4b6b8);
-	background-image: -moz-linear-gradient(180deg, #fff, #fff 60%, #b4b6b8);
-	background-image: -ms-linear-gradient(180deg, #fff, #fff 60%, #b4b6b8);
-	background-image: -o-linear-gradient(180deg, #fff, #fff 60%, #b4b6b8);
-	background-image: linear-gradient(180deg, #fff, #fff 60%, #b4b6b8);
-	-webkit-background-clip: text;
-	background-clip: text;
-	color: transparent;
-}
+
 
 
 .blur {
@@ -254,10 +248,17 @@ canvas {
 .title {
 	font-size: 2vw;
 	font-family: 'Trajan W01 Bd';
+	background-image: -webkit-linear-gradient(180deg, #fff, #fff 60%, #b4b6b8);
+	background-image: -moz-linear-gradient(180deg, #fff, #fff 60%, #b4b6b8);
+	background-image: -ms-linear-gradient(180deg, #fff, #fff 60%, #b4b6b8);
+	background-image: -o-linear-gradient(180deg, #fff, #fff 60%, #b4b6b8);
+	background-image: linear-gradient(180deg, #fff, #fff 60%, #b4b6b8);
+	-webkit-background-clip: text;
+	background-clip: text;
+	color: transparent;
 }
 .border {
 	margin: 10px 0;
-	width: 100%;
 }
 .modal-container.new {
 	position: absolute;
@@ -287,7 +288,8 @@ canvas {
 		margin: 0 auto;
 		z-index: 1;
 		top: 50%;
-		transform: translate(0, -50%);
+		transform: translate(0, -50%) scale(1, 0.01);
+    transition: 1s ease;
 		max-width: 860px;
     z-index: 3;
 		.controls {
@@ -631,7 +633,7 @@ canvas {
       position: relative;
       margin: 0 auto;
       top: 50%;
-      transform: translate(0, -50%);
+      transform: translate(0, -50%) scale(1, 0.01);
       max-width: 860px;
     }
     .title {
@@ -688,8 +690,12 @@ canvas {
     transform: rotate(-90deg);
     width: 100%;
     top: 44%;
-    left: calc(-50% + 20px);
+    left: calc(-50% + 28px);
     font-size: 18px;
+    z-index: 2;
+    img {
+      width: 200px;
+    }
   }
   .modal-container.new {
     .modal {
