@@ -582,7 +582,7 @@ function init() {
 	mesh.name = 'scene';
 	scene.add(mesh);
 
-	stats = initStats();
+	// stats = initStats()
 
 	raycaster = new THREE.Raycaster();
 	mouse = new THREE.Vector2();
@@ -1220,18 +1220,19 @@ function update() {
 
 TweenLite.ticker.addEventListener("tick", render);
 
-function initStats() {
-	// stats.setMode(0); // 0: fps, 1: ms
-	// Align top-left
-	stats = new Stats();
-	stats.domElement.style.position = 'absolute';
-	// stats.domElement.style.bottom = '0px';
-	stats.domElement.style.left = '0px';
-	stats.domElement.style.top = '0px';
-	stats.domElement.style.zIndex = 100;
-	container.appendChild(stats.domElement);
-	return stats;
-}
+// function initStats() {
+// 	// stats.setMode(0); // 0: fps, 1: ms
+// 	// Align top-left
+// 	stats = new Stats();
+// 	stats.domElement.style.position = 'absolute';
+// 	// stats.domElement.style.bottom = '0px';
+// 	stats.domElement.style.left = '0px';
+// 	stats.domElement.style.top = '0px';
+// 	stats.domElement.style.zIndex = 100;
+// 	container.appendChild(stats.domElement);
+// 	return stats;
+// }
+
 
 // function deviceOrientationListener(event) {
 // 	let deg2rad = Math.PI / 180;
