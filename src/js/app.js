@@ -18,6 +18,7 @@ var onPointerDownPointerX = void 0;
 var onPointerDownLon = void 0;
 var blocked = false;
 var touchStartX = void 0;
+var mouseStartX = void 0;
 
 //************************************************************************//
 //                             Init Loader                                //
@@ -261,8 +262,8 @@ function loadTick() {
 	progressBar.css('width', percent + '%');
 	if (percent === 100) {
 		TweenMax.to($('#preloader'), 750 / 1000, { delay: 550 / 1000, autoAlpha: 0, onComplete: function onComplete() {
-				audio.volume = 0.5;
-				audio.play();
+				// audio.volume = 0.5;
+				// audio.play();
 			} });
 	}
 }
@@ -297,7 +298,7 @@ function preloadImages() {
 
 if (showLoader) {
 	preloadImages();
-	audio = preloadAudio('audio/AC-Trailer.mp3');
+	//audio = preloadAudio('audio/AC-Trailer.mp3');
 	THREE.DefaultLoadingManager.onProgress = function (item, loaded, total) {
 		if (loaded === 1) totalFiles += total;
 		filesLoaded += 1;
@@ -434,7 +435,7 @@ Modal.prototype = {
 		this.description.text(hotspot.description);
 		this.title.text(hotspot.title);
 		this.item.attr('src', hotspot.image);
-		this.modal.attr('class', 'modal ' + hotspot.key);
+		this.modal.attr('class', 'modal ' + hotspot.key + ' open');
 	},
 	hide: function hide() {
 		freeze = false;
@@ -446,13 +447,18 @@ Modal.prototype = {
 		showingModal = false;
 		this.controls.hide();
 		// pointerLock();
-		TweenMax.to($('.modal-container'), 0.3, { autoAlpha: 0 });
+		TweenMax.to($('.modal-container'), 0.3, { autoAlpha: 0, onComplete: function () {
+				this.modal.removeClass('open');
+			}.bind(this)
+		});
 		TweenMax.to(camera, duration, { fov: fovMin, onComplete: function onComplete() {
 				blocked = false;
 			} });
 		$(document).off('keydown');
 	},
 	show: function show(hotspot, subid) {
+		var _this5 = this;
+
 		this.hotspot = hotspot;
 		this.subid = subid;
 		this.offset = 0;
@@ -466,6 +472,9 @@ Modal.prototype = {
 			this.setModalValues(this.activeSlide);
 		}
 		TweenMax.to($('.modal-container'), 0.3, { autoAlpha: 1 });
+		setTimeout(function () {
+			_this5.modal.addClass('open');
+		}, 200);
 		TweenMax.to(camera, duration, { fov: fovMax, onComplete: function onComplete() {
 				$('.modal-container').css({ top: 0 });
 				$(document).on('keydown', function (event) {
@@ -1038,6 +1047,7 @@ function tweenArc(start, end) {
 function onDocumentMouseDown(event, isTouch) {
 	if (freeze) return;
 	isUserInteracting = true;
+	mouseStartX = event.clientX;
 	if (selectedObjects.length && !showingModal) {
 		(function () {
 			var so = selectedObjects[0].hotspot;
@@ -1077,7 +1087,9 @@ function onDocumentMouseMove(event) {
 	if (freeze) return;
 	checkRaycasterCollisions(event.clientX, event.clientY);
 	if (isUserInteracting && !showingModal) {
-		var movementX = event.movementX || event.mozMovementX || event.webkitMovementX || 0;
+		var deltaX = mouseStartX - event.clientX;
+		mouseStartX = event.clientX;
+		var movementX = 'movementX' in event || 'mozMovementX' in event || 'webkitMovementX' in event ? event.movementX || event.mozMovementX || event.webkitMovementX || 0 : deltaX || 0;
 		var movementY = event.movementY || event.mozMovementY || event.webkitMovementY || 0;
 		curPosX += movementX;
 		if (curPosX < 0) {
@@ -1092,6 +1104,7 @@ function onDocumentMouseMove(event) {
 
 function onDocumentMouseUp(event) {
 	isUserInteracting = false;
+	// mouseStartX = 0;
 }
 
 // Zoom in & out | Need to limit this to the starting point and a endind point

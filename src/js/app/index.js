@@ -261,8 +261,8 @@ function loadTick() {
 	progressBar.css('width', `${percent}%`);
 	if(percent === 100) {
 		TweenMax.to($('#preloader'), 750/1000, {delay: 550/1000, autoAlpha: 0, onComplete: () => {
-			audio.volume = 0.5;
-			audio.play();
+			// audio.volume = 0.5;
+			// audio.play();
 		}});
 	}
 }
@@ -293,7 +293,7 @@ function preloadImages() {
 
 if(showLoader) {
 	preloadImages();
-	audio = preloadAudio('audio/AC-Trailer.mp3');
+	//audio = preloadAudio('audio/AC-Trailer.mp3');
 	THREE.DefaultLoadingManager.onProgress = function ( item, loaded, total ) {
 		if(loaded === 1) totalFiles += total;
 		filesLoaded += 1;
@@ -423,7 +423,7 @@ Modal.prototype = {
 		this.description.text(hotspot.description);
 		this.title.text(hotspot.title);
 		this.item.attr('src', hotspot.image);
-		this.modal.attr('class', `modal ${hotspot.key}`);
+		this.modal.attr('class', `modal ${hotspot.key} open`);
 	},
 	hide() {
 		freeze = false;
@@ -435,7 +435,10 @@ Modal.prototype = {
 		showingModal = false;
 		this.controls.hide();
 		// pointerLock();
-		TweenMax.to($('.modal-container') , 0.3, {autoAlpha: 0})
+		TweenMax.to($('.modal-container') , 0.3, {autoAlpha: 0, onComplete: function() {
+				this.modal.removeClass('open');
+			}.bind(this)
+		})
 		TweenMax.to(camera, duration, {fov: fovMin, onComplete: function() {
 			blocked = false;
 		}});
@@ -454,7 +457,10 @@ Modal.prototype = {
 			this.activeSlide = hotspot.slides[this.offset];
 			this.setModalValues(this.activeSlide);
 		}
-		TweenMax.to($('.modal-container') , 0.3, {autoAlpha: 1})
+		TweenMax.to($('.modal-container') , 0.3, {autoAlpha: 1});
+		setTimeout(() => {
+			this.modal.addClass('open');
+		}, 200)
 		TweenMax.to(camera, duration, {fov: fovMax, onComplete: () => {
 			$('.modal-container').css({top: 0})
 			$(document).on('keydown', (event) => {
