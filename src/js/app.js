@@ -274,10 +274,28 @@ function loadTick() {
 	}
 }
 
+// function preloadAudio(url) {
+// 	totalFiles += 1;
+// 	let audio = new Audio();
+// 	audio.addEventListener('canplaythrough', () => {
+// 		filesLoaded += 1;
+// 		loadTick();
+// 	}, false);
+// 	audio.src = url;
+// 	return audio;
+// }
+
+
 function preloadAudio(url) {
 	totalFiles += 1;
 	var audio = new Audio();
 	audio.addEventListener('canplaythrough', function () {
+		console.log("CALLED");
+		filesLoaded += 1;
+		loadTick();
+	}, false);
+	audio.addEventListener('error', function () {
+		console.log("ERROR", error);
 		filesLoaded += 1;
 		loadTick();
 	}, false);
@@ -304,7 +322,9 @@ function preloadImages() {
 
 if (showLoader) {
 	preloadImages();
-	audio = preloadAudio('audio/AC-Trailer.mp3');
+	audio.src = 'audio/bg-music.mp3';
+	audio.load();
+	// audio = preloadAudio('audio/bg-music.mp3');
 	THREE.DefaultLoadingManager.onProgress = function (item, loaded, total) {
 		if (loaded === 1) totalFiles += total;
 		filesLoaded += 1;
@@ -1161,7 +1181,7 @@ function update() {
 	// controls.update()
 
 	// spotLightHelper.update()
-	stats.update();
+	// stats.update()
 	delta = clock.getDelta();
 
 	// evolveSmoke();
