@@ -251,6 +251,7 @@ var playAudio = true;
 // var audioLoader = new THREE.AudioLoader();
 // audioLoader.load(audioFile);
 
+
 var audio = void 0;
 var progressBar = $('.progress');
 var numAnim = new CountUp(percent, 0, 0, 0, 0.5, { suffix: '%' });
@@ -261,10 +262,15 @@ function loadTick() {
 	numAnim.update(percent);
 	progressBar.css('width', percent + '%');
 	if (percent === 100) {
-		TweenMax.to($('#preloader'), 750 / 1000, { delay: 550 / 1000, autoAlpha: 0, onComplete: function onComplete() {
-				// audio.volume = 0.5;
-				// audio.play();
-			} });
+		var button = $('.splash button');
+		TweenMax.to($('.info'), 550 / 1000, { autoAlpha: 0 });
+		TweenMax.to(button, 550 / 1000, { autoAlpha: 1 });
+		button.on('click', function () {
+			TweenMax.to($('#preloader'), 750 / 1000, { delay: 550 / 1000, autoAlpha: 0, onComplete: function onComplete() {
+					audio.volume = 0.5;
+					audio.play();
+				} });
+		});
 	}
 }
 
@@ -298,7 +304,7 @@ function preloadImages() {
 
 if (showLoader) {
 	preloadImages();
-	//audio = preloadAudio('audio/AC-Trailer.mp3');
+	audio = preloadAudio('audio/AC-Trailer.mp3');
 	THREE.DefaultLoadingManager.onProgress = function (item, loaded, total) {
 		if (loaded === 1) totalFiles += total;
 		filesLoaded += 1;
