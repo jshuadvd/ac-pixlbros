@@ -267,8 +267,7 @@ function loadTick() {
 		TweenMax.to(button, 550/1000, {autoAlpha: 1});
 		button.on('click', () => {
 			TweenMax.to($('#preloader'), 750/1000, {delay: 550/1000, autoAlpha: 0, onComplete: () => {
-				audio.volume = 0.5;
-				audio.play();
+				audioFiles.bgAudio.play();
 			}});
 		})
 	}
@@ -286,22 +285,23 @@ function loadTick() {
 // }
 
 
- function preloadAudio(url) {
-    totalFiles += 1;
-    let audio = new Audio();
-    audio.addEventListener('canplaythrough', () => {
-		console.log("CALLED");
-        filesLoaded += 1;
-        loadTick();
-    }, false);
-    audio.addEventListener('error', () => {
-		console.log("ERROR", error);
-        filesLoaded += 1;
-        loadTick();
-    }, false);
-    audio.src = url;
-    audio.load();
-    return audio;
+function createAudioSource(file) {
+	totalFiles += 1;
+	let audio = new Audio();
+	audio.addEventListener('canplaythrough', function() {
+		if(file.volume) {
+			this.volume = file.volume;
+		}
+		filesLoaded += 1;
+		loadTick();
+	}, false);
+	audio.addEventListener('error', () => {
+		filesLoaded += 1;
+		loadTick();
+	}, false);
+	audio.src = file.url;
+	audio.load();
+	return audio;
 }
 
 function preloadImages() {
@@ -317,9 +317,25 @@ function preloadImages() {
 	});
 }
 
+function preloadAudioFiles(files) {
+	console.log(audioFiles);
+	var obj = {};
+	Object.keys(files).forEach((key) => {
+		obj[key] = createAudioSource(files[key]);
+	});
+	return obj;
+}
+
+let audioFiles = {
+	bgAudio: {
+		url: 'audio/bg-music.mp3',
+		volume: 0.5
+	}
+}
+
 if(showLoader) {
 	preloadImages();
-	audio = preloadAudio('audio/bg-music.mp3');
+	audioFiles = preloadAudioFiles(audioFiles);
 	THREE.DefaultLoadingManager.onProgress = function ( item, loaded, total ) {
 		if(loaded === 1) totalFiles += total;
 		filesLoaded += 1;
@@ -698,10 +714,10 @@ function init() {
 function getUrlParams() {
 	var urlParams,
 		match,
-	    pl     = /\+/g,  // Regex for replacing addition symbol with a space
-	    search = /([^&=]+)=?([^&]*)/g,
-	    decode = function (s) { return decodeURIComponent(s.replace(pl, " ")); },
-	    query  = window.location.search.substring(1);
+		pl     = /\+/g,  // Regex for replacing addition symbol with a space
+		search = /([^&=]+)=?([^&]*)/g,
+		decode = function (s) { return decodeURIComponent(s.replace(pl, " ")); },
+		query  = window.location.search.substring(1);
 
 	urlParams = {};
 	while (match = search.exec(query))

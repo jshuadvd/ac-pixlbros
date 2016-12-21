@@ -267,8 +267,7 @@ function loadTick() {
 		TweenMax.to(button, 550 / 1000, { autoAlpha: 1 });
 		button.on('click', function () {
 			TweenMax.to($('#preloader'), 750 / 1000, { delay: 550 / 1000, autoAlpha: 0, onComplete: function onComplete() {
-					audio.volume = 0.5;
-					audio.play();
+					audioFiles.bgAudio.play();
 				} });
 		});
 	}
@@ -286,20 +285,21 @@ function loadTick() {
 // }
 
 
-function preloadAudio(url) {
+function createAudioSource(file) {
 	totalFiles += 1;
 	var audio = new Audio();
 	audio.addEventListener('canplaythrough', function () {
-		console.log("CALLED");
+		if (file.volume) {
+			this.volume = file.volume;
+		}
 		filesLoaded += 1;
 		loadTick();
 	}, false);
 	audio.addEventListener('error', function () {
-		console.log("ERROR", error);
 		filesLoaded += 1;
 		loadTick();
 	}, false);
-	audio.src = url;
+	audio.src = file.url;
 	audio.load();
 	return audio;
 }
@@ -321,9 +321,25 @@ function preloadImages() {
 	});
 }
 
+function preloadAudioFiles(files) {
+	console.log(audioFiles);
+	var obj = {};
+	Object.keys(files).forEach(function (key) {
+		obj[key] = createAudioSource(files[key]);
+	});
+	return obj;
+}
+
+var audioFiles = {
+	bgAudio: {
+		url: 'audio/bg-music.mp3',
+		volume: 0.5
+	}
+};
+
 if (showLoader) {
 	preloadImages();
-	audio = preloadAudio('audio/bg-music.mp3');
+	audioFiles = preloadAudioFiles(audioFiles);
 	THREE.DefaultLoadingManager.onProgress = function (item, loaded, total) {
 		if (loaded === 1) totalFiles += total;
 		filesLoaded += 1;
