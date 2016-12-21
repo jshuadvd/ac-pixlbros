@@ -300,6 +300,7 @@ function loadTick() {
         loadTick();
     }, false);
     audio.src = url;
+    audio.load();
     return audio;
 }
 
@@ -318,9 +319,7 @@ function preloadImages() {
 
 if(showLoader) {
 	preloadImages();
- 	audio.src = 'audio/bg-music.mp3';
-	audio.load();
-	// audio = preloadAudio('audio/bg-music.mp3');
+	audio = preloadAudio('audio/bg-music.mp3');
 	THREE.DefaultLoadingManager.onProgress = function ( item, loaded, total ) {
 		if(loaded === 1) totalFiles += total;
 		filesLoaded += 1;
