@@ -289,9 +289,6 @@ function createAudioSource(file) {
 	totalFiles += 1;
 	var audio = new Audio();
 	audio.addEventListener('canplaythrough', function () {
-		if (file.volume) {
-			this.volume = file.volume;
-		}
 		filesLoaded += 1;
 		loadTick();
 	}, false);
@@ -299,7 +296,9 @@ function createAudioSource(file) {
 		filesLoaded += 1;
 		loadTick();
 	}, false);
-	audio.src = file.url;
+	Object.keys(file).forEach(function (key) {
+		audio[key] = file[key];
+	});
 	audio.load();
 	return audio;
 }
@@ -332,8 +331,9 @@ function preloadAudioFiles(files) {
 
 var audioFiles = {
 	bgAudio: {
-		url: 'audio/bg-music.mp3',
-		volume: 0.5
+		src: 'audio/bg-music.mp3',
+		volume: 0.5,
+		loop: true
 	}
 };
 
@@ -560,11 +560,11 @@ $(document).ready(function () {
 	var container = offLine.parents('svg');
 	$('.sound').on('click', function () {
 		if (playAudio) {
-			audio.pause();
+			audioFiles.bgAudio.pause();
 			offLine.show();
 			container.attr('class', 'off');
 		} else {
-			audio.play();
+			audioFiles.bgAudio.play();
 			offLine.hide();
 			container.attr('class', '');
 		}
