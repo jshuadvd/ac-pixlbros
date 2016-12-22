@@ -241,7 +241,7 @@ let mouseVector = new THREE.Vector3();
 let currentHotspot;
 
 let touchDevice
-if (('ontouchstart' in window) || window.DocumentTouch && document instanceof DocumentTouch) { 
+if (('ontouchstart' in window) || window.DocumentTouch && document instanceof DocumentTouch) {
 	touchDevice = true;
 }
 
@@ -263,14 +263,12 @@ function loadTick() {
 	progressBar.css('width', `${percent}%`);
 	if(percent === 100) {
 		let button = $('.splash button');
-		button.on('mouseenter', () => {
-			playSound('rollover');
-		})
 		TweenMax.to($('.info'), 550/1000, {autoAlpha: 0});
 		TweenMax.to(button, 550/1000, {autoAlpha: 1});
 		button.on('click', () => {
 			TweenMax.to($('#preloader'), 750/1000, {delay: 550/1000, autoAlpha: 0, onComplete: () => {
-				audioFiles.bgAudio.play();
+				audio.volume = 0.5;
+				audio.play();
 			}});
 		})
 	}
@@ -288,22 +286,22 @@ function loadTick() {
 // }
 
 
-function createAudioSource(file) {
-	totalFiles += 1;
-	let audio = new Audio();
-	audio.addEventListener('canplaythrough', function() {
-		filesLoaded += 1;
-		loadTick();
-	}, false);
-	audio.addEventListener('error', () => {
-		filesLoaded += 1;
-		loadTick();
-	}, false);
-	Object.keys(file).forEach((key) => {
-		audio[key] = file[key];
-	});
-	audio.load();
-	return audio;
+ function preloadAudio(url) {
+    totalFiles += 1;
+    let audio = new Audio();
+    audio.addEventListener('canplaythrough', () => {
+		console.log("CALLED");
+        filesLoaded += 1;
+        loadTick();
+    }, false);
+    audio.addEventListener('error', () => {
+		console.log("ERROR", error);
+        filesLoaded += 1;
+        loadTick();
+    }, false);
+    audio.src = url;
+    audio.load();
+    return audio;
 }
 
 function preloadImages() {
@@ -319,35 +317,9 @@ function preloadImages() {
 	});
 }
 
-function preloadAudioFiles(files) {
-	console.log(audioFiles);
-	var obj = {};
-	Object.keys(files).forEach((key) => {
-		obj[key] = createAudioSource(files[key]);
-	});
-	return obj;
-}
-
-let audioFiles = {
-	bgAudio: {
-		src: 'audio/bg-music.mp3',
-		volume: 0.5,
-		loop: true
-	},
-	close: {
-		src: 'audio/close.mp3'
-	},
-	open: {
-		src: 'audio/open.mp3'
-	},
-	rollover: {
-		src: 'audio/rollover.mp3'
-	}
-}
-
 if(showLoader) {
 	preloadImages();
-	audioFiles = preloadAudioFiles(audioFiles);
+	audio = preloadAudio('audio/bg-music.mp3');
 	THREE.DefaultLoadingManager.onProgress = function ( item, loaded, total ) {
 		if(loaded === 1) totalFiles += total;
 		filesLoaded += 1;
@@ -369,7 +341,6 @@ function setupButtons() {
 		$el.after(clone);
 	});
 	$('.button-outer').on('mouseenter', function() {
-		playSound('rollover');
 		var key = $(this).attr('key');
 		buttons[key].animate(1);
 	});
@@ -403,8 +374,10 @@ function Modal(hotspot) {
 	this.nextButton = this.modal.find('.next');
 	this.prevButton = this.modal.find('.prev');
 	this.controls = this.modal.find('.controls');
+	$('body').addClass('modal-open');
 	$('.modal-container .close').on('click', () => {
 		this.hide();
+		$('body').removeClass('modal-open');
 	});
 	$('.overlay').on('click', this.hide);
 	this.bindEvents();
@@ -413,12 +386,10 @@ function Modal(hotspot) {
 Modal.prototype = {
 	bindEvents() {
 		this.nextButton.on('click', () => {
-			playSound('rollover');
 			this.next();
 		});
 
 		this.prevButton.on('click', () => {
-			playSound('rollover');
 			this.prev();
 		});
 		this.facebookShare.on('click', () => {
@@ -492,7 +463,6 @@ Modal.prototype = {
 		showingModal = false;
 		this.controls.hide();
 		// pointerLock();
-		audioFiles.close.play();
 		TweenMax.to($('.modal-container') , 0.3, {autoAlpha: 0, onComplete: function() {
 				this.modal.removeClass('open');
 			}.bind(this)
@@ -501,7 +471,6 @@ Modal.prototype = {
 			blocked = false;
 		}});
 		$(document).off('keydown');
-		outlinePass.selectedObjects = [];
 	},
 	show(hotspot, subid) {
 		this.hotspot = hotspot;
@@ -518,7 +487,6 @@ Modal.prototype = {
 		}
 		TweenMax.to($('.modal-container') , 0.3, {autoAlpha: 1});
 		setTimeout(() => {
-			audioFiles.open.play();
 			this.modal.addClass('open');
 		}, 200)
 		TweenMax.to(camera, duration, {fov: fovMax, onComplete: () => {
@@ -526,7 +494,7 @@ Modal.prototype = {
 			$(document).on('keydown', (event) => {
 				if(event.keyCode === 27) {
 					modal.hide();
-				} 
+				}
 			});
 		}})
 	}
@@ -565,11 +533,11 @@ $(document).ready(function() {
 	let container = offLine.parents('svg');
 	$('.sound').on('click', () => {
 		if(playAudio) {
-			audioFiles.bgAudio.pause();
+			audio.pause();
 			offLine.show();
 			container.attr('class', 'off');
 		} else {
-			audioFiles.bgAudio.play();
+			audio.play();
 			offLine.hide();
 			container.attr('class', '');
 		}
@@ -995,11 +963,6 @@ function addSelectedObject(object) {
 	selectedObjects.push(object);
 }
 
-function playSound(key) {
-	let sound = audioFiles[key].cloneNode();
-	sound.play();
-}
-
 function checkRaycasterCollisions(x, y) {
 
 	var mouse3D = new THREE.Vector3( ( x / window.innerWidth ) * 2 - 1,
@@ -1014,7 +977,6 @@ function checkRaycasterCollisions(x, y) {
 			if(selectedObjects.indexOf(target) === -1) {
 				$('body').addClass('hot');
 				addSelectedObject(target);
-				playSound('rollover');
 			}
 		});
 	} else {
@@ -1128,7 +1090,7 @@ function rotateHotspots() {
 }
 
 function onDocumentMouseMove(event) {
-	if(freeze || showingModal) return;
+	if(freeze) return;
 	checkRaycasterCollisions(event.clientX, event.clientY);
 	if(isUserInteracting && !showingModal) {
 		let deltaX = mouseStartX - event.clientX;
