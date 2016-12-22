@@ -1035,13 +1035,13 @@ function checkRaycasterCollisions(x, y) {
 		items.forEach((item) => {
 			let target = item.object.parent.children[0]
 			if(selectedObjects.indexOf(target) === -1) {
-				$('body').addClass('hot');
+				// $('body').addClass('hot');
 				addSelectedObject(target);
 				playSound('rollover');
 			}
 		});
 	} else {
-		$('body').removeClass('hot');
+		// $('body').removeClass('hot');
 		selectedObjects = [];
 	}
 	outlinePass.selectedObjects = selectedObjects;
