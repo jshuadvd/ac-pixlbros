@@ -77,7 +77,7 @@ var hotspotObjects = [{
 		title: 'Assassin\'s Hidden Blade',
 		image: 'textures/weapons/assassins-hidden-blade.png',
 		key: 'assassins-hidden-blade',
-		description: 'this simple leather vambrace as an essential piece of every assassin’s outfit. theblade-concealing armor both proects from attacks and gives the assassin access to a deadly hidden blade with a simple flick of the wrist.'
+		description: 'this simple leather vambrace as an essential piece of every assassin’s outfit. the blade-concealing armor both proects from attacks and gives the assassin access to a deadly hidden blade with a simple flick of the wrist.'
 	}],
 	lon: 19,
 	position: [450, 0, 150]
@@ -267,7 +267,8 @@ function loadTick() {
 		TweenMax.to(button, 550 / 1000, { autoAlpha: 1 });
 		button.on('click', function () {
 			TweenMax.to($('#preloader'), 750 / 1000, { delay: 550 / 1000, autoAlpha: 0, onComplete: function onComplete() {
-					audioFiles.bgAudio.play();
+					audio.volume = 0.5;
+					audio.play();
 				} });
 		});
 	}
@@ -285,20 +286,20 @@ function loadTick() {
 // }
 
 
-function createAudioSource(file) {
+function preloadAudio(url) {
 	totalFiles += 1;
 	var audio = new Audio();
 	audio.addEventListener('canplaythrough', function () {
+		console.log("CALLED");
 		filesLoaded += 1;
 		loadTick();
 	}, false);
 	audio.addEventListener('error', function () {
+		console.log("ERROR", error);
 		filesLoaded += 1;
 		loadTick();
 	}, false);
-	Object.keys(file).forEach(function (key) {
-		audio[key] = file[key];
-	});
+	audio.src = url;
 	audio.load();
 	return audio;
 }
@@ -320,26 +321,9 @@ function preloadImages() {
 	});
 }
 
-function preloadAudioFiles(files) {
-	console.log(audioFiles);
-	var obj = {};
-	Object.keys(files).forEach(function (key) {
-		obj[key] = createAudioSource(files[key]);
-	});
-	return obj;
-}
-
-var audioFiles = {
-	bgAudio: {
-		src: 'audio/bg-music.mp3',
-		volume: 0.5,
-		loop: true
-	}
-};
-
 if (showLoader) {
 	preloadImages();
-	audioFiles = preloadAudioFiles(audioFiles);
+	audio = preloadAudio('audio/bg-music.mp3');
 	THREE.DefaultLoadingManager.onProgress = function (item, loaded, total) {
 		if (loaded === 1) totalFiles += total;
 		filesLoaded += 1;
@@ -378,7 +362,7 @@ var buttons = {};
 
 // let audio = document.createElement('audio');
 // let source = document.createElement('source');
-// source.src = 'audio/AC-Trailer.mp3';
+// source.src = 'audio/bg-music.mp3';
 // audio.appendChild(source);
 // audio.play();
 
@@ -395,8 +379,10 @@ function Modal(hotspot) {
 	this.nextButton = this.modal.find('.next');
 	this.prevButton = this.modal.find('.prev');
 	this.controls = this.modal.find('.controls');
+	$('body').addClass('modal-open');
 	$('.modal-container .close').on('click', function () {
 		_this.hide();
+		$('body').removeClass('modal-open');
 	});
 	$('.overlay').on('click', this.hide);
 	this.bindEvents();
@@ -560,11 +546,11 @@ $(document).ready(function () {
 	var container = offLine.parents('svg');
 	$('.sound').on('click', function () {
 		if (playAudio) {
-			audioFiles.bgAudio.pause();
+			audio.pause();
 			offLine.show();
 			container.attr('class', 'off');
 		} else {
-			audioFiles.bgAudio.play();
+			audio.play();
 			offLine.hide();
 			container.attr('class', '');
 		}
@@ -609,7 +595,7 @@ function init() {
 	geometry.scale(-1, 1, 1);
 
 	var material = new THREE.MeshBasicMaterial({
-		map: new THREE.TextureLoader().load('textures/AnimusPanorama_V4.jpg'),
+		map: new THREE.TextureLoader().load('textures/AnimusPanorama_v4.jpg'),
 		fog: true
 	});
 
@@ -833,19 +819,19 @@ function buildHotspots() {
 // 	let light = new THREE.DirectionalLight(0xffffff, 1.5);
 // 	light.position.set(-1, 0, 1);
 // 	scene.add(light);
-// 	
+//
 // 	let directionalLight = new THREE.DirectionalLight(0xffffff);
 // 	directionalLight.position.set(1, 1, 1).normalize();
 // 	scene.add(directionalLight);
-//   
+//
 // 	let smokeTexture = THREE.ImageUtils.loadTexture('https://s3-us-west-2.amazonaws.com/s.cdpn.io/95637/Smoke-Element.png');
 // 	let smokeMaterial = new THREE.MeshLambertMaterial({
-// 		color: 0xffffff, 
-// 		map: smokeTexture, 
+// 		color: 0xffffff,
+// 		map: smokeTexture,
 // 		transparent: true
 // 	});
 // 	let smokeGeo = new THREE.PlaneGeometry(500, 500);
-// 	 
+//
 // 	for (let p = 0; p < 150; p++) {
 // 		let particle = new THREE.Mesh(smokeGeo,smokeMaterial);
 // 		particle.position.set(Math.random()*500-250,Math.random()*500-250,Math.random()*1000-100);
@@ -865,48 +851,48 @@ function buildHotspots() {
 
 // function initRain() {
 // 	rainGeometry = new THREE.Geometry();
-// 
+//
 // 	let sprite1 = THREE.ImageUtils.loadTexture( "textures/rain1.png" ),
 // 	sprite2 = THREE.ImageUtils.loadTexture( "textures/rain2.png" ),
 // 	sprite3 = THREE.ImageUtils.loadTexture( "textures/rain3.png" ),
 // 	sprite4 = THREE.ImageUtils.loadTexture( "textures/rain4.png" ),
 // 	sprite5 = THREE.ImageUtils.loadTexture( "textures/rain5.png" );
-// 
+//
 // 	for (let i = 0; i < rainDensity; i++ ) {
 // 		let vertex = new THREE.Vector3();
 // 		vertex.x = Math.random() * 2000 - 1000;
 // 		vertex.y = Math.random() * 4000 + 500;
 // 		vertex.z = Math.random() * 2000 - 1000;
-// 
+//
 // 		rainGeometry.vertices.push( vertex );
 // 	}
-// 
+//
 // 	parameters = [ [ [1.0, 0.2, 0.5], 	sprite2, 20 ],
 // 				   [ [0.95, 0.1, 0.5], 	sprite3, 15 ],
 // 				   [ [0.90, 0.05, 0.5], sprite1, 10 ],
 // 				   [ [0.85, 0, 0.5], 	sprite5, 8 ],
 // 				   [ [0.80, 0, 0.5], 	sprite4, 5 ],
 // 				   ];
-// 
+//
 // 	for (let i = 0; i < parameters.length; i++ ) {
-// 
+//
 // 		color  = parameters[i][0];
 // 		sprite = parameters[i][1];
 // 		size   = parameters[i][2];
-// 
-// 		materials[i] = new THREE.PointCloudMaterial({ 
-// 			size: size, 
-// 			map: sprite, 
-// 			blending: THREE.AdditiveBlending, 
-// 			depthTest: false, 
-// 			transparent : true 
+//
+// 		materials[i] = new THREE.PointCloudMaterial({
+// 			size: size,
+// 			map: sprite,
+// 			blending: THREE.AdditiveBlending,
+// 			depthTest: false,
+// 			transparent : true
 // 		});
 // 		materials[i].color.setHSL( color[0], color[1], color[2] );
-// 
+//
 // 		particles = new THREE.PointCloud( rainGeometry, materials[i] );
-// 
+//
 // 		particles.rotation.z = Math.random() * 0.20 + 0.10;
-// 
+//
 // 		scene.add( particles );
 // 	}
 // }
@@ -914,18 +900,18 @@ function buildHotspots() {
 // function animateRain() {
 // 	// console.log("I'M ANIMATING THINGS");
 // 	let time = Date.now() * 0.00005;
-// 
+//
 // 	for (let i = 0; i < scene.children.length; i++ ) {
-// 
+//
 // 		let object = scene.children[i];
-// 		
+//
 // 		if ( object instanceof THREE.PointCloud ) {
 // 			// Not getting into the log here
 // 			console.log("I'M ANIMATING THINGS");
 // 			if (i == 0) {
 // 				object.translateY(-10);
 // 			}
-// 
+//
 // 			if (i > 0) {
 // 				if (layer)
 // 					object.translateY(-10);
@@ -933,7 +919,7 @@ function buildHotspots() {
 // 					if(scene.children[i-1].position.y < ((window.innerHeight * -1) / 2 - 1000))
 // 						object.translateY(-10);
 // 			}
-// 
+//
 // 			if ((object.position.y < window.innerHeight * -1 * 5)) {
 // 					object.position.y = 500;
 // 					object.position.x = 0;
@@ -941,14 +927,14 @@ function buildHotspots() {
 // 			}
 // 		}
 // 	}
-// 
+//
 // 	for (let i = 0; i < materials.length; i++ ) {
-// 
+//
 // 		color = parameters[i][0];
-// 
+//
 // 		h = ( 360 * ( color[0] + time ) % 360 ) / 360;
 // 		materials[i].color.setHSL( h, color[1], color[2] );
-// 
+//
 // 	}
 // }
 
@@ -1276,11 +1262,11 @@ TweenLite.ticker.addEventListener("tick", render);
 //         !event.gamma ? 0 : event.gamma * deg2rad,
 //         !event.alpha ? 0 : event.alpha * deg2rad
 //     );
-// 	
+//
 // 	console.log(event.beta * deg2rad)
 // 	console.log(event.gamma * deg2rad)
 // 	console.log(event.alpha * deg2rad)
-// 	
+//
 //         // console.log("Do Stuff With Device", event);
 //         // ctx.clearRect(0, 0, c.width, c.height);
 //         // ctx.fillStyle = "#FF7777";
@@ -1291,12 +1277,12 @@ TweenLite.ticker.addEventListener("tick", render);
 //         // ctx.lineTo(210, 75);
 //         // ctx.arc(180, 75, 60, 0, event.alpha * Math.PI / 180);
 //         // ctx.fill();
-// 		// 
+// 		//
 //         // ctx.fillStyle = "#FF6600";
 //         // ctx.fillText("Beta: " + Math.round(event.beta), 10, 140);
 //         // ctx.beginPath();
 //         // ctx.fillRect(180, 150, event.beta, 90);
-// 		// 
+// 		//
 //         // ctx.fillStyle = "#FF0000";
 //         // ctx.fillText("Gamma: " + Math.round(event.gamma), 10, 270);
 //         // ctx.beginPath();
@@ -1311,7 +1297,7 @@ function setupControllerEventHandlers(controls) {
 	var controllerSelectorEl = document.querySelector('#controllertype');
 	var compassCalibrationPopupEl = document.querySelector('#calibrate-compass-popup');
 
-	// Listen for manual interaction (zoom OR rotate)	
+	// Listen for manual interaction (zoom OR rotate)
 	controls.addEventListener('userinteractionstart', function () {
 		renderer.domElement.style.cursor = 'move';
 		controllerSelectorEl.style.display = 'none';
@@ -1322,7 +1308,7 @@ function setupControllerEventHandlers(controls) {
 		controllerSelectorEl.style.display = 'inline-block';
 	});
 
-	// Listen for manual rotate interaction	
+	// Listen for manual rotate interaction
 	controls.addEventListener('rotatestart', function () {
 		controllerEl.innerText = 'Manual Rotate';
 	});
