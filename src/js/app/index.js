@@ -264,8 +264,7 @@ function loadTick() {
 	if(percent === 100) {
 		let button = $('.splash button');
 		button.on('mouseenter', () => {
-			let rollover = audioFiles.rollover.cloneNode();
-			rollover.play();
+			playSound('rollover');
 		})
 		TweenMax.to($('.info'), 550/1000, {autoAlpha: 0});
 		TweenMax.to(button, 550/1000, {autoAlpha: 1});
@@ -370,8 +369,7 @@ function setupButtons() {
 		$el.after(clone);
 	});
 	$('.button-outer').on('mouseenter', function() {
-		let rollover = audioFiles.rollover.cloneNode();
-		rollover.play();
+		playSound('rollover');
 		var key = $(this).attr('key');
 		buttons[key].animate(1);
 	});
@@ -415,14 +413,12 @@ function Modal(hotspot) {
 Modal.prototype = {
 	bindEvents() {
 		this.nextButton.on('click', () => {
-			let rollover = audioFiles.rollover.cloneNode();
-			rollover.play();
+			playSound('rollover');
 			this.next();
 		});
 
 		this.prevButton.on('click', () => {
-			let rollover = audioFiles.rollover.cloneNode();
-			rollover.play();
+			playSound('rollover');
 			this.prev();
 		});
 		this.facebookShare.on('click', () => {
@@ -1000,6 +996,11 @@ function addSelectedObject(object) {
 	selectedObjects.push(object);
 }
 
+function playSound(key) {
+	let sound = audioFiles[key].cloneNode();
+	sound.play();
+}
+
 function checkRaycasterCollisions(x, y) {
 
 	var mouse3D = new THREE.Vector3( ( x / window.innerWidth ) * 2 - 1,
@@ -1014,8 +1015,7 @@ function checkRaycasterCollisions(x, y) {
 			if(selectedObjects.indexOf(target) === -1) {
 				$('body').addClass('hot');
 				addSelectedObject(target);
-				let rollover = audioFiles.rollover.cloneNode();
-				rollover.play();
+				playSound('rollover');
 			}
 		});
 	} else {
