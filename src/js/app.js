@@ -131,7 +131,7 @@ var hotspotObjects = [{
 	lon: 153,
 	slides: [{
 		title: 'Bow de silencio',
-		image: 'textures/weapons/bow-de-silencio.png',
+		image: 'textures/weapons/bow-de-silencio-revised.png',
 		key: 'bow-de-silencio',
 		description: 'your enemy will hear naught but the wind rustling through the trees as you release the string on this silent but deadly longbow. using arrows forged from strong spanish oak, this stealth weapon is a key in every assassin’s arsenal.'
 	}, {
