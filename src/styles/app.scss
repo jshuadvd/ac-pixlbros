@@ -110,11 +110,11 @@ html, body {
 		width: 40px;
 		color: #fff;
 	}
-	svg {
-		fill: #fff;
-		width: 50%;
-		margin-bottom: 20px;
-	}
+	// svg {
+	// 	fill: #fff;
+	// 	width: 50%;
+	// 	margin-bottom: 20px;
+	// }
 }
 #blocker {
 	position: absolute;
@@ -642,10 +642,16 @@ canvas {
 	max-width: 1000px;
 	background-repeat: no-repeat;
 	margin: 0 auto;
+
+	svg {
+		max-width: 275px;
+		fill: #fff;
+		width: 30%;
+	}
 	
 	path {
 		fill: none;
-		stroke: #fff;
+		stroke: #4f5f71;
 	}
 	text {
 		font-family: 'Trajan W01 Regular';
@@ -661,7 +667,8 @@ canvas {
 		&:before {
 			content: "";
 			display: block;
-			height: 60%;
+			padding-top: 53.086419753086%;
+			// height: 60%;
 		}
 	}
 	.button {
@@ -776,6 +783,9 @@ canvas {
   .logo {
     width: 130px;
   }
+  .splash svg {
+  	width: 50%;
+  }
   h1 {
     transform: rotate(-90deg);
     width: 100%;
@@ -887,7 +897,7 @@ canvas {
   	.text{
 		background-image: url(../textures/AC_360_LoadingScreenCopy_Mobile.png);
 		&:before {
-			padding-top: 0;
+			padding-top: 87.602880658436%;
 		}
   	}
   	button {
