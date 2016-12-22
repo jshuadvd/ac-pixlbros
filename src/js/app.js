@@ -353,7 +353,7 @@ var audioFiles = {
 		src: 'audio/open.mp3'
 	},
 	rollover: {
-		src: 'audio/rollover.mp3'
+		src: 'audio/rollover.wav'
 	}
 };
 
