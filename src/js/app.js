@@ -263,6 +263,10 @@ function loadTick() {
 	progressBar.css('width', percent + '%');
 	if (percent === 100) {
 		var button = $('.splash button');
+		button.on('mouseenter', function () {
+			var rollover = audioFiles.rollover.cloneNode();
+			rollover.play();
+		});
 		TweenMax.to($('.info'), 550 / 1000, { autoAlpha: 0 });
 		TweenMax.to(button, 550 / 1000, { autoAlpha: 1 });
 		button.on('click', function () {
@@ -334,6 +338,15 @@ var audioFiles = {
 		src: 'audio/bg-music.mp3',
 		volume: 0.5,
 		loop: true
+	},
+	close: {
+		src: 'audio/close.mp3'
+	},
+	open: {
+		src: 'audio/open.mp3'
+	},
+	rollover: {
+		src: 'audio/rollover.mp3'
 	}
 };
 
@@ -361,6 +374,8 @@ function setupButtons() {
 		$el.after(clone);
 	});
 	$('.button-outer').on('mouseenter', function () {
+		var rollover = audioFiles.rollover.cloneNode();
+		rollover.play();
 		var key = $(this).attr('key');
 		buttons[key].animate(1);
 	});
@@ -407,10 +422,14 @@ Modal.prototype = {
 		var _this2 = this;
 
 		this.nextButton.on('click', function () {
+			var rollover = audioFiles.rollover.cloneNode();
+			rollover.play();
 			_this2.next();
 		});
 
 		this.prevButton.on('click', function () {
+			var rollover = audioFiles.rollover.cloneNode();
+			rollover.play();
 			_this2.prev();
 		});
 		this.facebookShare.on('click', function () {
@@ -488,6 +507,7 @@ Modal.prototype = {
 		showingModal = false;
 		this.controls.hide();
 		// pointerLock();
+		audioFiles.close.play();
 		TweenMax.to($('.modal-container'), 0.3, { autoAlpha: 0, onComplete: function () {
 				this.modal.removeClass('open');
 			}.bind(this)
@@ -496,6 +516,7 @@ Modal.prototype = {
 				blocked = false;
 			} });
 		$(document).off('keydown');
+		outlinePass.selectedObjects = [];
 	},
 	show: function show(hotspot, subid) {
 		var _this5 = this;
@@ -503,6 +524,7 @@ Modal.prototype = {
 		this.hotspot = hotspot;
 		this.subid = subid;
 		this.offset = 0;
+		$('body').removeClass('hot');
 		// let urlParams = makeUrlParams(hotspot.id);
 		// history.replaceState(null, null, urlParams);
 		var duration = 550 / 1000;
@@ -514,6 +536,7 @@ Modal.prototype = {
 		}
 		TweenMax.to($('.modal-container'), 0.3, { autoAlpha: 1 });
 		setTimeout(function () {
+			audioFiles.open.play();
 			_this5.modal.addClass('open');
 		}, 200);
 		TweenMax.to(camera, duration, { fov: fovMax, onComplete: function onComplete() {
@@ -1008,6 +1031,8 @@ function checkRaycasterCollisions(x, y) {
 			if (selectedObjects.indexOf(target) === -1) {
 				$('body').addClass('hot');
 				addSelectedObject(target);
+				var rollover = audioFiles.rollover.cloneNode();
+				rollover.play();
 			}
 		});
 	} else {
@@ -1125,7 +1150,7 @@ function rotateHotspots() {
 }
 
 function onDocumentMouseMove(event) {
-	if (freeze) return;
+	if (freeze || showingModal) return;
 	checkRaycasterCollisions(event.clientX, event.clientY);
 	if (isUserInteracting && !showingModal) {
 		var deltaX = mouseStartX - event.clientX;

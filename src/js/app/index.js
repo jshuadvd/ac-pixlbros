@@ -263,6 +263,10 @@ function loadTick() {
 	progressBar.css('width', `${percent}%`);
 	if(percent === 100) {
 		let button = $('.splash button');
+		button.on('mouseenter', () => {
+			let rollover = audioFiles.rollover.cloneNode();
+			rollover.play();
+		})
 		TweenMax.to($('.info'), 550/1000, {autoAlpha: 0});
 		TweenMax.to(button, 550/1000, {autoAlpha: 1});
 		button.on('click', () => {
@@ -330,6 +334,15 @@ let audioFiles = {
 		src: 'audio/bg-music.mp3',
 		volume: 0.5,
 		loop: true
+	},
+	close: {
+		src: 'audio/close.mp3'
+	},
+	open: {
+		src: 'audio/open.mp3'
+	},
+	rollover: {
+		src: 'audio/rollover.mp3'
 	}
 }
 
@@ -357,6 +370,8 @@ function setupButtons() {
 		$el.after(clone);
 	});
 	$('.button-outer').on('mouseenter', function() {
+		let rollover = audioFiles.rollover.cloneNode();
+		rollover.play();
 		var key = $(this).attr('key');
 		buttons[key].animate(1);
 	});
@@ -400,10 +415,14 @@ function Modal(hotspot) {
 Modal.prototype = {
 	bindEvents() {
 		this.nextButton.on('click', () => {
+			let rollover = audioFiles.rollover.cloneNode();
+			rollover.play();
 			this.next();
 		});
 
 		this.prevButton.on('click', () => {
+			let rollover = audioFiles.rollover.cloneNode();
+			rollover.play();
 			this.prev();
 		});
 		this.facebookShare.on('click', () => {
@@ -477,6 +496,7 @@ Modal.prototype = {
 		showingModal = false;
 		this.controls.hide();
 		// pointerLock();
+		audioFiles.close.play();
 		TweenMax.to($('.modal-container') , 0.3, {autoAlpha: 0, onComplete: function() {
 				this.modal.removeClass('open');
 			}.bind(this)
@@ -485,11 +505,13 @@ Modal.prototype = {
 			blocked = false;
 		}});
 		$(document).off('keydown');
+		outlinePass.selectedObjects = [];
 	},
 	show(hotspot, subid) {
 		this.hotspot = hotspot;
 		this.subid = subid;
 		this.offset = 0;
+		$('body').removeClass('hot');
 		// let urlParams = makeUrlParams(hotspot.id);
 		// history.replaceState(null, null, urlParams);
 		let duration = 550/1000;
@@ -501,6 +523,7 @@ Modal.prototype = {
 		}
 		TweenMax.to($('.modal-container') , 0.3, {autoAlpha: 1});
 		setTimeout(() => {
+			audioFiles.open.play();
 			this.modal.addClass('open');
 		}, 200)
 		TweenMax.to(camera, duration, {fov: fovMax, onComplete: () => {
@@ -991,6 +1014,8 @@ function checkRaycasterCollisions(x, y) {
 			if(selectedObjects.indexOf(target) === -1) {
 				$('body').addClass('hot');
 				addSelectedObject(target);
+				let rollover = audioFiles.rollover.cloneNode();
+				rollover.play();
 			}
 		});
 	} else {
@@ -1104,7 +1129,7 @@ function rotateHotspots() {
 }
 
 function onDocumentMouseMove(event) {
-	if(freeze) return;
+	if(freeze || showingModal) return;
 	checkRaycasterCollisions(event.clientX, event.clientY);
 	if(isUserInteracting && !showingModal) {
 		let deltaX = mouseStartX - event.clientX;
