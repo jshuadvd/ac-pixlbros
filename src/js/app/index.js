@@ -498,7 +498,7 @@ Modal.prototype = {
 		showingModal = false;
 		this.controls.hide();
 		// pointerLock();
-		audioFiles.close.play();
+		playSound('close');
 		TweenMax.to($('.modal-container') , 0.3, {autoAlpha: 0, onComplete: function() {
 				this.modal.removeClass('open');
 			}.bind(this)
@@ -524,7 +524,7 @@ Modal.prototype = {
 		}
 		TweenMax.to($('.modal-container') , 0.3, {autoAlpha: 1});
 		setTimeout(() => {
-			audioFiles.open.play();
+			playSound('open');
 			this.modal.addClass('open');
 		}, 200)
 		TweenMax.to(camera, duration, {fov: fovMax, onComplete: () => {
@@ -543,6 +543,14 @@ modal.bindEvents();
 
 
 $(document).ready(function() {
+
+	$(window).blur( () => {
+		audioFiles.bgAudio.pause();
+	});
+
+	$(window).focus( () => {
+		if(playAudio) audioFiles.bgAudio.play();
+	});
 
 	splashButton = new ProgressBar.Path($('.splash .outer-path').get(0), {
 		easing: 'easeInOut',
@@ -1009,6 +1017,7 @@ function addSelectedObject(object) {
 }
 
 function playSound(key) {
+	if(!playAudio) return;
 	let sound = audioFiles[key].cloneNode();
 	sound.play();
 }
