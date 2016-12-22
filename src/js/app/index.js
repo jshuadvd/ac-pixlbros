@@ -517,6 +517,7 @@ Modal.prototype = {
 		// history.replaceState(null, null, urlParams);
 		let duration = 550/1000;
 		showingModal = true;
+		$('body').removeClass('hot');
 		if(hotspot.slides && hotspot.slides.length > 0) {
 			if(hotspot.slides.length > 1) this.controls.fadeIn();
 			this.activeSlide = hotspot.slides[this.offset];
