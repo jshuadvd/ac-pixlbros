@@ -642,6 +642,16 @@ canvas {
 	max-width: 1000px;
 	background-repeat: no-repeat;
 	margin: 0 auto;
+	
+	path {
+		fill: none;
+		stroke: #fff;
+	}
+	text {
+		font-family: 'Trajan W01 Regular';
+		font-size: 20px;
+	}
+
 	.text {
 		background-image: url(../textures/AC_360_LoadingScreenCopy_Desktop.png);
 		background-size: contain;
@@ -654,14 +664,20 @@ canvas {
 			height: 60%;
 		}
 	}
-	button {
+	.button {
 		opacity: 0;
-		outline: none;
-		transition: all 350ms ease-in-out;
 		&:hover {
-			transform: scale(1.1)
+			cursor: pointer;
 		}
 	}
+	// button {
+	// 	opacity: 0;
+	// 	outline: none;
+	// 	transition: all 350ms ease-in-out;
+	// 	&:hover {
+	// 		transform: scale(1.1)
+	// 	}
+	// }
 }
 
 .enter {

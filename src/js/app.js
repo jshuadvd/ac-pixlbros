@@ -250,7 +250,7 @@ var showLoader = true;
 var playAudio = true;
 // var audioLoader = new THREE.AudioLoader();
 // audioLoader.load(audioFile);
-
+var splashButton = void 0;
 
 var audio = void 0;
 var progressBar = $('.progress');
@@ -262,17 +262,25 @@ function loadTick() {
 	numAnim.update(percent);
 	progressBar.css('width', percent + '%');
 	if (percent === 100) {
-		var button = $('.splash button');
-		button.on('mouseenter', function () {
-			playSound('rollover');
-		});
-		TweenMax.to($('.info'), 550 / 1000, { autoAlpha: 0 });
-		TweenMax.to(button, 550 / 1000, { autoAlpha: 1 });
-		button.on('click', function () {
-			TweenMax.to($('#preloader'), 750 / 1000, { delay: 550 / 1000, autoAlpha: 0, onComplete: function onComplete() {
-					audioFiles.bgAudio.play();
-				} });
-		});
+		(function () {
+			var button = $('.splash .button');
+			TweenMax.to($('.info'), 550 / 1000, { autoAlpha: 0 });
+			TweenMax.to(button, 550 / 1000, { autoAlpha: 1, delay: 600 / 1000, onComplete: function onComplete() {
+					button.on('mouseenter', function () {
+						splashButton.animate(1);
+						playSound('rollover');
+					});
+					button.on('mouseleave', function () {
+						splashButton.set(0);
+					});
+				}
+			});
+			button.on('click', function () {
+				TweenMax.to($('#preloader'), 750 / 1000, { delay: 550 / 1000, autoAlpha: 0, onComplete: function onComplete() {
+						audioFiles.bgAudio.play();
+					} });
+			});
+		})();
 	}
 }
 
@@ -548,6 +556,11 @@ var modal = new Modal();
 modal.bindEvents();
 
 $(document).ready(function () {
+
+	splashButton = new ProgressBar.Path($('.splash .outer-path').get(0), {
+		easing: 'easeInOut',
+		duration: 500
+	});
 
 	$('.button-outer').each(function (index, el) {
 		var $el = $(el);

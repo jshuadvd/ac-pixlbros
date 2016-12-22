@@ -249,7 +249,7 @@ let showLoader = true;
 let playAudio = true;
 // var audioLoader = new THREE.AudioLoader();
 // audioLoader.load(audioFile);
-
+let splashButton;
 
 
 let audio;
@@ -262,12 +262,18 @@ function loadTick() {
 	numAnim.update(percent);
 	progressBar.css('width', `${percent}%`);
 	if(percent === 100) {
-		let button = $('.splash button');
-		button.on('mouseenter', () => {
-			playSound('rollover');
-		})
+		let button = $('.splash .button');
 		TweenMax.to($('.info'), 550/1000, {autoAlpha: 0});
-		TweenMax.to(button, 550/1000, {autoAlpha: 1});
+		TweenMax.to(button, 550/1000, {autoAlpha: 1, delay: 600/1000, onComplete: () => {
+				button.on('mouseenter', () => {
+					splashButton.animate(1);
+					playSound('rollover');
+				});
+				button.on('mouseleave', () => {
+					splashButton.set(0);
+				});
+			}
+		});
 		button.on('click', () => {
 			TweenMax.to($('#preloader'), 750/1000, {delay: 550/1000, autoAlpha: 0, onComplete: () => {
 				audioFiles.bgAudio.play();
@@ -534,7 +540,14 @@ Modal.prototype = {
 let modal = new Modal();
 modal.bindEvents();
 
+
+
 $(document).ready(function() {
+
+	splashButton = new ProgressBar.Path($('.splash .outer-path').get(0), {
+		easing: 'easeInOut',
+		duration: 500
+	});
 
 	$('.button-outer').each((index, el) => {
 		var $el = $(el);
