@@ -649,14 +649,14 @@ canvas {
 	}
 	text {
 		font-family: 'Trajan W01 Regular';
-		font-size: 20px;
+		font-size: 18.5px;
 	}
 
 	.text {
 		background-image: url(../textures/AC_360_LoadingScreenCopy_Desktop.png);
 		background-size: contain;
 		background-repeat: no-repeat;
-    background-position: center;
+		background-position: center;
 		width: 100%;
 		&:before {
 			content: "";
