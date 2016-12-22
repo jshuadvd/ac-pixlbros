@@ -263,12 +263,14 @@ function loadTick() {
 	progressBar.css('width', percent + '%');
 	if (percent === 100) {
 		var button = $('.splash button');
+		button.on('mouseenter', function () {
+			playSound('rollover');
+		});
 		TweenMax.to($('.info'), 550 / 1000, { autoAlpha: 0 });
 		TweenMax.to(button, 550 / 1000, { autoAlpha: 1 });
 		button.on('click', function () {
 			TweenMax.to($('#preloader'), 750 / 1000, { delay: 550 / 1000, autoAlpha: 0, onComplete: function onComplete() {
-					audio.volume = 0.5;
-					audio.play();
+					audioFiles.bgAudio.play();
 				} });
 		});
 	}
@@ -286,20 +288,20 @@ function loadTick() {
 // }
 
 
-function preloadAudio(url) {
+function createAudioSource(file) {
 	totalFiles += 1;
 	var audio = new Audio();
 	audio.addEventListener('canplaythrough', function () {
-		console.log("CALLED");
 		filesLoaded += 1;
 		loadTick();
 	}, false);
 	audio.addEventListener('error', function () {
-		console.log("ERROR", error);
 		filesLoaded += 1;
 		loadTick();
 	}, false);
-	audio.src = url;
+	Object.keys(file).forEach(function (key) {
+		audio[key] = file[key];
+	});
 	audio.load();
 	return audio;
 }
@@ -321,9 +323,35 @@ function preloadImages() {
 	});
 }
 
+function preloadAudioFiles(files) {
+	console.log(audioFiles);
+	var obj = {};
+	Object.keys(files).forEach(function (key) {
+		obj[key] = createAudioSource(files[key]);
+	});
+	return obj;
+}
+
+var audioFiles = {
+	bgAudio: {
+		src: 'audio/bg-music.mp3',
+		volume: 0.5,
+		loop: true
+	},
+	close: {
+		src: 'audio/close.mp3'
+	},
+	open: {
+		src: 'audio/open.mp3'
+	},
+	rollover: {
+		src: 'audio/rollover.mp3'
+	}
+};
+
 if (showLoader) {
 	preloadImages();
-	audio = preloadAudio('audio/bg-music.mp3');
+	audioFiles = preloadAudioFiles(audioFiles);
 	THREE.DefaultLoadingManager.onProgress = function (item, loaded, total) {
 		if (loaded === 1) totalFiles += total;
 		filesLoaded += 1;
@@ -345,6 +373,7 @@ function setupButtons() {
 		$el.after(clone);
 	});
 	$('.button-outer').on('mouseenter', function () {
+		playSound('rollover');
 		var key = $(this).attr('key');
 		buttons[key].animate(1);
 	});
@@ -379,10 +408,8 @@ function Modal(hotspot) {
 	this.nextButton = this.modal.find('.next');
 	this.prevButton = this.modal.find('.prev');
 	this.controls = this.modal.find('.controls');
-	$('body').addClass('modal-open');
 	$('.modal-container .close').on('click', function () {
 		_this.hide();
-		$('body').removeClass('modal-open');
 	});
 	$('.overlay').on('click', this.hide);
 	this.bindEvents();
@@ -393,10 +420,12 @@ Modal.prototype = {
 		var _this2 = this;
 
 		this.nextButton.on('click', function () {
+			playSound('rollover');
 			_this2.next();
 		});
 
 		this.prevButton.on('click', function () {
+			playSound('rollover');
 			_this2.prev();
 		});
 		this.facebookShare.on('click', function () {
@@ -474,6 +503,7 @@ Modal.prototype = {
 		showingModal = false;
 		this.controls.hide();
 		// pointerLock();
+		audioFiles.close.play();
 		TweenMax.to($('.modal-container'), 0.3, { autoAlpha: 0, onComplete: function () {
 				this.modal.removeClass('open');
 			}.bind(this)
@@ -482,6 +512,7 @@ Modal.prototype = {
 				blocked = false;
 			} });
 		$(document).off('keydown');
+		outlinePass.selectedObjects = [];
 	},
 	show: function show(hotspot, subid) {
 		var _this5 = this;
@@ -500,6 +531,7 @@ Modal.prototype = {
 		}
 		TweenMax.to($('.modal-container'), 0.3, { autoAlpha: 1 });
 		setTimeout(function () {
+			audioFiles.open.play();
 			_this5.modal.addClass('open');
 		}, 200);
 		TweenMax.to(camera, duration, { fov: fovMax, onComplete: function onComplete() {
@@ -546,11 +578,11 @@ $(document).ready(function () {
 	var container = offLine.parents('svg');
 	$('.sound').on('click', function () {
 		if (playAudio) {
-			audio.pause();
+			audioFiles.bgAudio.pause();
 			offLine.show();
 			container.attr('class', 'off');
 		} else {
-			audio.play();
+			audioFiles.bgAudio.play();
 			offLine.hide();
 			container.attr('class', '');
 		}
@@ -980,6 +1012,11 @@ function addSelectedObject(object) {
 	selectedObjects.push(object);
 }
 
+function playSound(key) {
+	var sound = audioFiles[key].cloneNode();
+	sound.play();
+}
+
 function checkRaycasterCollisions(x, y) {
 
 	var mouse3D = new THREE.Vector3(x / window.innerWidth * 2 - 1, -(y / window.innerHeight) * 2 + 1, 0.5);
@@ -994,6 +1031,7 @@ function checkRaycasterCollisions(x, y) {
 			if (selectedObjects.indexOf(target) === -1) {
 				$('body').addClass('hot');
 				addSelectedObject(target);
+				playSound('rollover');
 			}
 		});
 	} else {
@@ -1111,7 +1149,7 @@ function rotateHotspots() {
 }
 
 function onDocumentMouseMove(event) {
-	if (freeze) return;
+	if (freeze || showingModal) return;
 	checkRaycasterCollisions(event.clientX, event.clientY);
 	if (isUserInteracting && !showingModal) {
 		var deltaX = mouseStartX - event.clientX;
