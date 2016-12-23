@@ -274,6 +274,9 @@ function loadTick() {
 				});
 			}
 		});
+		button.on('touchstart', () => {
+			audioFiles.bgAudio.play();
+		});
 		button.on('click', () => {
 			TweenMax.to($('#preloader'), 750/1000, {delay: 550/1000, autoAlpha: 0, onComplete: () => {
 				audioFiles.bgAudio.play();
@@ -383,6 +386,10 @@ function setupButtons() {
 		var key = $(event.currentTarget).attr('key');
 		buttons[key].set(0);
 	});
+	// touch sounds
+	// $('.button-outer').on('touchstart', () => {
+	// 	playSound('rollover');
+	// });
 }
 
 var buttons = {};
