@@ -114,7 +114,7 @@ let hotspotObjects = [
 		slides: [
 			{
 				title: 'Bow de silencio',
-				image: 'textures/weapons/bow-de-silencio.png',
+				image: 'textures/weapons/bow-de-silencio-revised.png',
 				key: 'bow-de-silencio',
 				description: 'your enemy will hear naught but the wind rustling through the trees as you release the string on this silent but deadly longbow. using arrows forged from strong spanish oak, this stealth weapon is a key in every assassin’s arsenal.'
 			},
@@ -249,7 +249,7 @@ let showLoader = true;
 let playAudio = true;
 // var audioLoader = new THREE.AudioLoader();
 // audioLoader.load(audioFile);
-
+let splashButton;
 
 
 let audio;
@@ -262,12 +262,21 @@ function loadTick() {
 	numAnim.update(percent);
 	progressBar.css('width', `${percent}%`);
 	if(percent === 100) {
-		let button = $('.splash button');
-		button.on('mouseenter', () => {
-			playSound('rollover');
-		})
+		let button = $('.splash .button');
 		TweenMax.to($('.info'), 550/1000, {autoAlpha: 0});
-		TweenMax.to(button, 550/1000, {autoAlpha: 1});
+		TweenMax.to(button, 550/1000, {autoAlpha: 1, delay: 600/1000, onComplete: () => {
+				button.on('mouseenter', () => {
+					splashButton.animate(1);
+					playSound('rollover');
+				});
+				button.on('mouseleave', () => {
+					splashButton.set(0);
+				});
+			}
+		});
+		button.on('touchstart', () => {
+			audioFiles.bgAudio.play();
+		});
 		button.on('click', () => {
 			TweenMax.to($('#preloader'), 750/1000, {delay: 550/1000, autoAlpha: 0, onComplete: () => {
 				audioFiles.bgAudio.play();
@@ -341,7 +350,7 @@ let audioFiles = {
 		src: 'audio/open.mp3'
 	},
 	rollover: {
-		src: 'audio/rollover.mp3'
+		src: 'audio/rollover.wav'
 	}
 }
 
@@ -377,6 +386,10 @@ function setupButtons() {
 		var key = $(event.currentTarget).attr('key');
 		buttons[key].set(0);
 	});
+	// touch sounds
+	// $('.button-outer').on('touchstart', () => {
+	// 	playSound('rollover');
+	// });
 }
 
 var buttons = {};
@@ -492,7 +505,7 @@ Modal.prototype = {
 		showingModal = false;
 		this.controls.hide();
 		// pointerLock();
-		audioFiles.close.play();
+		playSound('close');
 		TweenMax.to($('.modal-container') , 0.3, {autoAlpha: 0, onComplete: function() {
 				this.modal.removeClass('open');
 			}.bind(this)
@@ -511,6 +524,7 @@ Modal.prototype = {
 		// history.replaceState(null, null, urlParams);
 		let duration = 550/1000;
 		showingModal = true;
+		$('body').removeClass('hot');
 		if(hotspot.slides && hotspot.slides.length > 0) {
 			if(hotspot.slides.length > 1) this.controls.fadeIn();
 			this.activeSlide = hotspot.slides[this.offset];
@@ -518,7 +532,7 @@ Modal.prototype = {
 		}
 		TweenMax.to($('.modal-container') , 0.3, {autoAlpha: 1});
 		setTimeout(() => {
-			audioFiles.open.play();
+			playSound('open');
 			this.modal.addClass('open');
 		}, 200)
 		TweenMax.to(camera, duration, {fov: fovMax, onComplete: () => {
@@ -534,7 +548,22 @@ Modal.prototype = {
 let modal = new Modal();
 modal.bindEvents();
 
+
+
 $(document).ready(function() {
+
+	$(window).blur( () => {
+		audioFiles.bgAudio.pause();
+	});
+
+	$(window).focus( () => {
+		if(playAudio) audioFiles.bgAudio.play();
+	});
+
+	splashButton = new ProgressBar.Path($('.splash .outer-path').get(0), {
+		easing: 'easeInOut',
+		duration: 500
+	});
 
 	$('.button-outer').each((index, el) => {
 		var $el = $(el);
@@ -996,6 +1025,7 @@ function addSelectedObject(object) {
 }
 
 function playSound(key) {
+	if(!playAudio) return;
 	let sound = audioFiles[key].cloneNode();
 	sound.play();
 }
@@ -1012,13 +1042,13 @@ function checkRaycasterCollisions(x, y) {
 		items.forEach((item) => {
 			let target = item.object.parent.children[0]
 			if(selectedObjects.indexOf(target) === -1) {
-				$('body').addClass('hot');
+				// $('body').addClass('hot');
 				addSelectedObject(target);
 				playSound('rollover');
 			}
 		});
 	} else {
-		$('body').removeClass('hot');
+		// $('body').removeClass('hot');
 		selectedObjects = [];
 	}
 	outlinePass.selectedObjects = selectedObjects;
