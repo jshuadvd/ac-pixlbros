@@ -210,6 +210,7 @@ let hotspotObjects = [
 		position: [400, 0, -205]
 	},
 ];
+
 let onMouseDownMouseX = 0, onMouseDownMouseY = 0,
 onMouseDownLon = 0,
 lat = 0, onMouseDownLat = 0,
