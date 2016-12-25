@@ -245,8 +245,6 @@ if (('ontouchstart' in window) || window.DocumentTouch && document instanceof Do
 
 let showLoader = true;
 let playAudio = true;
-// var audioLoader = new THREE.AudioLoader();
-// audioLoader.load(audioFile);
 let splashButton;
 
 
