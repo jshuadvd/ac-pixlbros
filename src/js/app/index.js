@@ -247,7 +247,6 @@ let showLoader = true;
 let playAudio = true;
 let splashButton;
 
-
 let audio;
 let progressBar = $('.progress');
 let numAnim = new CountUp(percent, 0, 0, 0, 0.5, {suffix: '%'});
