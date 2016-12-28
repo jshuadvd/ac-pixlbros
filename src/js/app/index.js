@@ -382,7 +382,6 @@ var buttons = {};
 //                             Init Audio                                 //
 //************************************************************************//
 
-
 function Modal(hotspot) {
 	this.modal = $('.modal');
 	this.item = this.modal.find('.item');
