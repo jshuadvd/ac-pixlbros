@@ -462,7 +462,6 @@ Modal.prototype = {
 			let hashtags = 'AssassinsCreed'
 			window.open(`http://twitter.com/intent/tweet?url=${url}&text=${text}&hashtags=${hashtags}`);
 		},
-	// },
 	duration: 0.35,
 	offset: 0,
 	setModalValues(hotspot) {
