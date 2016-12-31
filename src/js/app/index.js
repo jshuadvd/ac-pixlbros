@@ -522,8 +522,6 @@ Modal.prototype = {
 let modal = new Modal();
 modal.bindEvents();
 
-
-
 $(document).ready(function() {
 
 	$(window).blur( () => {
