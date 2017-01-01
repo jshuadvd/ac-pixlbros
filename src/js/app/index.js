@@ -623,8 +623,6 @@ function init() {
 	mesh.name = 'scene';
 	scene.add( mesh );
 
-	// stats = initStats()
-
 	raycaster = new THREE.Raycaster();
 	mouse = new THREE.Vector2();
 
