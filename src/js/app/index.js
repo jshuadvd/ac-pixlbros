@@ -377,16 +377,9 @@ function setupButtons() {
 
 var buttons = {};
 
-
 //************************************************************************//
 //                             Init Audio                                 //
 //************************************************************************//
-
-// let audio = document.createElement('audio');
-// let source = document.createElement('source');
-// source.src = 'audio/bg-music.mp3';
-// audio.appendChild(source);
-// audio.play();
 
 function Modal(hotspot) {
 	this.modal = $('.modal');
@@ -469,7 +462,6 @@ Modal.prototype = {
 			let hashtags = 'AssassinsCreed'
 			window.open(`http://twitter.com/intent/tweet?url=${url}&text=${text}&hashtags=${hashtags}`);
 		},
-	// },
 	duration: 0.35,
 	offset: 0,
 	setModalValues(hotspot) {
@@ -503,8 +495,7 @@ Modal.prototype = {
 		this.hotspot = hotspot;
 		this.subid = subid;
 		this.offset = 0;
-		// let urlParams = makeUrlParams(hotspot.id);
-		// history.replaceState(null, null, urlParams);
+	
 		let duration = 550/1000;
 		showingModal = true;
 		$('body').removeClass('hot');
@@ -530,8 +521,6 @@ Modal.prototype = {
 }
 let modal = new Modal();
 modal.bindEvents();
-
-
 
 $(document).ready(function() {
 
@@ -634,23 +623,8 @@ function init() {
 	mesh.name = 'scene';
 	scene.add( mesh );
 
-	// stats = initStats()
-
 	raycaster = new THREE.Raycaster();
 	mouse = new THREE.Vector2();
-
-	// bulb
-	// let bulbLight = new THREE.PointLight( 0xffee88, 1, 100, 2 );
-	// let bulbMat = new THREE.MeshStandardMaterial( {
-	// 	emissive: 0xffffee,
-	// 	emissiveIntensity: 1,
-	// 	color: 0x000000
-	// });
-	// bulbLight.add(new THREE.Mesh( bulbGeometry, bulbMat));
-	// bulbLight.position.set(0, 2, 0);
-	// bulbLight.castShadow = true;
-	// scene.add(bulbLight);
-	// bulbMat.emissiveIntensity = bulbLight.intensity / Math.pow( 0.02, 2.0 );
 
 	let hemiLight = new THREE.HemisphereLight( 0xffffff, 0xffffff, 5 );
 	// hemiLight.color.setHSL( 0.6, 1, 0.6 );
