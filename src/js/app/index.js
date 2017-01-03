@@ -210,6 +210,7 @@ let hotspotObjects = [
 		position: [400, 0, -205]
 	},
 ];
+
 let onMouseDownMouseX = 0, onMouseDownMouseY = 0,
 onMouseDownLon = 0,
 lat = 0, onMouseDownLat = 0,
@@ -244,10 +245,7 @@ if (('ontouchstart' in window) || window.DocumentTouch && document instanceof Do
 
 let showLoader = true;
 let playAudio = true;
-// var audioLoader = new THREE.AudioLoader();
-// audioLoader.load(audioFile);
 let splashButton;
-
 
 let audio;
 let progressBar = $('.progress');
@@ -281,18 +279,6 @@ function loadTick() {
 		})
 	}
 }
-
-// function preloadAudio(url) {
-// 	totalFiles += 1;
-// 	let audio = new Audio();
-// 	audio.addEventListener('canplaythrough', () => {
-// 		filesLoaded += 1;
-// 		loadTick();
-// 	}, false);
-// 	audio.src = url;
-// 	return audio;
-// }
-
 
 function createAudioSource(file) {
 	totalFiles += 1;
