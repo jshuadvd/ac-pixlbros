@@ -645,7 +645,6 @@ function init() {
 	// 	console.log("Sorry, your browser doesn't support Device Orientation");
 	// }
 
-
 	clock = new THREE.Clock();
 
 	// postprocessing
