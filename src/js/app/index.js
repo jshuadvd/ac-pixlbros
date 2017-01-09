@@ -700,7 +700,6 @@ function init() {
 	orientCamera();
 
 	document.body.appendChild( renderer.domElement );
-
 }
 
 function getUrlParams() {
