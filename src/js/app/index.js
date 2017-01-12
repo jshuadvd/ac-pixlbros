@@ -627,16 +627,9 @@ function init() {
 	mouse = new THREE.Vector2();
 
 	let hemiLight = new THREE.HemisphereLight( 0xffffff, 0xffffff, 5 );
-	// hemiLight.color.setHSL( 0.6, 1, 0.6 );
-	// hemiLight.groundColor.setHSL( 0.095, 1, 0.75 );
 	hemiLight.position.set(0, 200, 0);
 	scene.add(hemiLight);
 
-	// var hemiLight = new THREE.HemisphereLight( 0xddeeff, 0x0f0e0d, 0.1 );
-	// hemiLight.intensity = 8;
-	// scene.add( hemiLight );
-
-	// Build items for raycaster clicks
 	buildHotspots();
 
 	// Device Orientation Stuff
@@ -651,8 +644,6 @@ function init() {
 	// } else {
 	// 	console.log("Sorry, your browser doesn't support Device Orientation");
 	// }
-
-
 	clock = new THREE.Clock();
 
 	// postprocessing
@@ -689,8 +680,6 @@ function init() {
 
 	container.appendChild( renderer.domElement );
 	// container.addEventListener("mousemove", getPosition, false);
-
-
 	// @todo: event aliasing
 	// document.addEventListener(touchDevice ? 'touchstart' : 'mousedown', onDocumentMouseDown, false );
 	// document.addEventListener(touchDevice ? 'touchmove' : 'mousemove', onDocumentMouseMove, false );
@@ -703,7 +692,6 @@ function init() {
 	document.addEventListener( 'touchstart', onDocumentTouchStart, false );
 	document.addEventListener( 'touchmove', onDocumentTouchMove, false );
 	// document.addEventListener( 'touchend', onDocumentTouchEnd, false );
-
 	// document.addEventListener( 'wheel', onDocumentMouseWheel, false );
 	window.addEventListener( 'resize', onWindowResize, false );
 
@@ -712,7 +700,6 @@ function init() {
 	orientCamera();
 
 	document.body.appendChild( renderer.domElement );
-
 }
 
 function getUrlParams() {
@@ -769,13 +756,10 @@ function buildHotspots() {
 
 			// previous ac-logo.js scale
 			// let scale = 10;
-
 			// js/ac-badge-big.js
 			// let scale = 45;
-
 			//js/ac-logo-simple.js
 			// let scale = 27;
-
 			// let newMat = new THREE.MeshLambertMaterial()
 
 			let newMat = new THREE.MeshPhongMaterial( {
