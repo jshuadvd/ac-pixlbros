@@ -760,7 +760,6 @@ function buildHotspots() {
 			// let scale = 45;
 			//js/ac-logo-simple.js
 			// let scale = 27;
-
 			// let newMat = new THREE.MeshLambertMaterial()
 
 			let newMat = new THREE.MeshPhongMaterial( {
