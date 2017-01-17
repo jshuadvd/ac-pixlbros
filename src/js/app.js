@@ -172,7 +172,6 @@ var hotspotObjects = [{
 		key: 'pistola-de-pyrenees',
 		description: 'this pistola is an exclellent choice when stealth is no longer an option. perfect for disorienting groups of enemies or eliminating a lone inquisitor, this weapon is essential for every assassin in the field (or the mountains).'
 	}
-	// missing slide, piece of eden (gold)
 	],
 	position: [-265, 0, -380]
 }, {
