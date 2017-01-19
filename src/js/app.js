@@ -219,7 +219,6 @@ var onMouseDownMouseX = 0,
     theta = 0;
 
 container = document.getElementById('container');
-
 var containerWidth = container.clientWidth;
 var containerHeight = container.clientHeight;
 
