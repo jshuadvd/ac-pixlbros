@@ -221,7 +221,6 @@ var onMouseDownMouseX = 0,
 container = document.getElementById('container');
 var containerWidth = container.clientWidth;
 var containerHeight = container.clientHeight;
-
 var selectedObjects = [];
 var loader = void 0;
 var renderPass = void 0;
