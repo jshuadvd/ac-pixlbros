@@ -227,7 +227,6 @@ var renderPass = void 0;
 var outlinePass = void 0;
 var composer = void 0;
 var effectFXAA = void 0;
-// let controlsEnabled = true;
 var showingModal = false;
 var initialOrientation = void 0;
 var isUserInteracting = false;
