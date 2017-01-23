@@ -231,7 +231,6 @@ var showingModal = false;
 var initialOrientation = void 0;
 var isUserInteracting = false;
 var freeze = void 0;
-
 var projector = new THREE.Projector();
 var mouseVector = new THREE.Vector3();
 
