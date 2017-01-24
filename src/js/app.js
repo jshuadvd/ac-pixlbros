@@ -247,6 +247,8 @@ var progressBar = $('.progress');
 var numAnim = new CountUp(percent, 0, 0, 0, 0.5, { suffix: '%' });
 var filesLoaded = 0;
 var totalFiles = 0;
+
+
 function loadTick() {
 	var percent = filesLoaded / totalFiles * 100;
 	numAnim.update(percent);
