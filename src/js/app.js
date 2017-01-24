@@ -242,7 +242,6 @@ if ('ontouchstart' in window || window.DocumentTouch && document instanceof Docu
 var showLoader = true;
 var playAudio = true;
 var splashButton = void 0;
-
 var audio = void 0;
 var progressBar = $('.progress');
 var numAnim = new CountUp(percent, 0, 0, 0, 0.5, { suffix: '%' });
