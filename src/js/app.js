@@ -234,7 +234,6 @@ var freeze = void 0;
 var projector = new THREE.Projector();
 var mouseVector = new THREE.Vector3();
 var currentHotspot = void 0;
-
 var touchDevice = void 0;
 if ('ontouchstart' in window || window.DocumentTouch && document instanceof DocumentTouch) {
 	touchDevice = true;
