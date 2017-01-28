@@ -241,7 +241,6 @@ if ('ontouchstart' in window || window.DocumentTouch && document instanceof Docu
 
 var showLoader = true;
 var playAudio = true;
-// var audioLoader = new THREE.AudioLoader();
 var splashButton = void 0;
 
 var audio = void 0;
