@@ -279,16 +279,6 @@ function loadTick() {
 	}
 }
 
-// function preloadAudio(url) {
-// 	totalFiles += 1;
-// 	let audio = new Audio();
-// 	audio.addEventListener('canplaythrough', () => {
-// 		filesLoaded += 1;
-// 		loadTick();
-// 	}, false);
-// 	audio.src = url;
-// 	return audio;
-// }
 
 
 function createAudioSource(file) {
