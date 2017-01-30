@@ -280,7 +280,6 @@ function loadTick() {
 }
 
 
-
 function createAudioSource(file) {
 	totalFiles += 1;
 	var audio = new Audio();
