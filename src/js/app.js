@@ -506,7 +506,6 @@ Modal.prototype = {
 		this.subid = subid;
 		this.offset = 0;
 		// let urlParams = makeUrlParams(hotspot.id);
-		// history.replaceState(null, null, urlParams);
 		var duration = 550 / 1000;
 		showingModal = true;
 		$('body').removeClass('hot');
