@@ -380,12 +380,6 @@ var buttons = {};
 //                             Init Audio                                 //
 //************************************************************************//
 
-// let audio = document.createElement('audio');
-// let source = document.createElement('source');
-// source.src = 'audio/bg-music.mp3';
-// audio.appendChild(source);
-// audio.play();
-
 function Modal(hotspot) {
 	var _this = this;
 
