@@ -636,8 +636,6 @@ function init() {
 	raycaster = new THREE.Raycaster();
 	mouse = new THREE.Vector2();
 
-	// bulb
-	// let bulbLight = new THREE.PointLight( 0xffee88, 1, 100, 2 );
 	// let bulbMat = new THREE.MeshStandardMaterial( {
 	// 	emissive: 0xffffee,
 	// 	emissiveIntensity: 1,
