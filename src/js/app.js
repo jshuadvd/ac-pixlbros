@@ -642,10 +642,6 @@ function init() {
 	hemiLight.position.set(0, 200, 0);
 	scene.add(hemiLight);
 
-	// var hemiLight = new THREE.HemisphereLight( 0xddeeff, 0x0f0e0d, 0.1 );
-	// hemiLight.intensity = 8;
-	// scene.add( hemiLight );
-
 	// Build items for raycaster clicks
 	buildHotspots();
 
