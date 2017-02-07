@@ -636,12 +636,6 @@ function init() {
 	raycaster = new THREE.Raycaster();
 	mouse = new THREE.Vector2();
 
-	// bulbLight.add(new THREE.Mesh( bulbGeometry, bulbMat));
-	// bulbLight.position.set(0, 2, 0);
-	// bulbLight.castShadow = true;
-	// scene.add(bulbLight);
-	// bulbMat.emissiveIntensity = bulbLight.intensity / Math.pow( 0.02, 2.0 );
-
 	var hemiLight = new THREE.HemisphereLight(0xffffff, 0xffffff, 5);
 	// hemiLight.color.setHSL( 0.6, 1, 0.6 );
 	// hemiLight.groundColor.setHSL( 0.095, 1, 0.75 );
