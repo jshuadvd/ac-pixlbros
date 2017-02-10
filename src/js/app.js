@@ -172,7 +172,6 @@ var hotspotObjects = [{
 		key: 'pistola-de-pyrenees',
 		description: 'this pistola is an exclellent choice when stealth is no longer an option. perfect for disorienting groups of enemies or eliminating a lone inquisitor, this weapon is essential for every assassin in the field (or the mountains).'
 	}
-	// missing slide, piece of eden (gold)
 	],
 	position: [-265, 0, -380]
 }, {
@@ -220,27 +219,21 @@ var onMouseDownMouseX = 0,
     theta = 0;
 
 container = document.getElementById('container');
-
 var containerWidth = container.clientWidth;
 var containerHeight = container.clientHeight;
-
 var selectedObjects = [];
 var loader = void 0;
 var renderPass = void 0;
 var outlinePass = void 0;
 var composer = void 0;
 var effectFXAA = void 0;
-// let controlsEnabled = true;
 var showingModal = false;
 var initialOrientation = void 0;
 var isUserInteracting = false;
 var freeze = void 0;
-
 var projector = new THREE.Projector();
 var mouseVector = new THREE.Vector3();
-
 var currentHotspot = void 0;
-
 var touchDevice = void 0;
 if ('ontouchstart' in window || window.DocumentTouch && document instanceof DocumentTouch) {
 	touchDevice = true;
@@ -248,8 +241,6 @@ if ('ontouchstart' in window || window.DocumentTouch && document instanceof Docu
 
 var showLoader = true;
 var playAudio = true;
-// var audioLoader = new THREE.AudioLoader();
-// audioLoader.load(audioFile);
 var splashButton = void 0;
 
 var audio = void 0;
