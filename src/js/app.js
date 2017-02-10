@@ -242,12 +242,13 @@ if ('ontouchstart' in window || window.DocumentTouch && document instanceof Docu
 var showLoader = true;
 var playAudio = true;
 var splashButton = void 0;
-
 var audio = void 0;
 var progressBar = $('.progress');
 var numAnim = new CountUp(percent, 0, 0, 0, 0.5, { suffix: '%' });
 var filesLoaded = 0;
 var totalFiles = 0;
+
+
 function loadTick() {
 	var percent = filesLoaded / totalFiles * 100;
 	numAnim.update(percent);
@@ -277,18 +278,6 @@ function loadTick() {
 		})();
 	}
 }
-
-// function preloadAudio(url) {
-// 	totalFiles += 1;
-// 	let audio = new Audio();
-// 	audio.addEventListener('canplaythrough', () => {
-// 		filesLoaded += 1;
-// 		loadTick();
-// 	}, false);
-// 	audio.src = url;
-// 	return audio;
-// }
-
 
 function createAudioSource(file) {
 	totalFiles += 1;
@@ -383,10 +372,6 @@ function setupButtons() {
 		var key = $(event.currentTarget).attr('key');
 		buttons[key].set(0);
 	});
-	// touch sounds
-	// $('.button-outer').on('touchstart', () => {
-	// 	playSound('rollover');
-	// });
 }
 
 var buttons = {};
@@ -394,12 +379,6 @@ var buttons = {};
 //************************************************************************//
 //                             Init Audio                                 //
 //************************************************************************//
-
-// let audio = document.createElement('audio');
-// let source = document.createElement('source');
-// source.src = 'audio/bg-music.mp3';
-// audio.appendChild(source);
-// audio.play();
 
 function Modal(hotspot) {
 	var _this = this;
@@ -527,7 +506,6 @@ Modal.prototype = {
 		this.subid = subid;
 		this.offset = 0;
 		// let urlParams = makeUrlParams(hotspot.id);
-		// history.replaceState(null, null, urlParams);
 		var duration = 550 / 1000;
 		showingModal = true;
 		$('body').removeClass('hot');
@@ -655,23 +633,8 @@ function init() {
 	mesh.name = 'scene';
 	scene.add(mesh);
 
-	// stats = initStats()
-
 	raycaster = new THREE.Raycaster();
 	mouse = new THREE.Vector2();
-
-	// bulb
-	// let bulbLight = new THREE.PointLight( 0xffee88, 1, 100, 2 );
-	// let bulbMat = new THREE.MeshStandardMaterial( {
-	// 	emissive: 0xffffee,
-	// 	emissiveIntensity: 1,
-	// 	color: 0x000000
-	// });
-	// bulbLight.add(new THREE.Mesh( bulbGeometry, bulbMat));
-	// bulbLight.position.set(0, 2, 0);
-	// bulbLight.castShadow = true;
-	// scene.add(bulbLight);
-	// bulbMat.emissiveIntensity = bulbLight.intensity / Math.pow( 0.02, 2.0 );
 
 	var hemiLight = new THREE.HemisphereLight(0xffffff, 0xffffff, 5);
 	// hemiLight.color.setHSL( 0.6, 1, 0.6 );
