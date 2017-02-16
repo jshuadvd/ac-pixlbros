@@ -648,7 +648,6 @@ function init() {
 	deviceControls.connect();
 	setupControllerEventHandlers(deviceControls);
 
-	// } else {
 	// 	console.log("Sorry, your browser doesn't support Device Orientation");
 	// }
 
