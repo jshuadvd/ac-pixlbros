@@ -648,7 +648,6 @@ function init() {
 	deviceControls.connect();
 	setupControllerEventHandlers(deviceControls);
 
-	// }
 
 
 	clock = new THREE.Clock();
