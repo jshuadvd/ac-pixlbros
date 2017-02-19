@@ -649,7 +649,6 @@ function init() {
 	setupControllerEventHandlers(deviceControls);
 
 
-
 	clock = new THREE.Clock();
 
 	// postprocessing
