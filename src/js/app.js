@@ -648,7 +648,6 @@ function init() {
 	deviceControls.connect();
 	setupControllerEventHandlers(deviceControls);
 
-
 	clock = new THREE.Clock();
 
 	// postprocessing
@@ -664,7 +663,6 @@ function init() {
 	outlinePass.visibleEdgeColor = { r: 255, g: 255, b: 255 };
 
 	composer.addPass(outlinePass);
-	// @todo: prob dont need this texture but SHRUG
 	var onLoad = function onLoad(texture) {
 		outlinePass.patternTexture = texture;
 		texture.wrapS = THREE.RepeatWrapping;
