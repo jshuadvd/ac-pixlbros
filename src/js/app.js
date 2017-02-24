@@ -670,7 +670,6 @@ function init() {
 	};
 	var lod = new THREE.TextureLoader();
 	lod.load(
-	// resource URL
 	'textures/tri_pattern.jpg',
 	// Function when resource is loaded
 	onLoad);
