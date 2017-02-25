@@ -671,7 +671,6 @@ function init() {
 	var lod = new THREE.TextureLoader();
 	lod.load(
 	'textures/tri_pattern.jpg',
-	// Function when resource is loaded
 	onLoad);
 
 	effectFXAA = new THREE.ShaderPass(THREE.FXAAShader);
