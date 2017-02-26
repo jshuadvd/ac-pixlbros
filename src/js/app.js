@@ -679,8 +679,6 @@ function init() {
 	composer.addPass(effectFXAA);
 
 	container.appendChild(renderer.domElement);
-	// container.addEventListener("mousemove", getPosition, false);
-
 
 	// @todo: event aliasing
 	// document.addEventListener(touchDevice ? 'touchstart' : 'mousedown', onDocumentMouseDown, false );
