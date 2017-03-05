@@ -681,7 +681,6 @@ function init() {
 	container.appendChild(renderer.domElement);
 
 	// @todo: event aliasing
-	// document.addEventListener(touchDevice ? 'touchend' : 'mouseup', onDocumentMouseUp, false );
 
 	document.addEventListener('mousedown', onDocumentMouseDown, false);
 	document.addEventListener('mousemove', onDocumentMouseMove, false);
