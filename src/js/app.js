@@ -681,7 +681,6 @@ function init() {
 	container.appendChild(renderer.domElement);
 
 	// @todo: event aliasing
-
 	document.addEventListener('mousedown', onDocumentMouseDown, false);
 	document.addEventListener('mousemove', onDocumentMouseMove, false);
 	document.addEventListener('mouseup', onDocumentMouseUp, false);
