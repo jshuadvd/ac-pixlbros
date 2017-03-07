@@ -688,7 +688,6 @@ function init() {
 
 	document.addEventListener('touchstart', onDocumentTouchStart, false);
 	document.addEventListener('touchmove', onDocumentTouchMove, false);
-	// document.addEventListener( 'touchend', onDocumentTouchEnd, false );
 
 	// document.addEventListener( 'wheel', onDocumentMouseWheel, false );
 	window.addEventListener('resize', onWindowResize, false);
