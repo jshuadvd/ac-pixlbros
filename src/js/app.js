@@ -690,7 +690,6 @@ function init() {
 	
 	window.addEventListener('resize', onWindowResize, false);
 
-	// buildSmoke();
 	orientCamera();
 
 	document.body.appendChild(renderer.domElement);
