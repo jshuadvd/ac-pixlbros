@@ -745,7 +745,6 @@ function handleButtonClick(key) {
 function buildHotspots() {
 	loader = new THREE.JSONLoader();
 	loader.load('js/new-ac-logo-e3.js', function (geometry) {
-		// loader.load('js/ac-badge.js', function(geometry) {
 		// loader.load('js/ac-logo.js', function(geometry) {
 		hotspots = hotspotObjects.map(function (hotspotObject, index) {
 			geometry.center();
