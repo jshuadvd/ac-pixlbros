@@ -750,8 +750,6 @@ function buildHotspots() {
 
 			var scale = 5;
 
-			// previous ac-logo.js scale
-			// let scale = 10;
 
 			// js/ac-badge-big.js
 			// let scale = 45;
