@@ -749,8 +749,6 @@ function buildHotspots() {
 			geometry.center();
 
 			var scale = 5;
-
-
 			// js/ac-badge-big.js
 			// let scale = 45;
 
