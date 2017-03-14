@@ -749,14 +749,6 @@ function buildHotspots() {
 			geometry.center();
 
 			var scale = 5;
-			// js/ac-badge-big.js
-			// let scale = 45;
-
-			//js/ac-logo-simple.js
-			// let scale = 27;
-
-			// let newMat = new THREE.MeshLambertMaterial()
-
 			var newMat = new THREE.MeshPhongMaterial({
 				color: 0xFFFFFF,
 				specular: 0x000000,
