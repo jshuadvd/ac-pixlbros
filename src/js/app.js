@@ -798,9 +798,7 @@ function onWindowResize() {
 	effectFXAA.uniforms['resolution'].value.set(1 / window.innerWidth, 1 / window.innerHeight);
 }
 
-// function onDocumentTouchEnd() {
-// 	console.log('---- onDocumentTouchEnd ----');
-// }
+
 
 function onDocumentTouchStart(event) {
 	if (event.touches && event.touches.length === 1) {
@@ -837,7 +835,6 @@ function playSound(key) {
 
 function checkRaycasterCollisions(x, y) {
 
-	// console.log("WINDW MOUSE", window.event.clienty);
 	window.event.clientY - window.scrollTop;
 
 	var mouse3D = new THREE.Vector3(x / window.innerWidth * 2 - 1, -(y / window.innerHeight) * 2 + 1, 0.5);
@@ -846,6 +843,7 @@ function checkRaycasterCollisions(x, y) {
 	var items = intersects.filter(function (intersect) {
 		return intersect.object.name.match(/hitbox/);
 	});
+	
 	if (items.length) {
 		items.forEach(function (item) {
 			var target = item.object.parent.children[0];
@@ -955,8 +953,7 @@ function onDocumentMouseWheel(event) {
 		camera.fov += event.deltaY * 0.02;
 		camera.updateProjectionMatrix();
 	}
-	// camera.fov += event.deltaY * 0.02;
-	// camera.updateProjectionMatrix();
+
 }
 
 function animate() {
@@ -969,8 +966,7 @@ function update() {
 	// if ( isUserInteracting === false ) {
 	// 	// lon += 0.1;
 	// }
-	// console.log('initialOrientation', lon, initialOrientation)
-	// console.log('update', lon)
+
 	if (initialOrientation) {
 		position.lon = initialOrientation;
 		initialOrientation = null;
