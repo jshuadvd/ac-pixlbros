@@ -963,9 +963,6 @@ function animate() {
 }
 
 function update() {
-	// if ( isUserInteracting === false ) {
-	// 	// lon += 0.1;
-	// }
 
 	if (initialOrientation) {
 		position.lon = initialOrientation;
