@@ -963,7 +963,6 @@ function animate() {
 }
 
 function update() {
-
 	if (initialOrientation) {
 		position.lon = initialOrientation;
 		initialOrientation = null;
