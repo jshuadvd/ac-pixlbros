@@ -973,7 +973,6 @@ function update() {
 	theta = THREE.Math.degToRad(position.lon);
 
 	camera.target.x = 1 * Math.sin(phi) * Math.cos(theta);
-	// camera.target.y = 1 * Math.cos( phi );
 	camera.target.z = 1 * Math.sin(phi) * Math.sin(theta);
 	camera.lookAt(camera.target);
 
