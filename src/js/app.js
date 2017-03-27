@@ -976,10 +976,7 @@ function update() {
 	camera.target.z = 1 * Math.sin(phi) * Math.sin(theta);
 	camera.lookAt(camera.target);
 
-	// let delta = clock.getDelta(), speed = delta * CAMERAMOVESPEED;
-	// controls.update(delta);
-	// spotLight.target = marker;
-	// controls.update()
+
 
 	// spotLightHelper.update()
 	// stats.update()
