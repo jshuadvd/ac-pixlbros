@@ -977,7 +977,6 @@ function update() {
 	camera.lookAt(camera.target);
 
 
-
 	// spotLightHelper.update()
 	// stats.update()
 	delta = clock.getDelta();
