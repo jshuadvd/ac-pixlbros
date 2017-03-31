@@ -976,7 +976,6 @@ function update() {
 	camera.target.z = 1 * Math.sin(phi) * Math.sin(theta);
 	camera.lookAt(camera.target);
 	delta = clock.getDelta();
-
 	// evolveSmoke();
 	// animateRain();
 	// rotateHotspot();
