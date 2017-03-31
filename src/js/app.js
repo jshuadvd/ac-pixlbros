@@ -975,7 +975,6 @@ function update() {
 	camera.target.x = 1 * Math.sin(phi) * Math.cos(theta);
 	camera.target.z = 1 * Math.sin(phi) * Math.sin(theta);
 	camera.lookAt(camera.target);
-	// stats.update()
 	delta = clock.getDelta();
 
 	// evolveSmoke();
