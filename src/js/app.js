@@ -978,8 +978,6 @@ function update() {
 	delta = clock.getDelta();
 	rotateHotspots();
 
-	// checkRaycasterCollisions();
-
 	// rainEngine.update(0.01 * 0.5)
 	theta += 0.1;
 	// let radius = 600;
