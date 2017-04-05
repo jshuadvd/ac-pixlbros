@@ -978,7 +978,6 @@ function update() {
 	delta = clock.getDelta();
 	rotateHotspots();
 
-	// rainEngine.update(0.01 * 0.5)
 	theta += 0.1;
 	// let radius = 600;
 	// camera.position.x = radius * Math.sin( THREE.Math.degToRad( theta ) );
