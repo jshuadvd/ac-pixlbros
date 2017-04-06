@@ -637,8 +637,6 @@ function init() {
 	mouse = new THREE.Vector2();
 
 	var hemiLight = new THREE.HemisphereLight(0xffffff, 0xffffff, 5);
-	// hemiLight.color.setHSL( 0.6, 1, 0.6 );
-	// hemiLight.groundColor.setHSL( 0.095, 1, 0.75 );
 	hemiLight.position.set(0, 200, 0);
 	scene.add(hemiLight);
 
@@ -649,15 +647,6 @@ function init() {
 	deviceControls = new DeviceOrientationController(camera, renderer.domElement);
 	deviceControls.connect();
 	setupControllerEventHandlers(deviceControls);
-
-	// if (window.DeviceOrientationEvent) {
-	// 	console.log("Wonderful, Our browser supports DeviceOrientation");
-	// 	window.addEventListener("deviceorientation", deviceOrientationListener, false);
-	// 	deviceControls = new THREE.DeviceOrientationControls( camera, renderer.domElement );
-	// } else {
-	// 	console.log("Sorry, your browser doesn't support Device Orientation");
-	// }
-
 
 	clock = new THREE.Clock();
 
@@ -674,7 +663,6 @@ function init() {
 	outlinePass.visibleEdgeColor = { r: 255, g: 255, b: 255 };
 
 	composer.addPass(outlinePass);
-	// @todo: prob dont need this texture but SHRUG
 	var onLoad = function onLoad(texture) {
 		outlinePass.patternTexture = texture;
 		texture.wrapS = THREE.RepeatWrapping;
@@ -682,9 +670,7 @@ function init() {
 	};
 	var lod = new THREE.TextureLoader();
 	lod.load(
-	// resource URL
 	'textures/tri_pattern.jpg',
-	// Function when resource is loaded
 	onLoad);
 
 	effectFXAA = new THREE.ShaderPass(THREE.FXAAShader);
@@ -693,27 +679,17 @@ function init() {
 	composer.addPass(effectFXAA);
 
 	container.appendChild(renderer.domElement);
-	// container.addEventListener("mousemove", getPosition, false);
-
 
 	// @todo: event aliasing
-	// document.addEventListener(touchDevice ? 'touchstart' : 'mousedown', onDocumentMouseDown, false );
-	// document.addEventListener(touchDevice ? 'touchmove' : 'mousemove', onDocumentMouseMove, false );
-	// document.addEventListener(touchDevice ? 'touchend' : 'mouseup', onDocumentMouseUp, false );
-
 	document.addEventListener('mousedown', onDocumentMouseDown, false);
 	document.addEventListener('mousemove', onDocumentMouseMove, false);
 	document.addEventListener('mouseup', onDocumentMouseUp, false);
 
 	document.addEventListener('touchstart', onDocumentTouchStart, false);
 	document.addEventListener('touchmove', onDocumentTouchMove, false);
-	// document.addEventListener( 'touchend', onDocumentTouchEnd, false );
-
-	// document.addEventListener( 'wheel', onDocumentMouseWheel, false );
+	
 	window.addEventListener('resize', onWindowResize, false);
 
-	// initRain();
-	// buildSmoke();
 	orientCamera();
 
 	document.body.appendChild(renderer.domElement);
@@ -769,26 +745,10 @@ function handleButtonClick(key) {
 function buildHotspots() {
 	loader = new THREE.JSONLoader();
 	loader.load('js/new-ac-logo-e3.js', function (geometry) {
-		// loader.load('js/ac-logo-simple.js', function(geometry) {
-		// loader.load('js/ac-badge-big.js', function(geometry) {
-		// loader.load('js/ac-badge.js', function(geometry) {
-		// loader.load('js/ac-logo.js', function(geometry) {
 		hotspots = hotspotObjects.map(function (hotspotObject, index) {
 			geometry.center();
 
 			var scale = 5;
-
-			// previous ac-logo.js scale
-			// let scale = 10;
-
-			// js/ac-badge-big.js
-			// let scale = 45;
-
-			//js/ac-logo-simple.js
-			// let scale = 27;
-
-			// let newMat = new THREE.MeshLambertMaterial()
-
 			var newMat = new THREE.MeshPhongMaterial({
 				color: 0xFFFFFF,
 				specular: 0x000000,
