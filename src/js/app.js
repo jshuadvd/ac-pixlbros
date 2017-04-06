@@ -979,7 +979,6 @@ function update() {
 	rotateHotspots();
 
 	theta += 0.1;
-	// let radius = 600;
 	// camera.position.x = radius * Math.sin( THREE.Math.degToRad( theta ) );
 	// camera.position.y = radius * Math.sin( THREE.Math.degToRad( theta ) );
 	// camera.position.z = radius * Math.cos( THREE.Math.degToRad( theta ) );
