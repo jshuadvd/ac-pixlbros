@@ -239,6 +239,7 @@ let mouseVector = new THREE.Vector3();
 let currentHotspot;
 
 let touchDevice
+
 if (('ontouchstart' in window) || window.DocumentTouch && document instanceof DocumentTouch) { 
 	touchDevice = true;
 }
