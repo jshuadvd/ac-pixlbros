@@ -369,10 +369,6 @@ function setupButtons() {
 		var key = $(event.currentTarget).attr('key');
 		buttons[key].set(0);
 	});
-	// touch sounds
-	// $('.button-outer').on('touchstart', () => {
-	// 	playSound('rollover');
-	// });
 }
 
 var buttons = {};
