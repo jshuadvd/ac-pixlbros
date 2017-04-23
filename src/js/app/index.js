@@ -443,7 +443,6 @@ Modal.prototype = {
 				href: href,
 				title: slide.title,
 				picture: picture,
-				// caption: 'your_caption',
 				description: siteConfig.assetShare.replace('[Object Name]', slide.title)
 			 },
 			 function(response){
