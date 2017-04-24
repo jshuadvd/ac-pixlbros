@@ -454,7 +454,6 @@ Modal.prototype = {
 			let url = `${siteConfig.siteURL}${params}`;
 			let slide = this.hotspot.slides[this.offset];
 			let text = siteConfig.assetTweet.replace('[Object Name]', slide.title)
-			// .replace('[URL]', `${url}${params}`);
 			let hashtags = 'AssassinsCreed'
 			window.open(`http://twitter.com/intent/tweet?url=${url}&text=${text}&hashtags=${hashtags}`);
 		},
