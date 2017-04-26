@@ -632,13 +632,6 @@ function init() {
 	deviceControls.connect()
 	setupControllerEventHandlers( deviceControls )
 
-	// if (window.DeviceOrientationEvent) {
-	// 	console.log("Wonderful, Our browser supports DeviceOrientation");
-	// 	window.addEventListener("deviceorientation", deviceOrientationListener, false);
-	// 	deviceControls = new THREE.DeviceOrientationControls( camera, renderer.domElement );
-	// } else {
-	// 	console.log("Sorry, your browser doesn't support Device Orientation");
-	// }
 	clock = new THREE.Clock();
 
 	// postprocessing
