@@ -678,7 +678,6 @@ function init() {
 	window.addEventListener( 'resize', onWindowResize, false );
 
 	// initRain();
-	// buildSmoke();
 	orientCamera();
 
 	document.body.appendChild( renderer.domElement );
