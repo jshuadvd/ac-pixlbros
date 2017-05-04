@@ -677,7 +677,6 @@ function init() {
 	document.addEventListener( 'touchmove', onDocumentTouchMove, false );
 	window.addEventListener( 'resize', onWindowResize, false );
 
-	// initRain();
 	orientCamera();
 
 	document.body.appendChild( renderer.domElement );
