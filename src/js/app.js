@@ -798,8 +798,6 @@ function onWindowResize() {
 	effectFXAA.uniforms['resolution'].value.set(1 / window.innerWidth, 1 / window.innerHeight);
 }
 
-
-
 function onDocumentTouchStart(event) {
 	if (event.touches && event.touches.length === 1) {
 		var touch = event.touches[0];
