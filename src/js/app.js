@@ -852,7 +852,6 @@ function checkRaycasterCollisions(x, y) {
 			}
 		});
 	} else {
-		// $('body').removeClass('hot');
 		selectedObjects = [];
 	}
 	outlinePass.selectedObjects = selectedObjects;
