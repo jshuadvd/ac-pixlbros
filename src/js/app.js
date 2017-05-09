@@ -976,10 +976,7 @@ function update() {
 	rotateHotspots();
 
 	theta += 0.1;
-	// if (window.innerWidth < 768) {
-	// deviceControls.update()
-	// camera.lookAt(deviceControls.gamma)
-	// console.log(deviceControls);
+
 
 	// sconsole.log("DEVICE CONTROLS", deviceControls);
 	// deviceControls.alpha = 0
