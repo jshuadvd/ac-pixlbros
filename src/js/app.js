@@ -977,7 +977,6 @@ function update() {
 
 	theta += 0.1;
 
-
 	// sconsole.log("DEVICE CONTROLS", deviceControls);
 	// deviceControls.alpha = 0
 	// deviceControls.beta = 180
