@@ -976,8 +976,7 @@ function update() {
 	rotateHotspots();
 
 	theta += 0.1;
-	// sconsole.log("DEVICE CONTROLS", deviceControls);
-	// deviceControls.alpha = 0
+
 	// deviceControls.beta = 180
 	// deviceControls.gamma = 90
 	// deviceControls.updateAlphaOffsetAngle(0);
