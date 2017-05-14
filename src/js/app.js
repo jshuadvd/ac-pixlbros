@@ -976,10 +976,6 @@ function update() {
 	rotateHotspots();
 
 	theta += 0.1;
-	// deviceControls.beta = 180
-	// deviceControls.gamma = 90
-	// deviceControls.updateAlphaOffsetAngle(0);
-	// }
 
 	// if (window.DeviceOrientationEvent) {
 	// 	window.addEventListener('deviceorientation', function(event) {
