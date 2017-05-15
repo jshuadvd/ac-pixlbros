@@ -976,7 +976,6 @@ function update() {
 	rotateHotspots();
 
 	theta += 0.1;
-
 	// if (window.DeviceOrientationEvent) {
 	// 	window.addEventListener('deviceorientation', function(event) {
 	// 		let alpha = event.alpha;
