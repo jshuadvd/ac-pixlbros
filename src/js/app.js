@@ -988,7 +988,6 @@ function update() {
 	// }
 
 	deviceControls.update();
-
 	// deviceControls.connect();
 	renderer.render(scene, camera);
 	// renderer.render( scene, camera );
