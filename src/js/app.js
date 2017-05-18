@@ -976,7 +976,6 @@ function update() {
 	rotateHotspots();
 
 	theta += 0.1;
-
 	// 		let alpha = event.alpha;
 	// 		let beta = event.beta;
 	// 		let gamma = event.gamma;
