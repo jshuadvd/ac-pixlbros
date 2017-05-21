@@ -976,7 +976,6 @@ function update() {
 	rotateHotspots();
 
 	theta += 0.1;
-	// 		let gamma = event.gamma;
 	// 		// console.log("We on Mobile")
 	// 		// console.log("GAMMA" gamma);
 	// 		deviceControls.update();
