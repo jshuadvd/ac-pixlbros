@@ -976,7 +976,6 @@ function update() {
 	rotateHotspots();
 
 	theta += 0.1;
-	// 		// console.log("GAMMA" gamma);
 	// 		deviceControls.update();
 	// 		// Do something
 	// 	}, false);
