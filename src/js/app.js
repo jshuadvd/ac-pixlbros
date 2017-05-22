@@ -978,7 +978,6 @@ function update() {
 	theta += 0.1;
 	deviceControls.update();
 	renderer.render(scene, camera);
-	// renderer.render( scene, camera );
 	camera.updateProjectionMatrix();
 	composer.render();
 	// renderer.autoClear = true;
