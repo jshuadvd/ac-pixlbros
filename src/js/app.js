@@ -977,7 +977,6 @@ function update() {
 
 	theta += 0.1;
 	deviceControls.update();
-	// deviceControls.connect();
 	renderer.render(scene, camera);
 	// renderer.render( scene, camera );
 	camera.updateProjectionMatrix();
