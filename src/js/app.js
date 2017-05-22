@@ -980,7 +980,6 @@ function update() {
 	renderer.render(scene, camera);
 	camera.updateProjectionMatrix();
 	composer.render();
-	// renderer.autoClear = true;
 	// renderer.setClearColor( 0xfff0f0 );
 	// renderer.setClearAlpha( 0.0 );
 }
