@@ -976,7 +976,6 @@ function update() {
 	rotateHotspots();
 
 	theta += 0.1;
-	// 		// Do something
 	// 	}, false);
 	// }
 
