@@ -980,7 +980,6 @@ function update() {
 	renderer.render(scene, camera);
 	camera.updateProjectionMatrix();
 	composer.render();
-	// renderer.setClearAlpha( 0.0 );
 }
 
 TweenLite.ticker.addEventListener("tick", render);
