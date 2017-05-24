@@ -983,7 +983,6 @@ function update() {
 }
 
 TweenLite.ticker.addEventListener("tick", render);
-// 	// Align top-left
 // 	stats = new Stats();
 // 	stats.domElement.style.position = 'absolute';
 // 	// stats.domElement.style.bottom = '0px';
