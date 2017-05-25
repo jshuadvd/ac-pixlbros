@@ -983,8 +983,7 @@ function update() {
 }
 
 TweenLite.ticker.addEventListener("tick", render);
-// 	stats.domElement.style.left = '0px';
-// 	stats.domElement.style.top = '0px';
+
 // 	stats.domElement.style.zIndex = 100;
 // 	container.appendChild(stats.domElement);
 // 	return stats;
